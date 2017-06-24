@@ -2,7 +2,7 @@
 
 namespace Front.Controllers
 {
-    public class HomeController : Controller
+    public class RegistrationController : Controller
     {
         public ActionResult Index()
         {
