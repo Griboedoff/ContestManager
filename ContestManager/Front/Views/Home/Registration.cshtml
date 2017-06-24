@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "Регистрация на сайте";
+}
+
+<script type="text/javascript" src="../../Scripts/Front/registration.js"></script>
+
+<div class="jumbotron text-center">
+    <h1>@ViewBag.Title</h1>
+</div>
+
+<form id="registrationForm">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label for="modesContainer" class="col-md-2 control-label">Способ авторизации</label>
+            <div id="modesContainer">
+                <div class="col-sm-10">
+                    <input type="button" class="btn" onclick="setMode('Email')" value="Email"
+                           data-bind="css: {'btn-danger': isEmailMode, 'btn-default' : !isEmailMode() }" />
+
+                    <input type="button" class="btn" onclick="setMode('Vk')" value="Vk"
+                           data-bind="css: {'btn-primary': isVkMode, 'btn-default' : !isVkMode() }" />
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="userName" class="col-md-2 control-label">Имя на сайте</label>
+            <div class="col-sm-3">
+                <input type="text" id="userName" name="userName" class="form-control" placeholder="Введите ФИО" data-bind="value: userName">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="userEmail" class="col-md-2 control-label">Email</label>
+            <div class="col-sm-3">
+                <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email" data-bind="value: userEmail">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="userPassword" class="col-md-2 control-label">Пароль</label>
+            <div class="col-sm-3">
+                <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль" data-bind="value: userPassword">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
+            <div class="col-sm-3">
+                <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз" data-bind="value: userRepeatPassword">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="sendRequest" class="col-md-2 control-label"></label>
+            <div class="col-sm-3">
+                <input type="button" id="sendRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendRegistrationRequest()" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    ko.applyBindings(data);
+    setMode("Email");
+
+    setValidators();
+</script>
