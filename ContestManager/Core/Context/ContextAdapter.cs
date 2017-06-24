@@ -8,9 +8,14 @@ namespace Core.Context
 {
     public interface IContextAdapter : IDisposable
     {
+        IQueryable<T> Set<T>() where T : DataBaseEntity;
         IQueryable<T> SetWithAttach<T>() where T : DataBaseEntity;
 
+        T Find<T>(Guid id) where T : DataBaseEntity;
+        T Read<T>(Guid id) where T : DataBaseEntity;
+
         T FindAndAttach<T>(Guid id) where T : DataBaseEntity;
+        T ReadAndAttach<T>(Guid id) where T : DataBaseEntity;
 
         void AttachToInsert<T>(T entity) where T : DataBaseEntity;
         void AttachToUpdate<T>(T entity) where T : DataBaseEntity;
@@ -28,8 +33,17 @@ namespace Core.Context
             this.context = context;
         }
 
+        public IQueryable<T> Set<T>() where T : DataBaseEntity
+            => context.Set<T>().AsNoTracking();
+
         public IQueryable<T> SetWithAttach<T>() where T : DataBaseEntity
             => context.Set<T>();
+
+        public T Find<T>(Guid id) where T : DataBaseEntity
+            => Set<T>().FirstOrDefault(e => e.Id == id);
+
+        public T Read<T>(Guid id) where T : DataBaseEntity
+            => Find<T>(id) ?? throw new EntityNotFoundException<T>(id);
 
         public T FindAndAttach<T>(Guid id) where T : DataBaseEntity
             => SetWithAttach<T>().FirstOrDefault(e => e.Id == id);
