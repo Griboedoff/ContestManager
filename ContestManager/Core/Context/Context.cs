@@ -25,5 +25,6 @@ namespace Core.Context
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<AuthenticationAccount> AuthenticationAccounts { get; set; }
+        public virtual DbSet<EmailRegistrationRequest> EmailRegistrationRequests { get; set; }
     }
 }

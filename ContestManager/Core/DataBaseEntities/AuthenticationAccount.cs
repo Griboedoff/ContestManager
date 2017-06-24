@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Core.Enums;
+using Core.Helpers;
 
 namespace Core.DataBaseEntities
 {
@@ -10,9 +12,12 @@ namespace Core.DataBaseEntities
         public Guid UserId { get; set; }
 
         [Column]
+        [Index("AuthenticationAccount_Type_ServiceId_Index", Order = 1, IsClustered = false, IsUnique = true)]
         public AuthenticationType Type { get; set; }
 
         [Column]
+        [MaxLength(FieldsLength.ServiceId)]
+        [Index("AuthenticationAccount_Type_ServiceId_Index", Order = 2, IsClustered = false, IsUnique = true)]
         public string ServiceId { get; set; }
 
         [Column]
