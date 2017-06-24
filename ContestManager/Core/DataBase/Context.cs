@@ -3,7 +3,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using Core.DataBaseEntities;
 
-namespace Core.Context
+namespace Core.DataBase
 {
     public interface IContext : IDisposable
     {

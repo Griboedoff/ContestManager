@@ -60,22 +60,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextMigrations\201706201102225_InitDataContext.cs" />
-    <Compile Include="ContextMigrations\201706201102225_InitDataContext.Designer.cs">
+    <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.cs" />
+    <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.Designer.cs">
       <DependentUpon>201706201102225_InitDataContext.cs</DependentUpon>
     </Compile>
-    <Compile Include="Context\Context.cs" />
-    <Compile Include="Context\ContextAdapter.cs" />
-    <Compile Include="Context\NpgsqlConfiguration.cs" />
+    <Compile Include="DataBase\Context.cs" />
+    <Compile Include="DataBase\ContextAdapter.cs" />
+    <Compile Include="DataBase\NpgsqlConfiguration.cs" />
     <Compile Include="DataBaseEntities\DataBaseEntity.cs" />
     <Compile Include="DataBaseEntities\AuthenticationAccount.cs" />
     <Compile Include="DataBaseEntities\EmailRegistrationRequest.cs" />
     <Compile Include="DataBaseEntities\User.cs" />
     <Compile Include="Enums\AuthenticationType.cs" />
     <Compile Include="Enums\UserRole.cs" />
+    <Compile Include="Exceptions\EmailAlreadyRegisteredException.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
-    <Compile Include="ContextMigrations\MigrationsConfiguration.cs" />
+    <Compile Include="DataBaseMigrations\MigrationsConfiguration.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Factories\EmailRegistrationRequestFactory.cs" />
+    <Compile Include="Factories\ContextAdapterFactory.cs" />
+    <Compile Include="Helpers\CryptoHelper.cs" />
+    <Compile Include="Helpers\DataGenerator.cs" />
     <Compile Include="Helpers\FieldsLength.cs" />
+    <Compile Include="Managers\RegistrationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +91,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ContextMigrations\201706201102225_InitDataContext.resx">
+    <EmbeddedResource Include="DataBaseMigrations\201706201102225_InitDataContext.resx">
       <DependentUpon>201706201102225_InitDataContext.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,7 +4,7 @@ using System.Linq;
 using Core.DataBaseEntities;
 using Core.Exceptions;
 
-namespace Core.Context
+namespace Core.DataBase
 {
     public interface IContextAdapter : IDisposable
     {

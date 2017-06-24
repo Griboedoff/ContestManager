@@ -8,7 +8,6 @@ namespace Core.DataBaseEntities
     {
         [Column]
         [MaxLength(FieldsLength.Name)]
-        [Index("EmailRegistrationRequest_NameIndex", IsClustered = false, IsUnique = true)]
         public string Name { get; set; }
 
         [Column]
@@ -27,5 +26,8 @@ namespace Core.DataBaseEntities
         [Column]
         [MaxLength(FieldsLength.Secret)]
         public string Secret { get; set; }
+
+        [Column]
+        public bool IsUsed { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-namespace Core.ContextMigrations
+namespace Core.DataBaseMigrations
 {
     using System.Data.Entity.Migrations;
     
@@ -29,9 +29,9 @@ namespace Core.ContextMigrations
                         PasswordHash = c.Binary(),
                         Sult = c.String(maxLength: 5),
                         Secret = c.String(maxLength: 5),
+                        IsUsed = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .Index(t => t.Name, unique: true, name: "EmailRegistrationRequest_NameIndex")
                 .Index(t => t.Email, unique: true, name: "EmailRegistrationRequest_EmailIndex");
             
             CreateTable(
@@ -43,13 +43,11 @@ namespace Core.ContextMigrations
                         Role = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-            
         }
         
         public override void Down()
         {
             DropIndex("public.EmailRegistrationRequests", "EmailRegistrationRequest_EmailIndex");
-            DropIndex("public.EmailRegistrationRequests", "EmailRegistrationRequest_NameIndex");
             DropIndex("public.AuthenticationAccounts", "AuthenticationAccount_Type_ServiceId_Index");
             DropTable("public.Users");
             DropTable("public.EmailRegistrationRequests");

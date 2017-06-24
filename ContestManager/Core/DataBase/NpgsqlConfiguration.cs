@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity;
 using Npgsql;
 
-namespace Core.Context
+namespace Core.DataBase
 {
     public class NpgsqlConfiguration : DbConfiguration
     {
