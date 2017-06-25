@@ -10,51 +10,101 @@
 
 <form id="registrationForm">
     <div class="form-horizontal">
-        <div class="form-group">
-            <label for="modesContainer" class="col-md-2 control-label">Способ авторизации</label>
-            <div id="modesContainer">
-                <div class="col-sm-10">
-                    <input type="button" class="btn" onclick="setMode('Email')" value="Email"
-                           data-bind="css: {'btn-danger': isEmailMode, 'btn-default' : !isEmailMode() }" />
+        <div class="bs-callout bs-callout-danger" data-bind="visible: hasServerError">
+            <h4>Ошибка регистрации</h4>
+            <p>В данный момент сервер регистрации недоступен. Повторите попытку позже.</p>
+        </div>
+        
+        <div data-bind="visible: isRegistrationStep">
+            <div class="form-group">
+                <label for="modesContainer" class="col-md-2 control-label">Способ авторизации</label>
+                <div id="modesContainer">
+                    <div class="col-sm-10">
+                        <input type="button" class="btn" onclick="setMode('Email')" value="Email"
+                               data-bind="css: {'btn-danger': isEmailMode, 'btn-default' : !isEmailMode() }" />
 
-                    <input type="button" class="btn" onclick="setMode('Vk')" value="Vk"
-                           data-bind="css: {'btn-primary': isVkMode, 'btn-default' : !isVkMode() }" />
+                        <input type="button" class="btn" onclick="setMode('Vk')" value="Vk"
+                               data-bind="css: {'btn-primary': isVkMode, 'btn-default' : !isVkMode() }" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="userName" class="col-md-2 control-label">Имя на сайте</label>
+                <div class="col-sm-3">
+                    <input type="text" id="userName" name="userName" class="form-control" placeholder="Введите ФИО"
+                           data-bind="value: userName" />
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="userEmail" class="col-md-2 control-label">Email</label>
+                <div class="col-sm-3">
+                    <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email"
+                           data-bind="value: userEmail" />
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="userPassword" class="col-md-2 control-label">Пароль</label>
+                <div class="col-sm-3">
+                    <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль"
+                           data-bind="value: userPassword" />
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
+                <div class="col-sm-3">
+                    <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз"
+                           data-bind="value: userRepeatPassword" />
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="sendRequest" class="col-md-2 control-label"></label>
+                <div class="col-sm-3">
+                    <input type="button" id="sendRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendEmailRegistrationRequest()"
+                           data-bind="visible: !isSending()" />
+                    <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
                 </div>
             </div>
         </div>
         
-        <div class="form-group">
-            <label for="userName" class="col-md-2 control-label">Имя на сайте</label>
-            <div class="col-sm-3">
-                <input type="text" id="userName" name="userName" class="form-control" placeholder="Введите ФИО" data-bind="value: userName">
+        <div data-bind="visible: isConfirmStep">
+            <div class="bs-callout bs-callout-info" data-bind="visible: !hasServerError()">
+                <h4>Введите код подтверждения</h4>
+                <p>На Вашу электронную почту было отправлено письмо с кодом подтверждения.</p>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label for="userConfirm" class="col-md-2 control-label">Код подтверждения</label>
+                <div class="col-sm-3">
+                    <input type="text" id="userConfirm" name="userConfirm" class="form-control" placeholder="Введите код подтверждения" 
+                           data-bind="value: confirmCode">
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="sendConfirm" class="col-md-2 control-label"></label>
+                <div class="col-sm-3">
+                    <input type="button" id="sendConfirm" class="btn btn-info" value="Подтвердить" onclick="sendEmailConfirm()" 
+                           data-bind="visible: !isSending()"/>
+                    <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" 
+                         data-bind="visible: isSending" />
+                </div>
             </div>
         </div>
         
-        <div class="form-group">
-            <label for="userEmail" class="col-md-2 control-label">Email</label>
-            <div class="col-sm-3">
-                <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email" data-bind="value: userEmail">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="userPassword" class="col-md-2 control-label">Пароль</label>
-            <div class="col-sm-3">
-                <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль" data-bind="value: userPassword">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
-            <div class="col-sm-3">
-                <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз" data-bind="value: userRepeatPassword">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="sendRequest" class="col-md-2 control-label"></label>
-            <div class="col-sm-3">
-                <input type="button" id="sendRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendRegistrationRequest()" />
+        <div data-bind="visible: isFinishStep">
+            <div class="bs-callout bs-callout-success">
+                <h4>Регистрация успешно завершена!</h4>
+                <p>Авторизируйтесь</p>
             </div>
         </div>
     </div>
@@ -62,6 +112,7 @@
 
 <script>
     ko.applyBindings(data);
+    setStep("Registration");
     setMode("Email");
 
     setValidators();

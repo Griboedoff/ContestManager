@@ -12,8 +12,8 @@ namespace Core.DataBaseEntities
 
         [Column]
         [MaxLength(FieldsLength.Email)]
-        [Index("EmailRegistrationRequest_EmailIndex", IsClustered = false, IsUnique = true)]
-        public string Email { get; set; }
+        [Index("EmailRegistrationRequest_EmailAddress_Secret_Index", Order = 1, IsClustered = false, IsUnique = true)]
+        public string EmailAddress { get; set; }
 
         [Column]
         [MaxLength(FieldsLength.PasswordHash)]
@@ -25,6 +25,7 @@ namespace Core.DataBaseEntities
 
         [Column]
         [MaxLength(FieldsLength.Secret)]
+        [Index("EmailRegistrationRequest_EmailAddress_Secret_Index", Order = 2, IsClustered = false, IsUnique = true)]
         public string Secret { get; set; }
 
         [Column]

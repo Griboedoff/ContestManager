@@ -4,23 +4,23 @@ using Core.Helpers;
 
 namespace Core.Factories
 {
-    public interface IEmailRegistrationRequestFactory
+    public interface IRegistrationRequestFactory
     {
-        EmailRegistrationRequest CreateRequest(string name, string email, string password);
+        EmailRegistrationRequest CreateEmailRequest(string name, string email, string password);
     }
 
-    public class EmailRegistrationRequestFactory : IEmailRegistrationRequestFactory
+    public class RegistrationRequestFactory : IRegistrationRequestFactory
     {
         private readonly IDataGenerator dataGenerator;
         private readonly ICryptoHelper cryptoHelper;
 
-        public EmailRegistrationRequestFactory(IDataGenerator dataGenerator, ICryptoHelper cryptoHelper)
+        public RegistrationRequestFactory(IDataGenerator dataGenerator, ICryptoHelper cryptoHelper)
         {
             this.dataGenerator = dataGenerator;
             this.cryptoHelper = cryptoHelper;
         }
 
-        public EmailRegistrationRequest CreateRequest(string name, string email, string password)
+        public EmailRegistrationRequest CreateEmailRequest(string name, string email, string password)
         {
             var secret = dataGenerator.GenerateSequence(FieldsLength.Secret);
             var sult = dataGenerator.GenerateSequence(FieldsLength.Sult);
@@ -29,7 +29,7 @@ namespace Core.Factories
             {
                 Id = Guid.NewGuid(),
                 Name = name,
-                Email = email,
+                EmailAddress = email,
                 Secret = secret,
                 Sult = sult,
                 PasswordHash = cryptoHelper.ComputeSHA1(password, sult),
