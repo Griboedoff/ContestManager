@@ -76,8 +76,8 @@
     <Compile Include="DataBaseEntities\EmailConfirmationRequest.cs" />
     <Compile Include="DataBaseEntities\User.cs" />
     <Compile Include="Enums\ConfirmationType.cs" />
-    <Compile Include="Enums\RequestStatuses\ConfirmRequestResult.cs" />
-    <Compile Include="Enums\RequestStatuses\RegistrationRequestResult.cs" />
+    <Compile Include="Enums\RequestStatuses\RequestConfirmingStatus.cs" />
+    <Compile Include="Enums\RequestStatuses\RequestCreatingStatus.cs" />
     <Compile Include="Enums\AuthenticationType.cs" />
     <Compile Include="Enums\UserRole.cs" />
     <Compile Include="Exceptions\ConfigNotConsistentException.cs" />

@@ -1,6 +1,6 @@
 ﻿namespace Core.Enums.RequestStatuses
 {
-    public enum ConfirmRequestResult
+    public enum RequestConfirmingStatus
     {
         Success,
         RequestAlreadyUsed,

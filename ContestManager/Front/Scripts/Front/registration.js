@@ -137,21 +137,29 @@ function sendEmailRegistrationRequest() {
     $.ajax({
         async: true,
         method: "POST",
-        url: "/Registration/AddEmailRegistrationRequest",
+        url: "/Registration/CreateEmailRegistrationRequest",
         cache: false,
         data:
         {
             userEmail: data.userEmail()
         },
-        success: function (registrationRequestResult) {
-            if (registrationRequestResult === "Success")
-                setStep("Confirm");
-            else {
-                $("#userEmail").rules("remove", "alreadyUsedEmails");
+        success: function (status) {
+            switch (status) {
+                case "Success":
+                    setStep("Confirm");
+                    break;
 
-                data.alreadyUsedEmails.push(data.userEmail());
-                $("#userEmail").rules("add", { "alreadyUsedEmails": data.alreadyUsedEmails });
-                $("#registrationForm").valid();
+                case "EmailAlreadyUsed":
+                    $("#userEmail").rules("remove", "alreadyUsedEmails");
+
+                    data.alreadyUsedEmails.push(data.userEmail());
+                    $("#userEmail").rules("add", { "alreadyUsedEmails": data.alreadyUsedEmails });
+                    $("#registrationForm").valid();
+                    break;
+
+                default:
+                    data.hasServerError(true);
+                    break;
             }
         },
         error: function() {
@@ -182,8 +190,8 @@ function sendEmailConfirm() {
             userPassword: data.userPassword(),
             confirmationCode: data.confirmCode()
         },
-        success: function (confirmRequestResult) {
-            switch (confirmRequestResult) {
+        success: function (status) {
+            switch (status) {
                 case "Success": 
                     setStep("Finish");
                     break;
