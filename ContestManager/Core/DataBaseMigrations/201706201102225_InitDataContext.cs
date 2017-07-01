@@ -33,19 +33,17 @@ namespace Core.DataBaseMigrations
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "public.EmailRegistrationRequests",
+                "public.EmailConfirmationRequests",
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(maxLength: 100),
+                        Type = c.Int(nullable: false),
                         EmailAddress = c.String(maxLength: 100),
-                        PasswordHash = c.Binary(),
-                        Sult = c.String(maxLength: 5),
-                        Secret = c.String(maxLength: 5),
+                        ConfirmationCode = c.String(maxLength: 7),
                         IsUsed = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .Index(t => new { t.EmailAddress, t.Secret }, unique: true, name: "EmailRegistrationRequest_EmailAddress_Secret_Index");
+                .Index(t => new { t.Type, t.EmailAddress, t.ConfirmationCode }, unique: true, name: "EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index");
             
             CreateTable(
                 "public.Users",
@@ -56,14 +54,15 @@ namespace Core.DataBaseMigrations
                         Role = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
+            
         }
         
         public override void Down()
         {
-            DropIndex("public.EmailRegistrationRequests", "EmailRegistrationRequest_EmailAddress_Secret_Index");
+            DropIndex("public.EmailConfirmationRequests", "EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index");
             DropIndex("public.AuthenticationAccounts", "AuthenticationAccount_Type_ServiceId_Index");
             DropTable("public.Users");
-            DropTable("public.EmailRegistrationRequests");
+            DropTable("public.EmailConfirmationRequests");
             DropTable("public.EmailConfigs");
             DropTable("public.AuthenticationAccounts");
         }

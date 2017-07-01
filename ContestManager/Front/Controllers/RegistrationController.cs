@@ -19,11 +19,11 @@ namespace Front.Controllers
             => View();
 
         [HttpPost]
-        public RegistrationRequestResult AddEmailRegistrationRequest(string userName, string userEmail, string userPassword)
-            => registrationManager.AddEmailRegistrationRequest(userName, userEmail, userPassword);
+        public RegistrationRequestResult AddEmailRegistrationRequest(string userEmail)
+            => registrationManager.AddEmailRegistrationRequest(userEmail);
 
         [HttpPost]
-        public ConfirmRequestResult ConfirmEmailRegistration(string userEmail, string userConfirmCode)
-            => registrationManager.ConfirmEmailRegistration(userEmail, userConfirmCode);
+        public ConfirmRequestResult ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode)
+            => registrationManager.ConfirmEmailRegistrationRequest(userName, userEmail, userPassword, confirmationCode);
     }
 }

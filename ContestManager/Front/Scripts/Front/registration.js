@@ -1,9 +1,12 @@
 ﻿$.validator.addMethod("alreadyUsedEmails", function (value, element, usedEmails) {
     return $.inArray(value, usedEmails) === -1;
 }, "Email уже зарегистрирован");
-$.validator.addMethod("alreadyUsedConfirmCodes", function (value, element, confirmCodes) {
+$.validator.addMethod("wrongConfirmCodes", function (value, element, confirmCodes) {
     return $.inArray(value, confirmCodes) === -1;
 }, "Ошибка в коде подтверждения");
+$.validator.addMethod("alreadyUsedConfirmCodes", function (value, element, confirmCodes) {
+    return $.inArray(value, confirmCodes) === -1;
+}, "Код подтверждения уже использован");
 
 function PageData() {
     this.mode = ko.observable("");
@@ -29,6 +32,7 @@ function PageData() {
     this.isFinishStep = ko.computed(function() { return self.step() === "Finish" });
 
     this.alreadyUsedEmails = [];
+    this.wrongConfirmCodes = [];
     this.alreadyUsedConfirmCodes = [];
 }
 var data = new PageData();
@@ -137,9 +141,7 @@ function sendEmailRegistrationRequest() {
         cache: false,
         data:
         {
-            userName: data.userName(),
-            userEmail: data.userEmail(),
-            userPassword: data.userPassword()
+            userEmail: data.userEmail()
         },
         success: function (registrationRequestResult) {
             if (registrationRequestResult === "Success")
@@ -171,22 +173,40 @@ function sendEmailConfirm() {
     $.ajax({
         async: true,
         method: "POST",
-        url: "/Registration/ConfirmEmailRegistration",
+        url: "/Registration/ConfirmEmailRegistrationRequest",
         cache: false,
         data:
         {
+            userName: data.userName(),
             userEmail: data.userEmail(),
-            userConfirmCode: data.confirmCode()
+            userPassword: data.userPassword(),
+            confirmationCode: data.confirmCode()
         },
-        success: function (confirmRegistrationResult) {
-            if (confirmRegistrationResult === "Success")
-                setStep("Finish");
-            else {
-                $("#userConfirm").rules("remove", "alreadyUsedConfirmCodes");
+        success: function (confirmRequestResult) {
+            switch (confirmRequestResult) {
+                case "Success": 
+                    setStep("Finish");
+                    break;
 
-                data.alreadyUsedConfirmCodes.push(data.confirmCode());
-                $("#userConfirm").rules("add", { "alreadyUsedConfirmCodes": data.alreadyUsedConfirmCodes });
-                $("#registrationForm").valid();
+                case "RequestAlreadyUsed":
+                    $("#userConfirm").rules("remove", "alreadyUsedConfirmCodes");
+
+                    data.alreadyUsedConfirmCodes.push(data.confirmCode());
+                    $("#userConfirm").rules("add", { "alreadyUsedConfirmCodes": data.alreadyUsedConfirmCodes });
+                    $("#registrationForm").valid();
+                    break;
+
+                case "WrongConfirmationCode":
+                    $("#userConfirm").rules("remove", "wrongConfirmCodes");
+
+                    data.wrongConfirmCodes.push(data.confirmCode());
+                    $("#userConfirm").rules("add", { "wrongConfirmCodes": data.wrongConfirmCodes });
+                    $("#registrationForm").valid();
+                    break;
+
+                default:
+                    data.hasServerError(true);
+                    break;
             }
         },
         error: function () {

@@ -3,6 +3,7 @@
     public enum ConfirmRequestResult
     {
         Success,
-        WrongConfirmCode
+        RequestAlreadyUsed,
+        WrongConfirmationCode
     }
 }

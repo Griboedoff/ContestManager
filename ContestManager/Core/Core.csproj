@@ -73,8 +73,9 @@
     <Compile Include="DataBase\NpgsqlConfiguration.cs" />
     <Compile Include="DataBaseEntities\DataBaseEntity.cs" />
     <Compile Include="DataBaseEntities\AuthenticationAccount.cs" />
-    <Compile Include="DataBaseEntities\EmailRegistrationRequest.cs" />
+    <Compile Include="DataBaseEntities\EmailConfirmationRequest.cs" />
     <Compile Include="DataBaseEntities\User.cs" />
+    <Compile Include="Enums\ConfirmationType.cs" />
     <Compile Include="Enums\RequestStatuses\ConfirmRequestResult.cs" />
     <Compile Include="Enums\RequestStatuses\RegistrationRequestResult.cs" />
     <Compile Include="Enums\AuthenticationType.cs" />
@@ -82,10 +83,13 @@
     <Compile Include="Exceptions\ConfigNotConsistentException.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
     <Compile Include="DataBaseMigrations\MigrationsConfiguration.cs" />
+    <Compile Include="Extensions\ByteArrrayExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Factories\AuthenticationAccountFactory.cs" />
+    <Compile Include="Factories\ServiceTokenFactory.cs" />
     <Compile Include="Factories\UserFactory.cs" />
-    <Compile Include="Factories\EmailRegistrationRequestFactory.cs" />
+    <Compile Include="Factories\EmailConfirmationRequestFactory.cs" />
     <Compile Include="Factories\ContextAdapterFactory.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\DataGenerator.cs" />
@@ -93,7 +97,7 @@
     <Compile Include="Helpers\Secret.cs" />
     <Compile Include="Managers\EmailManager.cs" />
     <Compile Include="Managers\RegistrationManager.cs" />
-    <Compile Include="Models\EmailServiceToken.cs" />
+    <Compile Include="Models\PasswordToken.cs" />
     <Compile Include="Models\Mails\EmailBase.cs" />
     <Compile Include="Models\Mails\RegistrationConfirmEmail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

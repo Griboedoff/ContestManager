@@ -27,6 +27,6 @@ namespace Core.DataBase
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<EmailConfig> EmailConfigs { get; set; }
         public virtual DbSet<AuthenticationAccount> AuthenticationAccounts { get; set; }
-        public virtual DbSet<EmailRegistrationRequest> EmailRegistrationRequests { get; set; }
+        public virtual DbSet<EmailConfirmationRequest> EmailConfirmationRequests { get; set; }
     }
 }

@@ -17,8 +17,10 @@ namespace Front
 			var container = new UnityContainer();
             
             container.RegisterType<IUserFactory, UserFactory>();
+            container.RegisterType<IServiceTokenFactory, ServiceTokenFactory>();
             container.RegisterType<IContextAdapterFactory, ContextAdapterFactory>();
-            container.RegisterType<IRegistrationRequestFactory, RegistrationRequestFactory>();
+            container.RegisterType<IAuthenticationAccountFactory, AuthenticationAccountFactory>();
+            container.RegisterType<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
 
             var contextFactory = new ContextAdapterFactory();
             using (var db = contextFactory.Create())
