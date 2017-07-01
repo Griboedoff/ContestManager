@@ -145,7 +145,7 @@ function sendEmailRegistrationRequest() {
         },
         success: function (status) {
             switch (status) {
-                case "Success":
+                case "RequestCreated":
                     setStep("Confirm");
                     break;
 

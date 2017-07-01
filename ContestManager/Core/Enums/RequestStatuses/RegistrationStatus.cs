@@ -1,8 +1,10 @@
 ﻿namespace Core.Enums.RequestStatuses
 {
-    public enum RequestConfirmingStatus
+    public enum RegistrationStatus
     {
         Success,
+        EmailAlreadyUsed,
+        RequestCreated,
         RequestAlreadyUsed,
         WrongConfirmationCode
     }

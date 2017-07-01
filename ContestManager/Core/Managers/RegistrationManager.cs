@@ -10,8 +10,10 @@ namespace Core.Managers
 {
     public interface IRegistrationManager
     {
-        RequestCreatingStatus CreateEmailRegistrationRequest(string userEmail);
-        RequestConfirmingStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode);
+        RegistrationStatus CreateEmailRegistrationRequest(string userEmail);
+        RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode);
+
+
     }
 
     public class RegistrationManager : IRegistrationManager
@@ -36,12 +38,12 @@ namespace Core.Managers
             this.authenticationAccountFactory = authenticationAccountFactory;
         }
 
-        public RequestCreatingStatus CreateEmailRegistrationRequest(string userEmail)
+        public RegistrationStatus CreateEmailRegistrationRequest(string userEmail)
         {
             using (var db = contextFactory.Create())
             {
                 if (IsEmailAddressAlreadyUsed(db, userEmail))
-                    return RequestCreatingStatus.EmailAlreadyUsed;
+                    return RegistrationStatus.EmailAlreadyUsed;
 
                 var request = emailConfirmationRequestFactory.Create(userEmail, ConfirmationType.Registration);
                 SendEmail(request);
@@ -50,10 +52,10 @@ namespace Core.Managers
                 db.SaveChanges();
             }
 
-            return RequestCreatingStatus.Success;
+            return RegistrationStatus.RequestCreated;
         }
 
-        public RequestConfirmingStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode)
+        public RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode)
         {
             using (var db = contextFactory.Create())
             {
@@ -62,10 +64,10 @@ namespace Core.Managers
                     .FirstOrDefault(r => r.Type == ConfirmationType.Registration && r.EmailAddress == userEmail && r.ConfirmationCode == confirmationCode);
 
                 if (request == null)
-                    return RequestConfirmingStatus.WrongConfirmationCode;
+                    return RegistrationStatus.WrongConfirmationCode;
 
                 if (request.IsUsed)
-                    return RequestConfirmingStatus.RequestAlreadyUsed;
+                    return RegistrationStatus.RequestAlreadyUsed;
 
                 var user = userFactory.Create(userName, UserRole.User);
                 db.AttachToInsert(user);
@@ -78,7 +80,7 @@ namespace Core.Managers
                 db.SaveChanges();
             }
 
-            return RequestConfirmingStatus.Success;
+            return RegistrationStatus.Success;
         }
 
         private static bool IsEmailAddressAlreadyUsed(IContextAdapter db, string email)
