@@ -58,3 +58,7 @@ textarea {
 .bs-callout-info h4 {
     color: #5bc0de;
 }
+
+.btn {
+    outline: 0 !important;
+}
