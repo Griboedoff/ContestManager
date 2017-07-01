@@ -7,6 +7,10 @@ $.validator.addMethod("wrongConfirmCodes", function (value, element, confirmCode
 $.validator.addMethod("alreadyUsedConfirmCodes", function (value, element, confirmCodes) {
     return $.inArray(value, confirmCodes) === -1;
 }, "Код подтверждения уже использован");
+$.validator.addMethod("authorizedVkId", function (value, element, authorizedVkId) {
+    return value === authorizedVkId;
+}, "Неавторизованный идентификатор ВК");
+
 
 function PageData() {
     this.mode = ko.observable("");
@@ -160,11 +164,8 @@ function sendEmailRegistrationRequest() {
                     break;
 
                 case "EmailAlreadyUsed":
-                    $("#userEmail").rules("remove", "alreadyUsedEmails");
-
                     data.alreadyUsedEmails.push(data.userEmail());
-                    $("#userEmail").rules("add", { "alreadyUsedEmails": data.alreadyUsedEmails });
-                    $("#registrationForm").valid();
+                    updateValidationRule("#userEmail", "alreadyUsedEmails", data.alreadyUsedEmails);
                     break;
 
                 default:
@@ -186,7 +187,7 @@ function sendEmailConfirm() {
         return;
 
     data.isSending(true);
-    data.hasServerError(false);
+    data.serverError("");
 
     $.ajax({
         async: true,
@@ -207,19 +208,13 @@ function sendEmailConfirm() {
                     break;
 
                 case "RequestAlreadyUsed":
-                    $("#userConfirm").rules("remove", "alreadyUsedConfirmCodes");
-
                     data.alreadyUsedConfirmCodes.push(data.confirmCode());
-                    $("#userConfirm").rules("add", { "alreadyUsedConfirmCodes": data.alreadyUsedConfirmCodes });
-                    $("#registrationForm").valid();
+                    updateValidationRule("#userConfirm", "alreadyUsedConfirmCodes", data.alreadyUsedConfirmCodes);
                     break;
 
                 case "WrongConfirmationCode":
-                    $("#userConfirm").rules("remove", "wrongConfirmCodes");
-
                     data.wrongConfirmCodes.push(data.confirmCode());
-                    $("#userConfirm").rules("add", { "wrongConfirmCodes": data.wrongConfirmCodes });
-                    $("#registrationForm").valid();
+                    updateValidationRule("#userConfirm", "wrongConfirmCodes", data.wrongConfirmCodes);
                     break;
 
                 default:
@@ -257,11 +252,12 @@ function vkCollback(obj) {
     setMode("Vk");
 
     var user = obj.session.user;
+    var userName = user.last_name + " " + user.first_name;
 
-    data.userName(user.last_name + " " + user.first_name);
+    data.userName(userName);
     data.userVkId(user.id);
 
-    $("#registrationForm").valid();
+    updateValidationRule("#userVkId", "authorizedVkId", user.id);
 }
 
 function sendVkRegistrationRequest() {
@@ -303,4 +299,14 @@ function sendVkRegistrationRequest() {
             data.isSending(false);
         }
     });
+}
+
+function updateValidationRule(inputId, rule, value) {
+    var ruleContainer = {};
+    ruleContainer[rule] = value;
+
+    $(inputId).rules("remove", rule);
+    $(inputId).rules("add", ruleContainer);
+
+    $("#registrationForm").valid();
 }

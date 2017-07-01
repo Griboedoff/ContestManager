@@ -33,7 +33,7 @@
                 <label for="userName" class="col-md-2 control-label">Имя на сайте</label>
                 <div class="col-sm-3">
                     <input type="text" id="userName" name="userName" class="form-control" placeholder="Введите ФИО"
-                           data-bind="value: userName, enable: !isSending()" />
+                           data-bind="value: userName" />
                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                     <label for="userEmail" class="col-md-2 control-label">Email</label>
                     <div class="col-sm-3">
                         <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email"
-                               data-bind="value: userEmail, enable: !isSending()" />
+                               data-bind="value: userEmail" />
                         <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                     <label for="userPassword" class="col-md-2 control-label">Пароль</label>
                     <div class="col-sm-3">
                         <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль"
-                               data-bind="value: userPassword, enable: !isSending()" />
+                               data-bind="value: userPassword" />
                         <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                     <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
                     <div class="col-sm-3">
                         <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз"
-                               data-bind="value: userRepeatPassword, enable: !isSending()" />
+                               data-bind="value: userRepeatPassword" />
                         <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                 <label for="userConfirm" class="col-md-2 control-label">Код подтверждения</label>
                 <div class="col-sm-3">
                     <input type="text" id="userConfirm" name="userConfirm" class="form-control" placeholder="Введите код подтверждения" 
-                           data-bind="value: confirmCode, enable: !isSending()">
+                           data-bind="value: confirmCode">
                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                 </div>
             </div>
