@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Регистрация на сайте";
 }
-
+<script src="https://vk.com/js/api/openapi.js?146" type="text/javascript"></script>
 <script type="text/javascript" src="../../Scripts/Front/registration.js"></script>
 
 <div class="jumbotron text-center">
@@ -12,7 +12,7 @@
     <div class="form-horizontal">
         <div class="bs-callout bs-callout-danger" data-bind="visible: hasServerError">
             <h4>Ошибка регистрации</h4>
-            <p>В данный момент сервер регистрации недоступен. Повторите попытку позже.</p>
+            <p data-bind="text: serverError"></p>
         </div>
         
         <div data-bind="visible: isRegistrationStep">
@@ -20,10 +20,10 @@
                 <label for="modesContainer" class="col-md-2 control-label">Способ авторизации</label>
                 <div id="modesContainer">
                     <div class="col-sm-10">
-                        <input type="button" class="btn" onclick="setMode('Email')" value="Email"
+                        <input type="button" class="btn" onclick="setEmailMode()" value="Email"
                                data-bind="css: {'btn-danger': isEmailMode, 'btn-default' : !isEmailMode() }" />
 
-                        <input type="button" class="btn" onclick="setMode('Vk')" value="Vk"
+                        <input type="button" class="btn" onclick="setVkMode()" value="Vk"
                                data-bind="css: {'btn-primary': isVkMode, 'btn-default' : !isVkMode() }" />
                     </div>
                 </div>
@@ -37,40 +37,61 @@
                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                 </div>
             </div>
+            
+            <div data-bind="visible: isEmailMode">
+                <div class="form-group has-feedback">
+                    <label for="userEmail" class="col-md-2 control-label">Email</label>
+                    <div class="col-sm-3">
+                        <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email"
+                               data-bind="value: userEmail, enable: !isSending()" />
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
 
-            <div class="form-group has-feedback">
-                <label for="userEmail" class="col-md-2 control-label">Email</label>
-                <div class="col-sm-3">
-                    <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Введите email"
-                           data-bind="value: userEmail, enable: !isSending()" />
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                <div class="form-group has-feedback">
+                    <label for="userPassword" class="col-md-2 control-label">Пароль</label>
+                    <div class="col-sm-3">
+                        <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль"
+                               data-bind="value: userPassword, enable: !isSending()" />
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
+                    <div class="col-sm-3">
+                        <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз"
+                               data-bind="value: userRepeatPassword, enable: !isSending()" />
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <label for="sendEmailRequest" class="col-md-2 control-label"></label>
+                    <div class="col-sm-3">
+                        <input type="button" id="sendEmailRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendEmailRegistrationRequest()"
+                               data-bind="visible: !isSending()" />
+                        <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
+                    </div>
                 </div>
             </div>
-
-            <div class="form-group has-feedback">
-                <label for="userPassword" class="col-md-2 control-label">Пароль</label>
-                <div class="col-sm-3">
-                    <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Введите пароль"
-                           data-bind="value: userPassword, enable: !isSending()" />
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+        
+            <div data-bind="visible: isVkMode">
+                <div class="form-group has-feedback">
+                    <label for="userVkId" class="col-md-2 control-label">VkId</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="userVkId" name="userVkId" class="form-control" data-bind="value: userVkId" />
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="form-group has-feedback">
-                <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
-                <div class="col-sm-3">
-                    <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз"
-                           data-bind="value: userRepeatPassword, enable: !isSending()" />
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                </div>
-            </div>
-
-            <div class="form-group has-feedback">
-                <label for="sendRequest" class="col-md-2 control-label"></label>
-                <div class="col-sm-3">
-                    <input type="button" id="sendRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendEmailRegistrationRequest()"
-                           data-bind="visible: !isSending()" />
-                    <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
+            
+                <div class="form-group has-feedback">
+                    <label for="sendVkRequest" class="col-md-2 control-label"></label>
+                    <div class="col-sm-3">
+                        <input type="button" id="sendVkRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendVkRegistrationRequest()"
+                               data-bind="visible: !isSending()" />
+                        <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,6 +132,8 @@
 </form>
 
 <script>
+    VK.init({ apiId: 5186294 });
+
     ko.applyBindings(data);
     setStep("Registration");
     setMode("Email");

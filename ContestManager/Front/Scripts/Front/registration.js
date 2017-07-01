@@ -12,14 +12,16 @@ function PageData() {
     this.mode = ko.observable("");
     this.step = ko.observable("");
 
-    this.hasServerError = ko.observable(false);
-
+    this.serverError = ko.observable("");
+    
     this.userName = ko.observable("");
     this.userEmail = ko.observable("");
     this.userPassword = ko.observable("");
     this.userRepeatPassword = ko.observable("");
 
     this.confirmCode = ko.observable("");
+
+    this.userVkId = ko.observable("");
 
     this.isSending = ko.observable(false);
 
@@ -29,7 +31,9 @@ function PageData() {
 
     this.isRegistrationStep = ko.computed(function () { return self.step() === "Registration" });
     this.isConfirmStep = ko.computed(function () { return self.step() === "Confirm" });
-    this.isFinishStep = ko.computed(function() { return self.step() === "Finish" });
+    this.isFinishStep = ko.computed(function () { return self.step() === "Finish" });
+
+    this.hasServerError = ko.computed(function() { return self.serverError() !== "" });
 
     this.alreadyUsedEmails = [];
     this.wrongConfirmCodes = [];
@@ -71,6 +75,9 @@ function setValidators() {
             },
             userConfirm: {
                 required: true
+            },
+            userVkId: {
+                required: true
             }
         },
             
@@ -92,6 +99,9 @@ function setValidators() {
                 equalTo: "Поля не совпадают"
             },
             userConfirm: {
+                required: "Поле обязательно для заполнения"
+            },
+            userVkId: {
                 required: "Поле обязательно для заполнения"
             }
         },
@@ -132,7 +142,7 @@ function sendEmailRegistrationRequest() {
         return;
 
     data.isSending(true);
-    data.hasServerError(false);
+    data.serverError("");
 
     $.ajax({
         async: true,
@@ -158,12 +168,12 @@ function sendEmailRegistrationRequest() {
                     break;
 
                 default:
-                    data.hasServerError(true);
+                    data.serverError("Неизвестный ответ сервера");
                     break;
             }
         },
         error: function() {
-            data.hasServerError(true);
+            data.serverError("В данный момент сервер регистрации недоступен. Повторите попытку позже.");
         },
         complete: function () {
             data.isSending(false);
@@ -213,12 +223,81 @@ function sendEmailConfirm() {
                     break;
 
                 default:
-                    data.hasServerError(true);
+                    data.serverError("Неизвестный ответ сервера");
                     break;
             }
         },
         error: function () {
-            data.hasServerError(true);
+            data.serverError("В данный момент сервер регистрации недоступен. Повторите попытку позже.");
+        },
+        complete: function () {
+            data.isSending(false);
+        }
+    });
+}
+
+function setEmailMode() {
+    setMode("Email");
+}
+
+function setVkMode() {
+    data.serverError("");
+
+    if (data.userVkId() !== "")
+        setMode("Vk");
+    else
+        VK.Auth.login(vkCollback, 65536);
+}
+
+function vkCollback(obj) {
+    if (obj.status !== "connected") {
+        data.serverError("Для регистрации необходимо авторизироваться через ВКонтакте и разрешить доступ приложению");
+        return;
+    }
+    setMode("Vk");
+
+    var user = obj.session.user;
+
+    data.userName(user.last_name + " " + user.first_name);
+    data.userVkId(user.id);
+
+    $("#registrationForm").valid();
+}
+
+function sendVkRegistrationRequest() {
+    if (!$("#registrationForm").valid())
+        return;
+
+    data.isSending(true);
+    data.serverError("");
+
+    $.ajax({
+        async: true,
+        method: "POST",
+        url: "/Registration/RegisterByVk",
+        cache: false,
+        data:
+        {
+            userName: data.userName(),
+            userVkId: data.userVkId()
+        },
+        success: function (status) {
+            switch (status) {
+                case "Success":
+                    setStep("Finish");
+                    break;
+
+                case "VkIdAlreadyUsed":
+                    setStep("Finish");
+                    break;
+
+                default:
+                    data.serverError("Неизвестный ответ сервера");
+                    break;
+                }
+        },
+        error: function () {
+            data.serverError("В данный момент сервер регистрации недоступен. Повторите попытку позже.");
         },
         complete: function () {
             data.isSending(false);

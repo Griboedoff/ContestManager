@@ -13,7 +13,7 @@ namespace Core.Managers
         RegistrationStatus CreateEmailRegistrationRequest(string email);
         RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode);
 
-        RegistrationStatus RegisterByVk(string name, string vkId, string vkAccessToken);
+        RegistrationStatus RegisterByVk(string name, string vkId);
     }
 
     public class RegistrationManager : IRegistrationManager
@@ -83,7 +83,7 @@ namespace Core.Managers
             return RegistrationStatus.Success;
         }
 
-        public RegistrationStatus RegisterByVk(string name, string vkId, string vkAccessToken)
+        public RegistrationStatus RegisterByVk(string name, string vkId)
         {
             using (var db = contextFactory.Create())
             {
@@ -93,7 +93,7 @@ namespace Core.Managers
                 var user = userFactory.Create(name, UserRole.User);
                 db.AttachToInsert(user);
 
-                var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId, vkAccessToken);
+                var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
                 db.AttachToInsert(account);
 
                 db.SaveChanges();

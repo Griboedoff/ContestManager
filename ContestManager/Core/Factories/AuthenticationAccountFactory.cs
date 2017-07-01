@@ -8,7 +8,7 @@ namespace Core.Factories
     public interface IAuthenticationAccountFactory
     {
         AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword);
-        AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId, string vkAccessToken);
+        AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId);
     }
 
     public class AuthenticationAccountFactory : IAuthenticationAccountFactory
@@ -34,7 +34,7 @@ namespace Core.Factories
             };
         }
 
-        public AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId, string vkAccessToken)
+        public AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId)
         {
             return new AuthenticationAccount
             {
@@ -42,7 +42,6 @@ namespace Core.Factories
                 UserId = user.Id,
                 Type = AuthenticationType.Vk,
                 ServiceId = vkId,
-                ServiceToken = vkAccessToken
             };
         }
     }
