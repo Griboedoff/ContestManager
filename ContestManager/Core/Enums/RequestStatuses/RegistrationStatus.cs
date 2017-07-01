@@ -6,6 +6,7 @@
         EmailAlreadyUsed,
         RequestCreated,
         RequestAlreadyUsed,
-        WrongConfirmationCode
+        WrongConfirmationCode,
+        VkIdAlreadyUsed
     }
 }

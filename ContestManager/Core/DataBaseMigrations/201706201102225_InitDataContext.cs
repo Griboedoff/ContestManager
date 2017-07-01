@@ -38,12 +38,12 @@ namespace Core.DataBaseMigrations
                     {
                         Id = c.Guid(nullable: false),
                         Type = c.Int(nullable: false),
-                        EmailAddress = c.String(maxLength: 100),
+                        Email = c.String(maxLength: 100),
                         ConfirmationCode = c.String(maxLength: 7),
                         IsUsed = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .Index(t => new { t.Type, t.EmailAddress, t.ConfirmationCode }, unique: true, name: "EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index");
+                .Index(t => new { t.Type, t.Email, t.ConfirmationCode }, unique: true, name: "EmailConfirmationRequest_Type_Email_ConfirmationCode_Index");
             
             CreateTable(
                 "public.Users",
@@ -59,7 +59,7 @@ namespace Core.DataBaseMigrations
         
         public override void Down()
         {
-            DropIndex("public.EmailConfirmationRequests", "EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index");
+            DropIndex("public.EmailConfirmationRequests", "EmailConfirmationRequest_Type_Email_ConfirmationCode_Index");
             DropIndex("public.AuthenticationAccounts", "AuthenticationAccount_Type_ServiceId_Index");
             DropTable("public.Users");
             DropTable("public.EmailConfirmationRequests");

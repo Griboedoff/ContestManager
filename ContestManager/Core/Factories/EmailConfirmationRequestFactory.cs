@@ -24,8 +24,8 @@ namespace Core.Factories
             {
                 Id = Guid.NewGuid(),
                 Type = type,
-                EmailAddress = email,
-                ConfirmationCode = dataGenerator.GenerateSequence(FieldsLength.Secret),
+                Email = email,
+                ConfirmationCode = dataGenerator.GenerateSequence(FieldsLength.ConfirmationCode),
                 IsUsed = false
             };
     }

@@ -2,7 +2,7 @@
 {
     public enum AuthenticationType
     {
-        Email = 1,
+        Password = 1,
         Vk = 2,
     }
 }

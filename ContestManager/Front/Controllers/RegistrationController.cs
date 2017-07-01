@@ -24,5 +24,9 @@ namespace Front.Controllers
         [HttpPost]
         public RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode)
             => registrationManager.ConfirmEmailRegistrationRequest(userName, userEmail, userPassword, confirmationCode);
+
+        [HttpPost]
+        public RegistrationStatus RegisterByVk(string name, string vkId, string vkAccessToken)
+            => registrationManager.RegisterByVk(name, vkId, vkAccessToken);
     }
 }

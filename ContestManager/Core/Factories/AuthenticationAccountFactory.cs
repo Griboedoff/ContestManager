@@ -7,7 +7,8 @@ namespace Core.Factories
 {
     public interface IAuthenticationAccountFactory
     {
-        AuthenticationAccount Create(User user, string userEmail, string userPassword);
+        AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword);
+        AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId, string vkAccessToken);
     }
 
     public class AuthenticationAccountFactory : IAuthenticationAccountFactory
@@ -19,7 +20,7 @@ namespace Core.Factories
             this.serviceTokenFactory = serviceTokenFactory;
         }
 
-        public AuthenticationAccount Create(User user, string userEmail, string userPassword)
+        public AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword)
         {
             var passwordToken = serviceTokenFactory.CreatePasswordToken(userPassword);
 
@@ -27,9 +28,21 @@ namespace Core.Factories
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
-                Type = AuthenticationType.Email,
+                Type = AuthenticationType.Password,
                 ServiceId = userEmail,
                 ServiceToken = JsonConvert.SerializeObject(passwordToken)
+            };
+        }
+
+        public AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId, string vkAccessToken)
+        {
+            return new AuthenticationAccount
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Type = AuthenticationType.Vk,
+                ServiceId = vkId,
+                ServiceToken = vkAccessToken
             };
         }
     }

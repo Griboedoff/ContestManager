@@ -10,10 +10,10 @@ namespace Core.Managers
 {
     public interface IRegistrationManager
     {
-        RegistrationStatus CreateEmailRegistrationRequest(string userEmail);
-        RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode);
+        RegistrationStatus CreateEmailRegistrationRequest(string email);
+        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode);
 
-
+        RegistrationStatus RegisterByVk(string name, string vkId, string vkAccessToken);
     }
 
     public class RegistrationManager : IRegistrationManager
@@ -21,31 +21,31 @@ namespace Core.Managers
         private readonly IUserFactory userFactory;
         private readonly IEmailManager emailManager;
         private readonly IContextAdapterFactory contextFactory;
-        private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
+        private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
 
         public RegistrationManager(
             IUserFactory userFactory, 
             IEmailManager emailManager, 
             IContextAdapterFactory contextFactory, 
-            IEmailConfirmationRequestFactory emailConfirmationRequestFactory, 
-            IAuthenticationAccountFactory authenticationAccountFactory)
+            IAuthenticationAccountFactory authenticationAccountFactory, 
+            IEmailConfirmationRequestFactory emailConfirmationRequestFactory)
         {
             this.userFactory = userFactory;
             this.emailManager = emailManager;
             this.contextFactory = contextFactory;
-            this.emailConfirmationRequestFactory = emailConfirmationRequestFactory;
             this.authenticationAccountFactory = authenticationAccountFactory;
+            this.emailConfirmationRequestFactory = emailConfirmationRequestFactory;
         }
 
-        public RegistrationStatus CreateEmailRegistrationRequest(string userEmail)
+        public RegistrationStatus CreateEmailRegistrationRequest(string email)
         {
             using (var db = contextFactory.Create())
             {
-                if (IsEmailAddressAlreadyUsed(db, userEmail))
+                if (IsServiceIdAlreadyUsed(db, email))
                     return RegistrationStatus.EmailAlreadyUsed;
 
-                var request = emailConfirmationRequestFactory.Create(userEmail, ConfirmationType.Registration);
+                var request = emailConfirmationRequestFactory.Create(email, ConfirmationType.Registration);
                 SendEmail(request);
 
                 db.AttachToInsert(request);
@@ -55,13 +55,13 @@ namespace Core.Managers
             return RegistrationStatus.RequestCreated;
         }
 
-        public RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail, string userPassword, string confirmationCode)
+        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode)
         {
             using (var db = contextFactory.Create())
             {
                 var request = db
                     .SetWithAttach<EmailConfirmationRequest>()
-                    .FirstOrDefault(r => r.Type == ConfirmationType.Registration && r.EmailAddress == userEmail && r.ConfirmationCode == confirmationCode);
+                    .FirstOrDefault(r => r.Type == ConfirmationType.Registration && r.Email == email && r.ConfirmationCode == confirmationCode);
 
                 if (request == null)
                     return RegistrationStatus.WrongConfirmationCode;
@@ -69,10 +69,10 @@ namespace Core.Managers
                 if (request.IsUsed)
                     return RegistrationStatus.RequestAlreadyUsed;
 
-                var user = userFactory.Create(userName, UserRole.User);
+                var user = userFactory.Create(name, UserRole.User);
                 db.AttachToInsert(user);
 
-                var account = authenticationAccountFactory.Create(user, userEmail, userPassword);
+                var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
                 db.AttachToInsert(account);
 
                 request.IsUsed = true;
@@ -83,12 +83,31 @@ namespace Core.Managers
             return RegistrationStatus.Success;
         }
 
-        private static bool IsEmailAddressAlreadyUsed(IContextAdapter db, string email)
-            => db.Set<AuthenticationAccount>().Count(r => r.ServiceId == email) > 0;
+        public RegistrationStatus RegisterByVk(string name, string vkId, string vkAccessToken)
+        {
+            using (var db = contextFactory.Create())
+            {
+                if (IsServiceIdAlreadyUsed(db, vkId))
+                    return RegistrationStatus.VkIdAlreadyUsed;
+
+                var user = userFactory.Create(name, UserRole.User);
+                db.AttachToInsert(user);
+
+                var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId, vkAccessToken);
+                db.AttachToInsert(account);
+
+                db.SaveChanges();
+            }
+
+            return RegistrationStatus.Success;
+        }
+
+        private static bool IsServiceIdAlreadyUsed(IContextAdapter db, string serviceId)
+            => db.Set<AuthenticationAccount>().Count(r => r.ServiceId == serviceId) > 0;
 
         private void SendEmail(EmailConfirmationRequest request)
         {
-            var mail = new RegistrationConfirmEmail(request.EmailAddress, request.ConfirmationCode);
+            var mail = new RegistrationConfirmEmail(request.Email, request.ConfirmationCode);
             emailManager.Send(mail);
         }
     }

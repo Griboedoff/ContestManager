@@ -8,17 +8,17 @@ namespace Core.DataBaseEntities
     public class EmailConfirmationRequest : DataBaseEntity
     {
         [Column]
-        [Index("EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index", Order = 1, IsClustered = false, IsUnique = true)]
+        [Index("EmailConfirmationRequest_Type_Email_ConfirmationCode_Index", Order = 1, IsClustered = false, IsUnique = true)]
         public ConfirmationType Type { get; set; }
 
         [Column]
         [MaxLength(FieldsLength.Email)]
-        [Index("EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index", Order = 2, IsClustered = false, IsUnique = true)]
-        public string EmailAddress { get; set; }
+        [Index("EmailConfirmationRequest_Type_Email_ConfirmationCode_Index", Order = 2, IsClustered = false, IsUnique = true)]
+        public string Email { get; set; }
 
         [Column]
-        [MaxLength(FieldsLength.Secret)]
-        [Index("EmailConfirmationRequest_Type_EmailAddress_ConfirmationCode_Index", Order = 3, IsClustered = false, IsUnique = true)]
+        [MaxLength(FieldsLength.ConfirmationCode)]
+        [Index("EmailConfirmationRequest_Type_Email_ConfirmationCode_Index", Order = 3, IsClustered = false, IsUnique = true)]
         public string ConfirmationCode { get; set; }
 
         [Column]
