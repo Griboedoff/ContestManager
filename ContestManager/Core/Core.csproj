@@ -55,6 +55,7 @@
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBaseEntities\StoredConfig.cs" />
+    <Compile Include="Exceptions\AuthenticationFailedException.cs" />
+    <Compile Include="Factories\CookieFactory.cs" />
+    <Compile Include="Managers\AuthenticationManager.cs" />
     <Compile Include="Models\Configs\RSACryptoConfig.cs" />
     <Compile Include="Models\Configs\EmailConfig.cs" />
     <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.cs" />
@@ -89,7 +93,7 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factories\AuthenticationAccountFactory.cs" />
-    <Compile Include="Factories\ServiceTokenFactory.cs" />
+    <Compile Include="Managers\SecurityManager.cs" />
     <Compile Include="Factories\UserFactory.cs" />
     <Compile Include="Factories\EmailConfirmationRequestFactory.cs" />
     <Compile Include="Factories\ContextAdapterFactory.cs" />
@@ -100,6 +104,7 @@
     <Compile Include="Managers\EmailManager.cs" />
     <Compile Include="Managers\RegistrationManager.cs" />
     <Compile Include="Models\Configs\IConfig.cs" />
+    <Compile Include="Models\Configs\VkAppConfig.cs" />
     <Compile Include="Models\PasswordToken.cs" />
     <Compile Include="Models\Mails\EmailBase.cs" />
     <Compile Include="Models\Mails\RegistrationConfirmEmail.cs" />

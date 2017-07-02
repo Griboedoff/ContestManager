@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
+using Core.Managers;
 using Newtonsoft.Json;
 
 namespace Core.Factories
@@ -13,16 +14,16 @@ namespace Core.Factories
 
     public class AuthenticationAccountFactory : IAuthenticationAccountFactory
     {
-        private readonly IServiceTokenFactory serviceTokenFactory;
+        private readonly ISecurityManager securityManager;
 
-        public AuthenticationAccountFactory(IServiceTokenFactory serviceTokenFactory)
+        public AuthenticationAccountFactory(ISecurityManager securityManager)
         {
-            this.serviceTokenFactory = serviceTokenFactory;
+            this.securityManager = securityManager;
         }
 
         public AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword)
         {
-            var passwordToken = serviceTokenFactory.CreatePasswordToken(userPassword);
+            var passwordToken = securityManager.CreatePasswordToken(userPassword);
 
             return new AuthenticationAccount
             {

@@ -22,7 +22,7 @@ namespace Front
             RegisterStoredConfigs(container);
 
             container.RegisterType<IUserFactory, UserFactory>();
-            container.RegisterType<IServiceTokenFactory, ServiceTokenFactory>();
+            container.RegisterType<ICookieFactory, CookieFactory>();
             container.RegisterType<IContextAdapterFactory, ContextAdapterFactory>();
             container.RegisterType<IAuthenticationAccountFactory, AuthenticationAccountFactory>();
             container.RegisterType<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
@@ -30,8 +30,11 @@ namespace Front
             container.RegisterType<ICryptoHelper, CryptoHelper>();
             container.RegisterType<IDataGenerator, DataGenerator>();
 
+
             container.RegisterType<IEmailManager, EmailManager>();
+            container.RegisterType<ISecurityManager, SecurityManager>();
             container.RegisterType<IRegistrationManager, RegistrationManager>();
+            container.RegisterType<IAuthenticationManager, AuthenticationManager>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
@@ -45,6 +48,7 @@ namespace Front
                 var storedConfigs = db.Set<StoredConfig>().ToArray();
 
                 RegisterStoredConfig<EmailConfig>(container, storedConfigs);
+                RegisterStoredConfig<VkAppConfig>(container, storedConfigs);
                 RegisterStoredConfig<RSACryptoConfig>(container, storedConfigs);
             }
         }

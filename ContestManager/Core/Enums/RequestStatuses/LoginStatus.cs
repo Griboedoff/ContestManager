@@ -3,5 +3,7 @@
     public enum LoginStatus
     {
         Success,
+        WrongEmailOrPassword,
+        WrongVkAuthData
     }
 }

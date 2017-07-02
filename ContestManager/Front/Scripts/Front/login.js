@@ -35,6 +35,39 @@ function vkCallback(obj) {
     }
 
     setMode("Vk");
+
+    var session = obj.session;
+
+    $.ajax({
+        async: true,
+        method: "POST",
+        url: "/Login/VkLogin",
+        cache: false,
+        data:
+        {
+            expire: session.expire,
+            mid: session.mid,
+            secret: session.secret,
+            sid: session.sid,
+            sig: session.sig
+        },
+        success: function (status) {
+            switch (status) {
+            case "Success":
+                break;
+
+            default:
+                data.serverError("Неизвестный ответ сервера");
+                break;
+            }
+        },
+        error: function () {
+            data.serverError("В данный момент сервер недоступен. Повторите попытку позже.");
+        },
+        complete: function () {
+            setMode("Email");
+        }
+    });
 }
 
 function setValidators() {
@@ -72,7 +105,7 @@ function setValidators() {
     });
 }
 
-function sendLoginRequest() {
+function sendPasswordLoginRequest() {
     if (!$("#loginForm").valid())
         return;
 
@@ -82,7 +115,7 @@ function sendLoginRequest() {
     $.ajax({
         async: true,
         method: "POST",
-        url: "/Login/Login",
+        url: "/Login/PasswordLogin",
         cache: false,
         data:
         {
@@ -94,7 +127,7 @@ function sendLoginRequest() {
                 case "Success":
                     break;
 
-                case "Fail":
+                case "WrongEmailOrPassword":
                     data.serverError("Неправильный email или пароль");
                     data.userPassword("");
 
