@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Mail;
-using Core.DataBaseEntities.Configs;
-using Core.Models;
+using Core.Models.Configs;
 using Core.Models.Mails;
 
 namespace Core.Managers
@@ -19,7 +18,7 @@ namespace Core.Managers
 
         public EmailManager(EmailConfig config)
         {
-            mailFrom = config.MailboxAddress;
+            mailFrom = config.EmailboxAddr;
 
             client = new SmtpClient
             {

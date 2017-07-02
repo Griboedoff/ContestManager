@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Core.DataBase;
 using Core.DataBaseEntities;
-using Core.Enums;
+using Core.Enums.DataBaseEnums;
 using Core.Enums.RequestStatuses;
 using Core.Factories;
 using Core.Models.Mails;

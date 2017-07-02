@@ -1,12 +1,15 @@
 using System.Linq;
 using System.Web.Mvc;
+using Core.DataBaseEntities;
+using Core.Enums.DataBaseEnums;
 using Core.Factories;
 using Core.Helpers;
 using Core.Managers;
 using Microsoft.Practices.Unity;
 using Unity.Mvc5;
-using Core.DataBaseEntities.Configs;
 using Core.Exceptions;
+using Core.Models.Configs;
+using Newtonsoft.Json;
 
 namespace Front
 {
@@ -15,22 +18,14 @@ namespace Front
         public static void RegisterComponents()
         {
 			var container = new UnityContainer();
-            
+
+            RegisterStoredConfigs(container);
+
             container.RegisterType<IUserFactory, UserFactory>();
             container.RegisterType<IServiceTokenFactory, ServiceTokenFactory>();
             container.RegisterType<IContextAdapterFactory, ContextAdapterFactory>();
             container.RegisterType<IAuthenticationAccountFactory, AuthenticationAccountFactory>();
             container.RegisterType<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
-
-            var contextFactory = new ContextAdapterFactory();
-            using (var db = contextFactory.Create())
-            {
-                var emailConfigs = db.Set<EmailConfig>().ToArray();
-                if (emailConfigs.Length != 1)
-                    throw new ConfigNotConsistentException<EmailConfig>();
-
-                container.RegisterInstance(typeof(EmailConfig), emailConfigs[0]);
-            }
 
             container.RegisterType<ICryptoHelper, CryptoHelper>();
             container.RegisterType<IDataGenerator, DataGenerator>();
@@ -39,6 +34,31 @@ namespace Front
             container.RegisterType<IRegistrationManager, RegistrationManager>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+        }
+
+        private static void RegisterStoredConfigs(IUnityContainer container)
+        {
+            var contextFactory = new ContextAdapterFactory();
+
+            using (var db = contextFactory.Create())
+            {
+                var storedConfigs = db.Set<StoredConfig>().ToArray();
+
+                RegisterStoredConfig<EmailConfig>(container, storedConfigs);
+            }
+        }
+
+        private static void RegisterStoredConfig<T>(IUnityContainer container, StoredConfig[] storedConfigs)
+            where T : class, IConfig
+        {
+            var typeName = typeof(T).Name;
+
+            var wantedStoredConfigs = storedConfigs.Where(c => c.TypeName == typeName).ToArray();
+            if (wantedStoredConfigs.Length != 1)
+                throw new ConfigNotConsistentException<T>();
+
+            var storedConfig = JsonConvert.DeserializeObject<T>(wantedStoredConfigs[0].JsonValue);
+            container.RegisterInstance(storedConfig);
         }
     }
 }

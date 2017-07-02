@@ -1,6 +1,6 @@
 ﻿using System;
 using Core.DataBaseEntities;
-using Core.Enums;
+using Core.Enums.DataBaseEnums;
 using Newtonsoft.Json;
 
 namespace Core.Factories

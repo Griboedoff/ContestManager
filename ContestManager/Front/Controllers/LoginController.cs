@@ -6,8 +6,6 @@ namespace Front.Controllers
     {
         [HttpGet]
         public ActionResult Index()
-        {
-            return View();
-        }
+            => View();
     }
 }

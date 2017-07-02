@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using Core.DataBaseEntities;
-using Core.DataBaseEntities.Configs;
 
 namespace Core.DataBase
 {
@@ -25,7 +24,7 @@ namespace Core.DataBase
             => modelBuilder.HasDefaultSchema("public");
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<EmailConfig> EmailConfigs { get; set; }
+        public virtual DbSet<StoredConfig> StoredConfigs { get; set; }
         public virtual DbSet<AuthenticationAccount> AuthenticationAccounts { get; set; }
         public virtual DbSet<EmailConfirmationRequest> EmailConfirmationRequests { get; set; }
     }
