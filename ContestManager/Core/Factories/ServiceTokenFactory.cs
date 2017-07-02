@@ -1,4 +1,5 @@
-﻿using Core.Helpers;
+﻿using Core.Extensions;
+using Core.Helpers;
 using Core.Models;
 
 namespace Core.Factories
@@ -22,9 +23,9 @@ namespace Core.Factories
         public PasswordToken CreatePasswordToken(string userPassword)
         {
             var sult = dataGenerator.GenerateSequence(FieldsLength.Sult);
-            var hash = cryptoHelper.ComputeSHA1(userPassword, sult);
+            var hash = cryptoHelper.ComputeSHA1((userPassword + sult).ToBytes());
 
-            return new PasswordToken { Sult = sult, Base64Hash = hash };
+            return new PasswordToken { Sult = sult, Base64Hash = hash.ToBase64() };
         }
     }
 }

@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBaseEntities\StoredConfig.cs" />
+    <Compile Include="Models\Configs\RSACryptoConfig.cs" />
     <Compile Include="Models\Configs\EmailConfig.cs" />
     <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.cs" />
     <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.Designer.cs">

@@ -45,6 +45,7 @@ namespace Front
                 var storedConfigs = db.Set<StoredConfig>().ToArray();
 
                 RegisterStoredConfig<EmailConfig>(container, storedConfigs);
+                RegisterStoredConfig<RSACryptoConfig>(container, storedConfigs);
             }
         }
 
