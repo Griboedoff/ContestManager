@@ -53,11 +53,6 @@ function setStep(step) {
     data.step(step);
 }
 
-function changeClass(element, classToRemove, classToAdd) {
-    element.removeClass(classToRemove);
-    element.addClass(classToAdd);
-}
-
 function setValidators() {
     $("#registrationForm").validate({
         rules: {
@@ -117,27 +112,9 @@ function setValidators() {
         wrapper: "div",
         errorElement: "p",
         
-        errorPlacement: function (error, element) {
-            error.addClass("col-xs-4");
-            error.children().addClass("help-block");
-            error.appendTo(element.parent("div").parent("div"));
-        },
-
-        highlight: function (element) {
-            var container = $(element).parent("div").parent("div");
-            changeClass(container, "has-success", "has-error");
-
-            var glyphicon = $(element).next("span");
-            changeClass(glyphicon, "glyphicon-ok", "glyphicon-remove");
-        },
-
-        unhighlight: function (element) {
-            var container = $(element).parent("div").parent("div");
-            changeClass(container, "has-error", "has-success");
-
-            var glyphicon = $(element).next("span");
-            changeClass(glyphicon, "glyphicon-remove", "glyphicon-ok");
-        },
+        errorPlacement: errorPlacement,
+        highlight: highlight,
+        unhighlight: unhighlight
     });
 }
 
@@ -241,10 +218,10 @@ function setVkMode() {
     if (data.userVkId() !== "")
         setMode("Vk");
     else
-        VK.Auth.login(vkCollback, 65536);
+        VK.Auth.login(vkCallback, 65536);
 }
 
-function vkCollback(obj) {
+function vkCallback(obj) {
     if (obj.status !== "connected") {
         data.serverError("Для регистрации необходимо авторизироваться через ВКонтакте и разрешить доступ приложению");
         return;

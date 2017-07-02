@@ -13,6 +13,8 @@
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    
+    <script type="text/javascript" src="../../Scripts/Front/base.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -27,7 +29,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li>@Html.ActionLink("Авторизация", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Авторизация", "Index", "Login")</li>
                     <li>@Html.ActionLink("Регистрация", "Index", "Registration")</li>
                 </ul>
             </div>

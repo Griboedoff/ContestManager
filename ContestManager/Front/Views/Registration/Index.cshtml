@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Регистрация на сайте";
 }
+
 <script src="https://vk.com/js/api/openapi.js?146" type="text/javascript"></script>
 <script type="text/javascript" src="../../Scripts/Front/registration.js"></script>
 
@@ -17,7 +18,7 @@
         
         <div data-bind="visible: isRegistrationStep">
             <div class="form-group">
-                <label for="modesContainer" class="col-md-2 control-label">Способ авторизации</label>
+                <label for="modesContainer" class="col-md-2 control-label">Способ регистрации</label>
                 <div id="modesContainer">
                     <div class="col-sm-10">
                         <input type="button" class="btn" onclick="setEmailMode()" value="Email"
