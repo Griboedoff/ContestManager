@@ -7,10 +7,16 @@ $.validator.addMethod("wrongConfirmCodes", function (value, element, confirmCode
 $.validator.addMethod("alreadyUsedConfirmCodes", function (value, element, confirmCodes) {
     return $.inArray(value, confirmCodes) === -1;
 }, "Код подтверждения уже использован");
-$.validator.addMethod("authorizedVkId", function (value, element, authorizedVkId) {
-    return value === authorizedVkId;
-}, "Неавторизованный идентификатор ВК");
+$.validator.addMethod("onlyNameSymbols", function (value, element) {
+    return /^[' а-яё-]*$/i.test(value);
+}, "Имя должно содержать только русские буквы");
+$.validator.addMethod("notFullNameWarning", function (value, element) {
+    var isNotFullName = value.split(/\s+/).length < 3;
+    if (isNotFullName)
+        $(element).addClass("validation-warning");
 
+    return !isNotFullName;
+}, "Не забудьте ввести отчество, если есть");
 
 function PageData() {
     this.mode = ko.observable("");
@@ -21,7 +27,6 @@ function PageData() {
     this.userName = ko.observable("");
     this.userEmail = ko.observable("");
     this.userPassword = ko.observable("");
-    this.userRepeatPassword = ko.observable("");
 
     this.confirmCode = ko.observable("");
 
@@ -58,7 +63,9 @@ function setValidators() {
         rules: {
             userName: {
                 required: true,
-                maxlength: 100
+                maxlength: 100,
+                onlyNameSymbols: true,
+                notFullNameWarning: true
             },
             userEmail: {
                 required: true,
@@ -73,9 +80,6 @@ function setValidators() {
                 equalTo: "#userPassword"
             },
             userConfirm: {
-                required: true
-            },
-            userVkId: {
                 required: true
             }
         },
@@ -99,9 +103,6 @@ function setValidators() {
             },
             userConfirm: {
                 required: "Поле обязательно для заполнения"
-            },
-            userVkId: {
-                required: "Поле обязательно для заполнения"
             }
         },
 
@@ -119,7 +120,7 @@ function setValidators() {
 }
 
 function sendEmailRegistrationRequest() {
-    if (!$("#registrationForm").valid())
+    if (!isRegistrationFormValid())
         return;
 
     data.isSending(true);
@@ -160,7 +161,7 @@ function sendEmailRegistrationRequest() {
 }
 
 function sendEmailConfirm() {
-    if (!$("#registrationForm").valid())
+    if (!isRegistrationFormValid())
         return;
 
     data.isSending(true);
@@ -234,11 +235,11 @@ function vkCallback(obj) {
     data.userName(userName);
     data.userVkId(user.id);
 
-    updateValidationRule("#userVkId", "authorizedVkId", user.id);
+    $("#registrationForm").valid();
 }
 
 function sendVkRegistrationRequest() {
-    if (!$("#registrationForm").valid())
+    if (!isRegistrationFormValid())
         return;
 
     data.isSending(true);
@@ -286,4 +287,16 @@ function updateValidationRule(inputId, rule, value) {
     $(inputId).rules("add", ruleContainer);
 
     $("#registrationForm").valid();
+}
+
+function isRegistrationFormValid() {
+    var form = $("#registrationForm");
+    var userNameInput = $("#userName");
+    
+    userNameInput.rules("remove", "notFullNameWarning");
+    var result = form.valid();
+    userNameInput.rules("add", { notFullNameWarning: true });
+
+    form.valid();
+    return result;
 }

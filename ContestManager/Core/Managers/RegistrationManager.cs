@@ -103,7 +103,7 @@ namespace Core.Managers
         }
 
         private static bool IsServiceIdAlreadyUsed(IContextAdapter db, string serviceId)
-            => db.Set<AuthenticationAccount>().Count(r => r.ServiceId == serviceId) > 0;
+            => db.Set<AuthenticationAccount>().Any(r => r.ServiceId == serviceId);
 
         private void SendEmail(EmailConfirmationRequest request)
         {

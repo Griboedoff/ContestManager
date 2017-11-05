@@ -61,8 +61,7 @@
                 <div class="form-group has-feedback">
                     <label for="userRepeat" class="col-md-2 control-label">Повторите пароль</label>
                     <div class="col-sm-3">
-                        <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз"
-                               data-bind="value: userRepeatPassword" />
+                        <input type="password" id="userRepeat" name="repeatPassword" class="form-control" placeholder="Введите пароль еще раз" />
                         <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
                 </div>
@@ -77,22 +76,12 @@
                 </div>
             </div>
         
-            <div data-bind="visible: isVkMode">
-                <div class="form-group has-feedback">
-                    <label for="userVkId" class="col-md-2 control-label">VkId</label>
-                    <div class="col-sm-3">
-                        <input type="text" id="userVkId" name="userVkId" class="form-control" data-bind="value: userVkId" />
-                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                    </div>
-                </div>
-            
-                <div class="form-group has-feedback">
-                    <label for="sendVkRequest" class="col-md-2 control-label"></label>
-                    <div class="col-sm-3">
-                        <input type="button" id="sendVkRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendVkRegistrationRequest()"
-                               data-bind="visible: !isSending()" />
-                        <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
-                    </div>
+            <div class="form-group has-feedback" data-bind="visible: isVkMode">
+                <label for="sendVkRequest" class="col-md-2 control-label"></label>
+                <div class="col-sm-3">
+                    <input type="button" id="sendVkRequest" class="btn btn-info" value="Зарегистрироваться" onclick="sendVkRegistrationRequest()"
+                           data-bind="visible: !isSending()" />
+                    <img src="../../Sources/load.gif" style="display: none; width: 27px" alt="<Load>" data-bind="visible: isSending" />
                 </div>
             </div>
         </div>
