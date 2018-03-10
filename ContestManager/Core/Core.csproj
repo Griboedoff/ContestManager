@@ -67,10 +67,12 @@
   <ItemGroup>
     <Compile Include="DataBaseEntities\Contest.cs" />
     <Compile Include="DataBaseEntities\StoredConfig.cs" />
+    <Compile Include="Enums\ContestOptions.cs" />
     <Compile Include="Enums\ValidatorType.cs" />
     <Compile Include="Exceptions\AuthenticationFailedException.cs" />
     <Compile Include="Factories\CookieFactory.cs" />
     <Compile Include="Managers\AuthenticationManager.cs" />
+    <Compile Include="Managers\ContestManager.cs" />
     <Compile Include="Models\Configs\RSACryptoConfig.cs" />
     <Compile Include="Models\Configs\EmailConfig.cs" />
     <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.cs" />

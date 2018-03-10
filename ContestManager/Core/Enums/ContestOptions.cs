@@ -3,9 +3,8 @@
 namespace Core.Enums
 {
     [Flags]
-    public enum ValidatorType
+    public enum ContestOptions
     {
         None = 0,
-        OnlyDigits = 1,
     }
 }
