@@ -1,19 +1,19 @@
 ﻿using System.Web.Mvc;
 using Core.Enums.RequestStatuses;
 using Core.Exceptions;
-using Core.Factories;
 using Core.Managers;
 
 namespace Front.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ICookieFactory cookieFactory;
+        private readonly ICookieManager cookieManager;
         private readonly IAuthenticationManager authenticationManager;
 
-        public LoginController(ICookieFactory cookieFactory, IAuthenticationManager authenticationManager)
+        public LoginController(ICookieManager cookieManager,
+            IAuthenticationManager authenticationManager)
         {
-            this.cookieFactory = cookieFactory;
+            this.cookieManager = cookieManager;
             this.authenticationManager = authenticationManager;
         }
 
@@ -27,8 +27,7 @@ namespace Front.Controllers
             try
             {
                 var user = authenticationManager.Authenticate(userEmail, userPassword);
-                var loginCookie = cookieFactory.CreateLoginCookie(user);
-                Request.Cookies.Add(loginCookie);
+                cookieManager.SetLoginCookie(Response, user);
 
                 return LoginStatus.Success;
             }
@@ -45,8 +44,7 @@ namespace Front.Controllers
             try
             {
                 var user = authenticationManager.Authenticate(expire, mid, secret, sid, sig);
-                var loginCookie = cookieFactory.CreateLoginCookie(user);
-                Request.Cookies.Add(loginCookie);
+                cookieManager.SetLoginCookie(Response, user);
 
                 return LoginStatus.Success;
             }

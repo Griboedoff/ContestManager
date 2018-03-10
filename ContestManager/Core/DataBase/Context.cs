@@ -24,6 +24,7 @@ namespace Core.DataBase
             => modelBuilder.HasDefaultSchema("public");
 
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Contest> Contests { get; set; }
         public virtual DbSet<StoredConfig> StoredConfigs { get; set; }
         public virtual DbSet<AuthenticationAccount> AuthenticationAccounts { get; set; }
         public virtual DbSet<EmailConfirmationRequest> EmailConfirmationRequests { get; set; }

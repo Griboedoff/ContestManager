@@ -17,12 +17,12 @@ namespace Front
     {
         public static void RegisterComponents()
         {
-			var container = new UnityContainer();
+            var container = new UnityContainer();
 
             RegisterStoredConfigs(container);
 
             container.RegisterType<IUserFactory, UserFactory>();
-            container.RegisterType<ICookieFactory, CookieFactory>();
+            container.RegisterType<ICookieManager, CookieManager>();
             container.RegisterType<IContextAdapterFactory, ContextAdapterFactory>();
             container.RegisterType<IAuthenticationAccountFactory, AuthenticationAccountFactory>();
             container.RegisterType<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
@@ -35,6 +35,7 @@ namespace Front
             container.RegisterType<ISecurityManager, SecurityManager>();
             container.RegisterType<IRegistrationManager, RegistrationManager>();
             container.RegisterType<IAuthenticationManager, AuthenticationManager>();
+            container.RegisterType<IContestManager, ContestManager>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }

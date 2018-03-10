@@ -67,18 +67,18 @@
   <ItemGroup>
     <Compile Include="DataBaseEntities\Contest.cs" />
     <Compile Include="DataBaseEntities\StoredConfig.cs" />
+    <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.cs" />
+    <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs">
+      <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\ContestOptions.cs" />
     <Compile Include="Enums\ValidatorType.cs" />
     <Compile Include="Exceptions\AuthenticationFailedException.cs" />
-    <Compile Include="Factories\CookieFactory.cs" />
     <Compile Include="Managers\AuthenticationManager.cs" />
     <Compile Include="Managers\ContestManager.cs" />
+    <Compile Include="Managers\CookieManager.cs" />
     <Compile Include="Models\Configs\RSACryptoConfig.cs" />
     <Compile Include="Models\Configs\EmailConfig.cs" />
-    <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.cs" />
-    <Compile Include="DataBaseMigrations\201706201102225_InitDataContext.Designer.cs">
-      <DependentUpon>201706201102225_InitDataContext.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataBase\Context.cs" />
     <Compile Include="DataBase\ContextAdapter.cs" />
     <Compile Include="DataBase\NpgsqlConfiguration.cs" />
@@ -123,10 +123,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DataBaseMigrations\201706201102225_InitDataContext.resx">
-      <DependentUpon>201706201102225_InitDataContext.cs</DependentUpon>
+    <EmbeddedResource Include="DataBaseMigrations\201803101602571_InitDataContext.resx">
+      <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
