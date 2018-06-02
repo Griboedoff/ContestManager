@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Authentication;
-using System.Text;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
 using Core.Exceptions;
