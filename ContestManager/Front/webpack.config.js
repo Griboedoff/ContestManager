@@ -13,7 +13,7 @@ var vendorPackages = Object.keys(pkg.dependencies).filter(function (el) {
  */
 const config = {
     entry: {
-        main: path.join(__dirname, "Scripts", "App.js"),
+        main: path.join(__dirname, "Static", "Scripts", "App.js"),
         vendor: vendorPackages
     },
     output: {

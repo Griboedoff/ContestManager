@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -177,9 +178,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\JsonNetResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -189,15 +192,19 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\App.js" />
-    <Content Include="Scripts\AppDispatcher.js" />
-    <Content Include="Scripts\React\Tutorial.jsx" />
+    <Content Include="Static\Scripts\App.js" />
+    <Content Include="Static\Scripts\AppDispatcher.js" />
+    <Content Include="Static\Scripts\components\Header.jsx" />
+    <Content Include="Static\Scripts\components\Login.jsx" />
+    <Content Include="Static\Scripts\components\Main.jsx" />
+    <Content Include="Static\Scripts\Front\base.js" />
+    <Content Include="Static\Scripts\Front\login.js" />
+    <Content Include="Static\Scripts\Front\registration.js" />
+    <Content Include="Static\Styles\main.css" />
+    <Content Include="Views\Users\Login.cshtml" />
     <Content Include="watch.cmd" />
     <Content Include="webpack.config.js" />
     <Content Include="package.json" />
-    <Content Include="Scripts\Front\base.js" />
-    <Content Include="Scripts\Front\login.js" />
-    <Content Include="Scripts\Front\registration.js" />
     <Content Include="Sources\load.gif" />
     <Content Include="Views\Contest\Index.cshtml" />
     <Content Include="Web.config" />
@@ -218,7 +225,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Scripts\React\components" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
