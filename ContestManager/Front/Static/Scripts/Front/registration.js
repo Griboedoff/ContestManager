@@ -59,7 +59,7 @@ function setStep(step) {
 }
 
 function setValidators() {
-    $("#registrationForm").validate({
+    RussianLettersValidator.validate({
         rules: {
             userName: {
                 required: true,

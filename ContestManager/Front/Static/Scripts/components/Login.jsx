@@ -19,6 +19,8 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
+        document.title = "Войти";
+
         if (document.getElementById('vk-jssdk')) {
             this.sdkLoaded();
             return;
@@ -55,7 +57,7 @@ class Login extends React.Component {
 
         const session = response.session;
 
-        Axios.post('vk', {
+        Axios.post('login/vk', {
             expire: session.expire,
             mid: session.mid,
             secret: session.secret,
@@ -78,7 +80,7 @@ class Login extends React.Component {
 
     loginPassword = () => {
         this.setState({error: false});
-        Axios.post('email', {
+        Axios.post('login/email', {
             email: this.state.email,
             password: this.state.password,
         })

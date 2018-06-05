@@ -1,33 +1,31 @@
-﻿using System.Web.Mvc;
+﻿using System.Web.Http.Cors;
+using System.Web.Mvc;
+using Core.Enums.RequestStatuses;
 using Core.Exceptions;
 using Core.Managers;
 using Front.Helpers;
-using Newtonsoft.Json;
 
 namespace Front.Controllers
 {
     [RoutePrefix("users")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UsersController : Controller
     {
         private readonly ICookieManager cookieManager;
         private readonly IAuthenticationManager authenticationManager;
+        private readonly IRegistrationManager registrationManager;
 
         public UsersController(ICookieManager cookieManager,
-            IAuthenticationManager authenticationManager)
+            IAuthenticationManager authenticationManager,
+            IRegistrationManager registrationManager)
         {
             this.cookieManager = cookieManager;
             this.authenticationManager = authenticationManager;
+            this.registrationManager = registrationManager;
         }
 
-        // GET
-        [Route("login")]
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        [Route("email")]
         [HttpPost]
+        [Route("login/email")]
         public ActionResult Login(string email, string password)
         {
             try
@@ -35,7 +33,8 @@ namespace Front.Controllers
                 var user = authenticationManager.Authenticate(email, password);
                 cookieManager.SetLoginCookie(Response, user);
 
-                return new JsonNetResult {
+                return new JsonNetResult
+                {
                     Data = user,
                 };
             }
@@ -45,8 +44,8 @@ namespace Front.Controllers
             }
         }
 
-        [Route("vk")]
         [HttpPost]
+        [Route("login/vk")]
         public ActionResult Login(long expire, string mid, string secret, string sid, string sig)
         {
             try
@@ -54,7 +53,8 @@ namespace Front.Controllers
                 var user = authenticationManager.Authenticate(expire, mid, secret, sid, sig);
                 cookieManager.SetLoginCookie(Response, user);
 
-                return new JsonNetResult {
+                return new JsonNetResult
+                {
                     Data = user,
                 };
             }
@@ -62,6 +62,29 @@ namespace Front.Controllers
             {
                 return null;
             }
+        }
+
+        [HttpPost]
+        [Route("register/email")]
+        public RegistrationStatus CreateEmailRegistrationRequest(string userEmail)
+        {
+            return registrationManager.CreateEmailRegistrationRequest(userEmail);
+        }
+
+        [HttpPost]
+        [Route("register/email/confirm")]
+        public RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail,
+            string userPassword, string confirmationCode)
+        {
+            return registrationManager.ConfirmEmailRegistrationRequest(userName, userEmail, userPassword,
+                confirmationCode);
+        }
+
+        [HttpPost]
+        [Route("register/vk")]
+        public RegistrationStatus RegisterByVk(string name, string vkId)
+        {
+            return registrationManager.RegisterByVk(name, vkId);
         }
     }
 }
