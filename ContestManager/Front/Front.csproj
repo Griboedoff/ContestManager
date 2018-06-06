@@ -215,6 +215,7 @@
     <Content Include="Static\Scripts\App.js" />
     <Content Include="Static\Scripts\AppDispatcher.js" />
     <Content Include="Static\Scripts\Common\Validators.js" />
+    <Content Include="Static\Scripts\components\FormGroupWithTooltip.jsx" />
     <Content Include="Static\Scripts\components\Header.jsx" />
     <Content Include="Static\Scripts\components\Login.jsx" />
     <Content Include="Static\Scripts\components\Register.jsx" />

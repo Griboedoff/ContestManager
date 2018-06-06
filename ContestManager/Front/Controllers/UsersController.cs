@@ -66,18 +66,17 @@ namespace Front.Controllers
 
         [HttpPost]
         [Route("register/email")]
-        public RegistrationStatus CreateEmailRegistrationRequest(string userEmail)
+        public RegistrationStatus CreateEmailRegistrationRequest(string email)
         {
-            return registrationManager.CreateEmailRegistrationRequest(userEmail);
+            return registrationManager.CreateEmailRegistrationRequest(email);
         }
 
         [HttpPost]
         [Route("register/email/confirm")]
-        public RegistrationStatus ConfirmEmailRegistrationRequest(string userName, string userEmail,
-            string userPassword, string confirmationCode)
+        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email,
+            string password, string confirmationCode)
         {
-            return registrationManager.ConfirmEmailRegistrationRequest(userName, userEmail, userPassword,
-                confirmationCode);
+            return registrationManager.ConfirmEmailRegistrationRequest(name, email, password, confirmationCode);
         }
 
         [HttpPost]

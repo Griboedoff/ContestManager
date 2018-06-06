@@ -7,6 +7,6 @@
         RequestCreated,
         RequestAlreadyUsed,
         WrongConfirmationCode,
-        VkIdAlreadyUsed
+        VkIdAlreadyUsed,
     }
 }

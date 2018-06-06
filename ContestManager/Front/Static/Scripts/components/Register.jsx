@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-    FormGroup,
-    FormControl,
-    ControlLabel,
-    Form,
-    Col,
-    Alert,
-    Tooltip,
-    OverlayTrigger
-} from 'react-bootstrap';
-import Button from "react-bootstrap/es/Button";
+import {Alert, Button, Col, Form, FormControl, FormGroup, Tooltip, ControlLabel} from 'react-bootstrap';
 import Axios from 'axios';
 import {EmailValidator, LengthValidator, RussianLettersValidator} from "../Common/Validators";
+import FormGroupWithTooltip from './FormGroupWithTooltip'
 
 const tt = (val) => <Tooltip id={`tooltipHelp${Math.random()}`}>{val}</Tooltip>;
 
@@ -26,57 +17,24 @@ const overlay = (val, text) => {
             return <div />;
     }
 };
-
-class FormGroupWithTooltip extends React.Component {
-    constructor(props) {
-        super(props);
-        this.fc = (<Col sm={5}>
-            <FormControl type={this.props.type}
-                         value={this.props.value}
-                         placeholder={this.props.ph}
-                         onChange={this.props.onChange} />
-            <FormControl.Feedback />
-        </Col>)
+const parseRegisterStatus = (s) => {
+    switch (s) {
+        case "EmailAlreadyUsed" :
+            return "Такой email уже зарегистрирован";
+        case "RequestAlreadyUsed" :
+        case "WrongConfirmationCode" :
+            return "Неверный код подтверждения";
+        case "VkIdAlreadyUsed" :
+            return "Пользователь с таким VK уже зарегистрирован";
+        case"Success" :
+        case"RequestCreated" :
+            return ""
     }
-
-    showOverlay = () => {
-        switch (this.props.validationState) {
-            case 'error':
-            case 'warning':
-                return true;
-            case 'success':
-            case null:
-                return false;
-        }
-    };
-
-    render() {
-        const formControl = (
-            <Col sm={5}>
-                <FormControl type={this.props.type}
-                             value={this.props.value}
-                             placeholder={this.props.ph}
-                             onChange={this.props.onChange} />
-                <FormControl.Feedback />
-            </Col>);
-
-        return <FormGroup controlId={this.props.controlId}
-                          validationState={this.props.validationState}>
-            <Col componentClass={ControlLabel} sm={4}>
-                {this.props.label}
-            </Col>
-            <OverlayTrigger placement="right" overlay={this.props.overlay}>
-                {formControl}
-            </OverlayTrigger>
-        </FormGroup>
-    }
-}
+};
 
 class Register extends React.Component {
     constructor(props, context) {
         super(props, context);
-
-        this.onLogIn = props.onLogIn;
 
         this.state = {
             firstName: '',
@@ -89,6 +47,8 @@ class Register extends React.Component {
             isSdkLoaded: false,
             isProcessing: false,
             error: false,
+            errorMessage: '',
+            confirmSend: false,
         };
     }
 
@@ -136,7 +96,11 @@ class Register extends React.Component {
             vkId: user.id,
         })
             .then((resp) => {
-                    this.onLogIn(resp.data);
+                    this.setState({errorMessage: parseRegisterStatus(resp.data)});
+                    if (this.state.errorMessage)
+                        this.setState({error: true});
+                    else
+                        this.props.history.push(`/login`);
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -145,18 +109,42 @@ class Register extends React.Component {
         if (!this.state.isSdkLoaded || this.state.isProcessing || this.props.disabled) {
             return;
         }
-        this.setState({isProcessing: true});
+        this.setState({isProcessing: true, error: false, errorMessage: ''});
         window.VK.Auth.login(this.registerInternal);
     };
 
     registerEmail = () => {
-        this.setState({error: false});
-        Axios.post('email', {
+        this.setState({error: false, errorMessage: '', confirmSend: false});
+
+        Axios.post('register/email', {
             email: this.state.email,
-            password: this.state.password,
         })
             .then((resp) => {
-                    this.onLogIn(resp.data);
+                    this.setState({errorMessage: parseRegisterStatus(resp.data)});
+                    if (this.state.errorMessage)
+                        this.setState({error: true});
+                    else
+                        this.setState({confirmSend: true});
+                }
+            ).catch(() => this.setState({error: true}));
+    };
+
+    confirm = () => {
+        this.setState({error: false, errorMessage: ''});
+
+        Axios.post('register/email/confirm', {
+            name: `${this.state.surname} ${this.state.firstName} ${this.state.patronymic}`,
+            email: this.state.email,
+            password: this.state.password,
+            confirmationCode: this.state.confirmationCode,
+
+        })
+            .then((resp) => {
+                    this.setState({errorMessage: parseRegisterStatus(resp.data)});
+                    if (this.state.errorMessage)
+                        this.setState({error: true});
+                    else
+                        this.props.history.push(`/login`);
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -186,14 +174,18 @@ class Register extends React.Component {
     handleEmailChange = (e) => this.setState({email: e.target.value});
     handlePassChange = (e) => this.setState({password: e.target.value});
     handlePassRepeatChange = (e) => this.setState({passwordRepeat: e.target.value});
+    handleConfirmCodeChange = (e) => this.setState({confirmCode: e.target.value});
 
     render() {
         return [
             this.state.error
                 ? <Alert bsStyle="danger">
-                    Ой! Что-то пошло не так
-                    <br />
-                    Попробуйте позже
+                    {this.state.errorMessage ? this.state.errorMessage :
+                        <div>Ой! Что-то пошло не так
+                            <br />
+                            Попробуйте позже
+                        </div>
+                    }
                 </Alert>
                 : "",
             <Form horizontal className="login-form">
@@ -248,14 +240,34 @@ class Register extends React.Component {
                                       onChange={this.handlePassRepeatChange}
                                       type="password" />
                 <FormGroup
-                    controlId="login-btn">
-                    <Col
-                        smOffset={4}
-                        sm={10}>
-                        <Button key="loginEmail" bsStyle="primary" onClick={this.registerEmail}> Войти </Button>
+                    controlId="register-btn">
+                    <Col smOffset={4} sm={10}>
+                        <Button key="loginEmail"
+                                bsStyle="primary"
+                                onClick={this.registerEmail}>
+                            Зарегистрироваться
+                        </Button>
                     </Col>
                 </FormGroup>
-            </Form>
+            </Form>,
+            this.state.confirmSend ? [
+                <Alert> Код подтверждения отправлен на {this.state.email}</Alert>,
+                <Form horizontal>
+                    <FormGroup controlId="login-btn">
+                        <Col componentClass={ControlLabel} sm={4}>Код подтверждения </Col>
+                        <Col sm={2}>
+                            <FormControl type="text"
+                                         value={this.props.confirmCode}
+                                         onChange={this.handleConfirmCodeChange} />
+                        </Col>
+                        <Col sm={2}>
+                            <Button key="confirm" bsStyle="primary" onClick={this.confirm}>
+                                Подтвердить
+                            </Button>
+                        </Col>
+                    </FormGroup>
+                </Form>
+            ] : "",
 
         ];
     }
