@@ -100,7 +100,7 @@ class Register extends React.Component {
                     if (this.state.errorMessage)
                         this.setState({error: true});
                     else
-                        this.props.history.push(`/login`);
+                        this.props.history.push(`/`);
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -144,7 +144,7 @@ class Register extends React.Component {
                     if (this.state.errorMessage)
                         this.setState({error: true});
                     else
-                        this.props.history.push(`/login`);
+                        this.props.history.push(`/`);
                 }
             ).catch(() => this.setState({error: true}));
     };

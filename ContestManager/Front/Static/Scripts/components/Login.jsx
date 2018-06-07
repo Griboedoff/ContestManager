@@ -7,8 +7,6 @@ class Login extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.onLogIn = props.onLogIn;
-
         this.state = {
             email: '',
             password: '',
@@ -64,9 +62,9 @@ class Login extends React.Component {
             sid: session.sid,
             sig: session.sig
         })
-            .then((resp) => {
-                    this.onLogIn(resp.data);
-                    this.props.history.push(`/login`);
+            .then(() => {
+                    this.props.history.push(`/`);
+                    window.location.reload();
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -85,9 +83,9 @@ class Login extends React.Component {
             email: this.state.email,
             password: this.state.password,
         })
-            .then((resp) => {
-                    this.onLogIn(resp.data);
-                    this.props.history.push(`/login`);
+            .then(() => {
+                    this.props.history.push(`/`);
+                    window.location.reload();
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -132,4 +130,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login
+export default Login;
