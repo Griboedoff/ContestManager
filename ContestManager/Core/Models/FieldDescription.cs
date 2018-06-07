@@ -10,6 +10,6 @@ namespace Core.Models
         public string Title { get; set; }
 
         [DataMember]
-        public ValidatorType ValidatorTypes { get; set; }
+        public FieldType FieldType { get; set; }
     }
 }

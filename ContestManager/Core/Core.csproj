@@ -72,7 +72,7 @@
       <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
     </Compile>
     <Compile Include="Enums\ContestOptions.cs" />
-    <Compile Include="Enums\ValidatorType.cs" />
+    <Compile Include="Enums\FieldType.cs" />
     <Compile Include="Exceptions\AuthenticationFailedException.cs" />
     <Compile Include="Managers\AuthenticationManager.cs" />
     <Compile Include="Managers\ContestManager.cs" />
