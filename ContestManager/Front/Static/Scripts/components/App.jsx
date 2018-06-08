@@ -9,10 +9,12 @@ import Register from "./Register";
 class App extends React.Component {
     constructor(props, context) {
         super(props, context);
-        const { cookies } = this.props;
-        
+        const {cookies} = this.props;
+
         this.state = {cookies: cookies};
     };
+
+    onLogIn = () => this.render();
 
     render() {
         return [
@@ -20,12 +22,12 @@ class App extends React.Component {
                 <Header {...props} cookies={this.state.cookies} user={this.state.user} />}
             />,
             <Route key="login" path="/users/login" render={(props) =>
-                <Login {...props} user={this.state.user} />}
+                <Login {...props} user={this.state.user} onLogIn={this.onLogIn} />}
             />,
             <Route key="register" path="/users/register" render={(props) =>
                 <Register {...props} />}
             />
-        ]
+        ];
     };
 }
 

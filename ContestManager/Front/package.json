@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev-build": "webpack -d --config webpack.config.js --colors --display-error-details",
-    "dev-watch": "webpack -d --config webpack.config.js --watch --colors",
+    "watch": "webpack -d --config webpack.config.js --watch --colors",
     "prod-build": "SET NODE_ENV=production&&webpack -p --config webpack.config.js --colors"
   },
   "dependencies": {

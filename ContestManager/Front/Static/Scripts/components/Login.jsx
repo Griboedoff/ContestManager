@@ -64,7 +64,7 @@ class Login extends React.Component {
         })
             .then(() => {
                     this.props.history.push(`/`);
-                    window.location.reload();
+                    this.props.onLogIn();
                 }
             ).catch(() => this.setState({error: true}));
     };
@@ -85,7 +85,7 @@ class Login extends React.Component {
         })
             .then(() => {
                     this.props.history.push(`/`);
-                    window.location.reload();
+                    this.props.onLogIn();
                 }
             ).catch(() => this.setState({error: true}));
     };
