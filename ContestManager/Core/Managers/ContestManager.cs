@@ -8,7 +8,7 @@ namespace Core.Managers
 {
     public interface IContestManager
     {
-        Contest Create(string title, Guid ownerId);
+        Contest Create(string title, Guid ownerId, FieldDescription[] fields);
         void Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
         Contest Get(Guid contestId);
     }
@@ -22,13 +22,14 @@ namespace Core.Managers
             this.contextFactory = contextFactory;
         }
 
-        public Contest Create(string title, Guid ownerId)
+        public Contest Create(string title, Guid ownerId, FieldDescription[] fields)
         {
             var contest = new Contest
             {
                 Id = Guid.NewGuid(),
                 Title = title,
                 OwnerId = ownerId,
+                Fields = fields,
             };
 
             using (var db = contextFactory.Create())

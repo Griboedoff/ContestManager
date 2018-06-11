@@ -52,5 +52,5 @@ namespace Core.Helpers
             provider.ImportCspBlob(key);
             return provider;
         }
-}
+    }
 }

@@ -197,6 +197,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ContestsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -214,13 +215,19 @@
     </Content>
     <Content Include="Static\Scripts\App.js" />
     <Content Include="Static\Scripts\AppDispatcher.js" />
+    <Content Include="Static\Scripts\Common\FieldType.js" />
     <Content Include="Static\Scripts\Common\UserRole.js" />
     <Content Include="Static\Scripts\Common\Validators.js" />
     <Content Include="Static\Scripts\components\App.jsx" />
-    <Content Include="Static\Scripts\components\FormGroupWithTooltip.jsx" />
+    <Content Include="Static\Scripts\components\Contest\ContestCreate.jsx" />
+    <Content Include="Static\Scripts\components\Contest\Field\ContestField.jsx" />
+    <Content Include="Static\Scripts\components\Contest\Field\ContestFieldHeader.jsx" />
+    <Content Include="Static\Scripts\components\Contest\Field\ContestFields.jsx" />
+    <Content Include="Static\Scripts\components\Contest\Field\CreateField.jsx" />
     <Content Include="Static\Scripts\components\Header.jsx" />
-    <Content Include="Static\Scripts\components\Login.jsx" />
-    <Content Include="Static\Scripts\components\Register.jsx" />
+    <Content Include="Static\Scripts\components\Login\FormGroupWithTooltip.jsx" />
+    <Content Include="Static\Scripts\components\Login\Login.jsx" />
+    <Content Include="Static\Scripts\components\Login\Register.jsx" />
     <Content Include="Static\Scripts\Front\base.js" />
     <Content Include="Static\Scripts\Front\registration.js" />
     <Content Include="Static\Styles\main.css" />

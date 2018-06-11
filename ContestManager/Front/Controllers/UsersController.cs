@@ -1,5 +1,4 @@
-﻿using System.Web.Http.Cors;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Core.Enums.RequestStatuses;
 using Core.Exceptions;
 using Core.Managers;
@@ -8,7 +7,6 @@ using Front.Helpers;
 namespace Front.Controllers
 {
     [RoutePrefix("users")]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UsersController : Controller
     {
         private readonly ICookieManager cookieManager;

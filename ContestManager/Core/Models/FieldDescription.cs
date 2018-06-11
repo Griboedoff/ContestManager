@@ -1,15 +1,14 @@
-﻿using System.Runtime.Serialization;
-using Core.Enums;
+﻿using Core.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Core.Models
 {
-    [DataContract]
     public class FieldDescription
     {
-        [DataMember]
         public string Title { get; set; }
 
-        [DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; set; }
     }
 }

@@ -1,1 +1,1 @@
-npm run dev-watch
+npm run dev-build

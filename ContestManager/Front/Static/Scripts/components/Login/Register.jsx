@@ -1,7 +1,7 @@
 import React from 'react';
 import {Alert, Button, Col, Form, FormControl, FormGroup, Tooltip, ControlLabel} from 'react-bootstrap';
 import Axios from 'axios';
-import {EmailValidator, LengthValidator, RussianLettersValidator} from "../Common/Validators";
+import {EmailValidator, LengthValidator, RussianLettersValidator} from "../../Common/Validators";
 import FormGroupWithTooltip from './FormGroupWithTooltip'
 
 const tt = (val) => <Tooltip id={`tooltipHelp${Math.random()}`}>{val}</Tooltip>;

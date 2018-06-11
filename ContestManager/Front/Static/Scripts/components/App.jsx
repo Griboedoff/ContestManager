@@ -3,8 +3,9 @@ import {Route} from "react-router-dom";
 import {withCookies} from 'react-cookie';
 
 import Header from "./Header";
-import Login from "./Login";
-import Register from "./Register";
+import Login from "./Login/Login";
+import Register from "./Login/Register";
+import ContestCreate from "./Contest/ContestCreate";
 
 class App extends React.Component {
     constructor(props, context) {
@@ -19,13 +20,16 @@ class App extends React.Component {
     render() {
         return [
             <Route key="header" path="/" render={(props) =>
-                <Header {...props} cookies={this.state.cookies} user={this.state.user} />}
+                <Header {...props} cookies={this.state.cookies} />}
             />,
             <Route key="login" path="/users/login" render={(props) =>
-                <Login {...props} user={this.state.user} onLogIn={this.onLogIn} />}
+                <Login {...props} onLogIn={this.onLogIn} />}
             />,
             <Route key="register" path="/users/register" render={(props) =>
                 <Register {...props} />}
+            />,
+            <Route key="CreateContest" path="/contests/create" render={(props) =>
+                <ContestCreate {...props} />}
             />
         ];
     };

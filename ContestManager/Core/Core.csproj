@@ -110,6 +110,8 @@
     <Compile Include="Managers\RegistrationManager.cs" />
     <Compile Include="Models\Configs\IConfig.cs" />
     <Compile Include="Models\Configs\VkAppConfig.cs" />
+    <Compile Include="Models\ContestField.cs" />
+    <Compile Include="Models\ContestFieldsModel.cs" />
     <Compile Include="Models\FieldDescription.cs" />
     <Compile Include="Models\PasswordToken.cs" />
     <Compile Include="Models\Mails\EmailBase.cs" />

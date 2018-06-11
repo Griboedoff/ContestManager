@@ -10,6 +10,7 @@ namespace Front
         {
             UnityConfig.RegisterComponents();
 
+            ValueProviderFactories.Factories.Add(new JsonValueProviderFactory());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             WebApiConfig.Register(GlobalConfiguration.Configuration);
