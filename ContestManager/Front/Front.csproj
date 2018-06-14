@@ -229,8 +229,6 @@
     <Content Include="Static\Scripts\components\Login\FormGroupWithTooltip.jsx" />
     <Content Include="Static\Scripts\components\Login\Login.jsx" />
     <Content Include="Static\Scripts\components\Login\Register.jsx" />
-    <Content Include="Static\Scripts\Front\base.js" />
-    <Content Include="Static\Scripts\Front\registration.js" />
     <Content Include="Static\Styles\main.css" />
     <Content Include="watch.cmd" />
     <Content Include="webpack.config.js" />
