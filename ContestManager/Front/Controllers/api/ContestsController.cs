@@ -45,7 +45,7 @@ namespace Front.Controllers.api
         }
 
         [HttpGet]
-        [Route("/:id")]
+        [Route(":id")]
         public string GetContestInfo(Guid contestId)
         {
             var contest = contestManager.Get(contestId);
@@ -54,7 +54,7 @@ namespace Front.Controllers.api
         }
 
         [HttpGet]
-        [Route("/:id/news")]
+        [Route(":id/news")]
         public string GetNews(Guid contestId)
         {
             var news = contestManager.GetNews(contestId);

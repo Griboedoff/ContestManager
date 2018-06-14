@@ -14,32 +14,55 @@ class App extends React.Component {
         super(props, context);
         const {cookies} = this.props;
 
-        this.state = {cookies: cookies};
+        this.state = {
+            cookies: cookies,
+            user: null
+        };
     };
 
-    onLogIn = () => this.render();
+    getUser = () => {
+        const str = this.state.cookies.get("CM-User");
+        let user = null;
+        if (str) {
+            const splitted = str.split('&');
+            user = {
+                name: splitted[1].split('=')[1],
+                role: splitted[2].split('=')[1],
+            };
+        }
+
+        this.setState({user: user});
+    };
+
+    onLogInOut = () => this.getUser();
+
+    componentDidMount() {
+        this.getUser();
+    }
 
     render() {
         return <Grid fluid>
             <Row>
                 <Route key="header" path="/" render={(props) =>
-                    <Header {...props} cookies={this.props.cookies} />}
+                    <Header {...props} cookies={this.state.cookies}
+                            onLogOut={this.onLogInOut}
+                            user={this.state.user} />}
                 />
             </Row>
             <Row>
                 <Col smOffset={2} sm={8}>
-                        <Route key="ContestList" exact path="/" render={(props) => 
-                            <ContestsList {...props} />}
-                        />
-                        <Route key="login" path="/users/login" render={(props) =>
-                            <Login {...props} onLogIn={this.onLogIn} />}
-                        />
-                        <Route key="register" path="/users/register" render={(props) =>
-                            <Register {...props} />}
-                        />
-                        <Route key="CreateContest" path="/contests/create" render={(props) =>
-                            <ContestCreate {...props} />}
-                        />
+                    <Route key="ContestList" exact path="/" render={(props) =>
+                        <ContestsList {...props} />}
+                    />
+                    <Route key="login" path="/users/login" render={(props) =>
+                        <Login {...props} onLogIn={this.onLogInOut} />}
+                    />
+                    <Route key="register" path="/users/register" render={(props) =>
+                        <Register {...props} />}
+                    />
+                    <Route key="CreateContest" path="/contests/create" render={(props) =>
+                        <ContestCreate {...props} />}
+                    />
                 </Col>
             </Row>
         </Grid>;

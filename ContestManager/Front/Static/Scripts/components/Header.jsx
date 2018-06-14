@@ -8,35 +8,23 @@ class Header extends Navbar {
     logOut = () => {
         this.props.cookies.remove("CM-User");
         this.props.history.push('/');
-        this.render();
+        
+        this.props.onLogOut();
     };
 
-    getUser = () => {
-        const str = this.props.cookies.get("CM-User");
-        let user = null;
-        if (str) {
-            const splitted = str.split('&');
-            user = {
-                name: splitted[1].split('=')[1],
-                role: splitted[2].split('=')[1],
-            };
-        }
-
-        return user;
-    };
 
     getUserSection = () => {
         const nameStyle = {
             fontWeight: 'bold'
         };
 
-        const user = this.getUser();
+        // const user = this.getUser();
 
-        if (user)
+        if (this.props.user)
             return (
                 <Nav pullRight>
-                    <NavItem style={nameStyle}> {user.name} </NavItem>
-                    {UserRole[user.role] & UserRole.ContestManager
+                    <NavItem style={nameStyle}> {this.props.user.name} </NavItem>
+                    {UserRole[this.props.user.role] & UserRole.ContestManager
                         ?
                         (<LinkContainer to="/contests/create">
                             <NavItem> Создать контест </NavItem>
