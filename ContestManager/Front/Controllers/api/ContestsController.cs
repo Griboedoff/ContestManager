@@ -1,9 +1,11 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
 using Core.Managers;
 using Core.Models;
 using Newtonsoft.Json;
 
-namespace Front.Controllers
+namespace Front.Controllers.api
 {
     [RoutePrefix("contests")]
     public class ContestsController : Controller
@@ -34,9 +36,21 @@ namespace Front.Controllers
         [Route("")]
         public string List()
         {
-            var contests = contestManager.GetAll();
+            var contests = contestManager.GetAll()
+                                         .OrderByDescending(c => c.CreationDate)
+                                         .Select(c => new { c.Title, c.Id })
+                                         .ToArray();
 
             return JsonConvert.SerializeObject(contests);
+        }
+
+        [HttpGet]
+        [Route("/:id")]
+        public string GetContestInfo(Guid contestId)
+        {
+            var contest = contestManager.Get(contestId);
+
+            return JsonConvert.SerializeObject(contest);
         }
     }
 }

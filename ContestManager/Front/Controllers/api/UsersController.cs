@@ -4,7 +4,7 @@ using Core.Exceptions;
 using Core.Managers;
 using Front.Helpers;
 
-namespace Front.Controllers
+namespace Front.Controllers.api
 {
     [RoutePrefix("users")]
     public class UsersController : Controller

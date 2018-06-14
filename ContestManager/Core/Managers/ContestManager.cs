@@ -31,6 +31,7 @@ namespace Core.Managers
                 Title = title,
                 OwnerId = ownerId,
                 Fields = fields,
+                CreationDate = DateTime.Now,
             };
 
             using (var db = contextFactory.Create())

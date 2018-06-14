@@ -71,6 +71,10 @@
     <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs">
       <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.cs" />
+    <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.Designer.cs">
+      <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\ContestOptions.cs" />
     <Compile Include="Enums\FieldType.cs" />
     <Compile Include="Exceptions\AuthenticationFailedException.cs" />
@@ -127,6 +131,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DataBaseMigrations\201803101602571_InitDataContext.resx">
       <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataBaseMigrations\201806141322199_CreationDateInContest.resx">
+      <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

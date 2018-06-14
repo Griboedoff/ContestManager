@@ -20,6 +20,9 @@ namespace Core.DataBaseEntities
         [Column]
         public ContestOptions Options { get; set; }
 
+        [Column]
+        public DateTime CreationDate { get; set; }
+
         [JsonIgnore]
         [Column]
         public string SerializedFields { get; set; }
