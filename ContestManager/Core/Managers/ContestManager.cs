@@ -14,7 +14,7 @@ namespace Core.Managers
         Contest Get(Guid contestId);
         Contest[] GetAll();
         News[] GetNews(Guid contestId);
-        void AddNews(Guid contestId, string content);
+        News AddNews(Guid contestId, string content);
     }
 
     public class ContestManager : IContestManager
