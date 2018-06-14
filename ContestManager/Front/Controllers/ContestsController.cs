@@ -18,7 +18,7 @@ namespace Front.Controllers
         }
 
         [HttpPost]
-        [Route("contests/create")]
+        [Route("")]
         public string Create(string name, string fields)
         {
             var user = cookieManager.GetUser(Request);
@@ -28,6 +28,15 @@ namespace Front.Controllers
                 JsonConvert.DeserializeObject<FieldDescription[]>(fields));
 
             return JsonConvert.SerializeObject(contest);
+        }
+
+        [HttpGet]
+        [Route("")]
+        public string List()
+        {
+            var contests = contestManager.GetAll();
+
+            return JsonConvert.SerializeObject(contests);
         }
     }
 }

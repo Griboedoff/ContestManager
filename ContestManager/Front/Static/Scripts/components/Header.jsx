@@ -1,6 +1,7 @@
 import React from 'react';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
 import {LinkContainer} from "react-router-bootstrap";
+import {Link} from 'react-router-dom';
 import UserRole from '../Common/UserRole';
 
 class Header extends Navbar {
@@ -34,7 +35,7 @@ class Header extends Navbar {
         if (user)
             return (
                 <Nav pullRight>
-                    <Navbar.Text style={nameStyle}> {user.name} </Navbar.Text>
+                    <NavItem style={nameStyle}> {user.name} </NavItem>
                     {UserRole[user.role] & UserRole.ContestManager
                         ?
                         (<LinkContainer to="/contests/create">
@@ -60,7 +61,7 @@ class Header extends Navbar {
             <Navbar staticTop inverse>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="/">ContestManager</a>
+                        <Link to="/">ContestManager</Link>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>

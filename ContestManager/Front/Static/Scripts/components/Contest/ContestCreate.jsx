@@ -14,6 +14,10 @@ class ContestCreate extends React.Component {
         };
     }
 
+    componentDidMount() {
+        document.title = "Создать соревнование";
+    }
+
     onClick = field => {
         if (field.title && field.fieldType) {
             this.setState(prevState => ({
@@ -31,7 +35,7 @@ class ContestCreate extends React.Component {
     handleNameChange = e => this.setState({name: e.target.value,});
 
     create = () => {
-        Axios.post('contests/create', {
+        Axios.post('contests', {
             name: this.state.name,
             fields: JSON.stringify(this.state.fields),
         })
@@ -39,7 +43,7 @@ class ContestCreate extends React.Component {
                     this.props.history.push(`/`);
                     this.props.onLogIn();
                 }
-            ).catch(() => this.setState({error: true}))
+            ).catch(() => this.setState({error: true}));
     };
 
     render() {
@@ -57,6 +61,7 @@ class ContestCreate extends React.Component {
                 </Form>
                 <br />
                 <ContestFields fields={this.state.fields} removeItem={this.removeItem} />
+                <br />
                 <CreateField onClick={this.onClick} />
                 <Button onClick={this.create}>Создать</Button>
             </div>

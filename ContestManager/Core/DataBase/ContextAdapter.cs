@@ -11,6 +11,7 @@ namespace Core.DataBase
         IQueryable<T> Set<T>() where T : DataBaseEntity;
         IQueryable<T> SetWithAttach<T>() where T : DataBaseEntity;
 
+        T[] GetAll<T>() where T : DataBaseEntity;
         T Find<T>(Guid id) where T : DataBaseEntity;
         T Read<T>(Guid id) where T : DataBaseEntity;
 
@@ -38,6 +39,9 @@ namespace Core.DataBase
 
         public IQueryable<T> SetWithAttach<T>() where T : DataBaseEntity
             => context.Set<T>();
+
+        public T[] GetAll<T>() where T : DataBaseEntity
+            => context.Set<T>().ToArray();
 
         public T Find<T>(Guid id) where T : DataBaseEntity
             => Set<T>().FirstOrDefault(e => e.Id == id);

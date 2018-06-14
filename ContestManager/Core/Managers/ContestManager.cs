@@ -11,6 +11,7 @@ namespace Core.Managers
         Contest Create(string title, Guid ownerId, FieldDescription[] fields);
         void Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
         Contest Get(Guid contestId);
+        Contest[] GetAll();
     }
 
     public class ContestManager : IContestManager
@@ -60,6 +61,12 @@ namespace Core.Managers
         {
             using (var db = contextFactory.Create())
                 return db.Read<Contest>(contestId);
+        }
+        
+        public Contest[] GetAll()
+        {
+            using (var db = contextFactory.Create())
+                return db.GetAll<Contest>();
         }
     }
 }
