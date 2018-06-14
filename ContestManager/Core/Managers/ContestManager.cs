@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Factories;
@@ -12,6 +13,8 @@ namespace Core.Managers
         void Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
         Contest Get(Guid contestId);
         Contest[] GetAll();
+        News[] GetNews(Guid contestId);
+        void AddNews(Guid contestId, string content);
     }
 
     public class ContestManager : IContestManager
@@ -63,11 +66,35 @@ namespace Core.Managers
             using (var db = contextFactory.Create())
                 return db.Read<Contest>(contestId);
         }
-        
+
         public Contest[] GetAll()
         {
             using (var db = contextFactory.Create())
                 return db.GetAll<Contest>();
+        }
+
+        public News[] GetNews(Guid contestId)
+        {
+            using (var db = contextFactory.Create())
+                return db.GetAll<News>().Where(n => n.ContestId == contestId).ToArray();
+        }
+
+        public News AddNews(Guid contestId, string content)
+        {
+            var news = new News
+            {
+                ContestId = contestId,
+                CreationDate = DateTime.Now,
+                MdContent = content,
+            };
+
+            using (var db = contextFactory.Create())
+            {
+                db.AttachToInsert(news);
+                db.SaveChanges();
+            }
+
+            return news;
         }
     }
 }

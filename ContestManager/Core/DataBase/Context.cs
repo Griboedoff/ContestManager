@@ -28,5 +28,6 @@ namespace Core.DataBase
         public virtual DbSet<StoredConfig> StoredConfigs { get; set; }
         public virtual DbSet<AuthenticationAccount> AuthenticationAccounts { get; set; }
         public virtual DbSet<EmailConfirmationRequest> EmailConfirmationRequests { get; set; }
+        public virtual DbSet<News> News { get; set; }
     }
 }

@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBaseEntities\Contest.cs" />
+    <Compile Include="DataBaseEntities\News.cs" />
     <Compile Include="DataBaseEntities\StoredConfig.cs" />
     <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.cs" />
     <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs">
@@ -74,6 +75,10 @@
     <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.cs" />
     <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.Designer.cs">
       <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataBaseMigrations\201806141414261_News.cs" />
+    <Compile Include="DataBaseMigrations\201806141414261_News.Designer.cs">
+      <DependentUpon>201806141414261_News.cs</DependentUpon>
     </Compile>
     <Compile Include="Enums\ContestOptions.cs" />
     <Compile Include="Enums\FieldType.cs" />
@@ -134,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataBaseMigrations\201806141322199_CreationDateInContest.resx">
       <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataBaseMigrations\201806141414261_News.resx">
+      <DependentUpon>201806141414261_News.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
