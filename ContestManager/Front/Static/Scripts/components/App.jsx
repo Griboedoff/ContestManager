@@ -48,7 +48,8 @@ class App extends React.Component {
         return <Grid fluid>
             <Row>
                 <Route key="header" path="/" render={(props) =>
-                    <Header {...props} cookies={this.state.cookies}
+                    <Header {...props}
+                            cookies={this.state.cookies}
                             onLogOut={this.setUser}
                             setContest={this.setContest}
                             user={this.state.user} />}

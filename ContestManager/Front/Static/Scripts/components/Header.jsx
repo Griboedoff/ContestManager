@@ -4,6 +4,10 @@ import {LinkContainer} from "react-router-bootstrap";
 import UserRole from '../Common/UserRole';
 
 class Header extends Navbar {
+    constructor(props) {
+        super(props);
+    }
+
     logOut = () => {
         this.props.cookies.remove("CM-User");
         this.props.history.push('/');
@@ -15,25 +19,44 @@ class Header extends Navbar {
         this.props.history.push('/');
     };
 
-    getUserSection = () => {
+    inContest = () => this.props.location.pathname.includes("contests");
+
+    getControls = user => {
         const nameStyle = {
             fontWeight: 'bold'
         };
 
-        // const user = this.getUser();
-
-        if (this.props.user)
-            return (
-                <Nav pullRight>
-                    <NavItem style={nameStyle}> {this.props.user.name} </NavItem>
-                    {UserRole[this.props.user.role] & UserRole.ContestManager
-                        ?
-                        (<LinkContainer to="/contests/create">
+        const isAdmin = UserRole[user.role] & UserRole.ContestManager;
+        const controls = isAdmin
+            ? (
+                !this.inContest()
+                    ? (
+                        <LinkContainer key="createContestLink" to="/contests/create">
                             <NavItem> Создать контест </NavItem>
-                        </LinkContainer>)
-                        : ""}
-                    <NavItem onClick={this.logOut}> Выйти </NavItem>
-                </Nav>);
+                        </LinkContainer>
+                    )
+                    : ([
+                        <LinkContainer key="addNewsLink" to="/contests/addnews">
+                            <NavItem> Добавить новость </NavItem>
+                        </LinkContainer>,
+                        <LinkContainer key="optionsLink" to="/contests/options">
+                            <NavItem> Настройки контеста </NavItem>
+                        </LinkContainer>
+                    ])
+            )
+            : "";
+
+        return (
+            <Nav pullRight>
+                <NavItem style={nameStyle}> {user.name} </NavItem>
+                {controls}
+                <NavItem onClick={this.logOut}> Выйти </NavItem>
+            </Nav>
+        );
+    };
+    getUserSection = () => {
+        if (this.props.user)
+            return this.getControls(this.props.user);
 
         return (
             <Nav pullRight>
@@ -43,7 +66,8 @@ class Header extends Navbar {
                 <LinkContainer to="/users/login">
                     <NavItem> Войти </NavItem>
                 </LinkContainer>
-            </Nav>);
+            </Nav>
+        );
     };
 
     render() {
