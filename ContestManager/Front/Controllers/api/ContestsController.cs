@@ -51,6 +51,15 @@ namespace Front.Controllers.api
             var news = contestManager.GetNews(id);
 
             return JsonConvert.SerializeObject(news);
+        }      
+        
+        [HttpGet]
+        [Route("{id}/info")]
+        public string Get(Guid id)
+        {
+            var contest = contestManager.Get(id);
+
+            return JsonConvert.SerializeObject(contest);
         }
     }
 }

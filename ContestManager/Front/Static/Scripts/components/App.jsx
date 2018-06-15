@@ -7,7 +7,7 @@ import Header from "./Header";
 import ContestsList from './ContestsList';
 import Login from "./Login/Login";
 import Register from "./Login/Register";
-import ContestNews from './Contest/ContestNews';
+import Contest from './Contest/Contest';
 import ContestCreate from "./Contest/ContestCreate";
 
 class App extends React.Component {
@@ -68,13 +68,12 @@ class App extends React.Component {
                     <Route key="CreateContest" path="/contests/create" render={(props) =>
                         <ContestCreate {...props} />}
                     />
-                    <Route key="News" path="/contests/:id" render={(props) =>
-                        <ContestNews {...props} setContest={this.setContest} />}
+                    <Route key="Contest" path="/contests/:id" render={(props) =>
+                        <Contest {...props}
+                                 setContest={this.setContest}
+                                 user={this.state.user}
+                                 contest={this.state.contest} />}
                     />
-                    <Route key="ContestHeader" path="/contests/:id" render={(props) => this.state.contest ?
-                        <h1>{this.state.contest.Title}</h1>
-                        : ""
-                    } />
                 </Col>
             </Row>
         </Grid>;

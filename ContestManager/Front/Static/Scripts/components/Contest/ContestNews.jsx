@@ -15,14 +15,13 @@ class ContestNews extends React.Component {
         super(props);
 
         this.state = {
-            contestId: props.match.params.id,
             news: [],
         };
     }
 
     componentWillMount() {
         Axios
-            .get(`/contests/${this.state.contestId}/news`)
+            .get(`/contests/${this.props.contest.Id}/news`)
             .then(r => this.setState({news: r.data}));
     }
 

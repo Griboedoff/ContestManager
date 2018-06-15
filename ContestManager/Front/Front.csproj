@@ -221,6 +221,7 @@
     <Content Include="Static\Scripts\Common\Validators.js" />
     <Content Include="Static\Scripts\components\App.jsx" />
     <Content Include="Static\Scripts\components\ContestsList.jsx" />
+    <Content Include="Static\Scripts\components\Contest\Contest.jsx" />
     <Content Include="Static\Scripts\components\Contest\ContestCreate.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestField.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestFieldHeader.jsx" />

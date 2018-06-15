@@ -18,7 +18,6 @@ export default class extends React.Component {
     }
 
     onClick = (to, contest) => {
-        this.props.setContest(contest);
         this.props.history.push(to);
     };
 
