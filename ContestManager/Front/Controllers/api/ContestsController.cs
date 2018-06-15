@@ -45,19 +45,10 @@ namespace Front.Controllers.api
         }
 
         [HttpGet]
-        [Route(":id")]
-        public string GetContestInfo(Guid contestId)
+        [Route("{id}/news")]
+        public string GetNews(Guid id)
         {
-            var contest = contestManager.Get(contestId);
-
-            return JsonConvert.SerializeObject(contest);
-        }
-
-        [HttpGet]
-        [Route(":id/news")]
-        public string GetNews(Guid contestId)
-        {
-            var news = contestManager.GetNews(contestId);
+            var news = contestManager.GetNews(id);
 
             return JsonConvert.SerializeObject(news);
         }

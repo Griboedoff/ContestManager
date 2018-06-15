@@ -17,7 +17,8 @@ export default class extends React.Component {
             .then(r => this.setState({contests: r.data}));
     }
 
-    onClick = to => {
+    onClick = (to, contest) => {
+        this.props.setContest(contest);
         this.props.history.push(to);
     };
 
@@ -33,7 +34,7 @@ export default class extends React.Component {
                     {this.state.contests.map(c => (
                         <ListGroupItem style={titleStyle}
                                        key={c.Id}
-                                       onClick={() => this.onClick(`/contests/contests/${c.Id}`)}>
+                                       onClick={() => this.onClick(`/contests/${c.Id}`, c)}>
                             {c.Title}
                         </ListGroupItem>))}
                 </ListGroup>);

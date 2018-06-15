@@ -226,7 +226,7 @@
     <Content Include="Static\Scripts\components\Contest\Field\ContestFieldHeader.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestFields.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\CreateField.jsx" />
-    <Content Include="Static\Scripts\components\Contest\News.jsx" />
+    <Content Include="Static\Scripts\components\Contest\ContestNews.jsx" />
     <Content Include="Static\Scripts\components\Header.jsx" />
     <Content Include="Static\Scripts\components\Login\FormGroupWithTooltip.jsx" />
     <Content Include="Static\Scripts\components\Login\Login.jsx" />

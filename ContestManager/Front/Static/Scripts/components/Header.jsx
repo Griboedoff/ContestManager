@@ -1,17 +1,19 @@
 import React from 'react';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
 import {LinkContainer} from "react-router-bootstrap";
-import {Link} from 'react-router-dom';
 import UserRole from '../Common/UserRole';
 
 class Header extends Navbar {
     logOut = () => {
         this.props.cookies.remove("CM-User");
         this.props.history.push('/');
-        
         this.props.onLogOut();
     };
 
+    toMain = () => {
+        this.props.setContest(null);
+        this.props.history.push('/');
+    };
 
     getUserSection = () => {
         const nameStyle = {
@@ -48,8 +50,8 @@ class Header extends Navbar {
         return (
             <Navbar staticTop inverse>
                 <Navbar.Header>
-                    <Navbar.Brand>
-                        <Link to="/">ContestManager</Link>
+                    <Navbar.Brand onClick={this.toMain}>
+                        ContestManager
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>

@@ -1,12 +1,13 @@
 import React from 'react';
-import {Col, Grid, Row} from 'react-bootstrap';
-import {Route, Switch} from "react-router-dom";
+import {Col, Grid, PageHeader, Row} from 'react-bootstrap';
+import {Route} from "react-router-dom";
 import {withCookies} from 'react-cookie';
 
 import Header from "./Header";
 import ContestsList from './ContestsList';
 import Login from "./Login/Login";
 import Register from "./Login/Register";
+import ContestNews from './Contest/ContestNews';
 import ContestCreate from "./Contest/ContestCreate";
 
 class App extends React.Component {
@@ -16,11 +17,12 @@ class App extends React.Component {
 
         this.state = {
             cookies: cookies,
-            user: null
+            user: null,
+            contest: null,
         };
     };
 
-    getUser = () => {
+    setUser = () => {
         const str = this.state.cookies.get("CM-User");
         let user = null;
         if (str) {
@@ -34,10 +36,12 @@ class App extends React.Component {
         this.setState({user: user});
     };
 
-    onLogInOut = () => this.getUser();
+    setContest = contest => {
+        this.setState({contest: contest});
+    };
 
     componentDidMount() {
-        this.getUser();
+        this.setUser();
     }
 
     render() {
@@ -45,17 +49,18 @@ class App extends React.Component {
             <Row>
                 <Route key="header" path="/" render={(props) =>
                     <Header {...props} cookies={this.state.cookies}
-                            onLogOut={this.onLogInOut}
+                            onLogOut={this.setUser}
+                            setContest={this.setContest}
                             user={this.state.user} />}
                 />
             </Row>
             <Row>
                 <Col smOffset={2} sm={8}>
                     <Route key="ContestList" exact path="/" render={(props) =>
-                        <ContestsList {...props} />}
+                        <ContestsList {...props} setContest={this.setContest} />}
                     />
                     <Route key="login" path="/users/login" render={(props) =>
-                        <Login {...props} onLogIn={this.onLogInOut} />}
+                        <Login {...props} onLogIn={this.setUser} />}
                     />
                     <Route key="register" path="/users/register" render={(props) =>
                         <Register {...props} />}
@@ -63,6 +68,13 @@ class App extends React.Component {
                     <Route key="CreateContest" path="/contests/create" render={(props) =>
                         <ContestCreate {...props} />}
                     />
+                    <Route key="News" path="/contests/:id" render={(props) =>
+                        <ContestNews {...props} setContest={this.setContest} />}
+                    />
+                    <Route key="ContestHeader" path="/contests/:id" render={(props) => this.state.contest ?
+                        <h1>{this.state.contest.Title}</h1>
+                        : ""
+                    } />
                 </Col>
             </Row>
         </Grid>;
