@@ -36,10 +36,10 @@ class Header extends Navbar {
                         </LinkContainer>
                     )
                     : ([
-                        <LinkContainer key="addNewsLink" to="/contests/addnews">
+                        <LinkContainer key="addNewsLink" to={`${this.props.location.pathname}/addnews`}>
                             <NavItem> Добавить новость </NavItem>
                         </LinkContainer>,
-                        <LinkContainer key="optionsLink" to="/contests/options">
+                        <LinkContainer key="optionsLink" to={`${this.props.location.pathname}/options`}>
                             <NavItem> Настройки контеста </NavItem>
                         </LinkContainer>
                     ])
@@ -54,6 +54,7 @@ class Header extends Navbar {
             </Nav>
         );
     };
+
     getUserSection = () => {
         if (this.props.user)
             return this.getControls(this.props.user);

@@ -219,6 +219,7 @@
     <Content Include="Static\Scripts\Common\FieldType.js" />
     <Content Include="Static\Scripts\Common\UserRole.js" />
     <Content Include="Static\Scripts\Common\Validators.js" />
+    <Content Include="Static\Scripts\components\AddNews.jsx" />
     <Content Include="Static\Scripts\components\App.jsx" />
     <Content Include="Static\Scripts\components\ContestsList.jsx" />
     <Content Include="Static\Scripts\components\Contest\Contest.jsx" />
@@ -237,7 +238,6 @@
     <Content Include="webpack.config.js" />
     <Content Include="package.json" />
     <Content Include="Sources\load.gif" />
-    <Content Include="Views\Contest\Index.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -250,7 +250,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Registration\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2,6 +2,7 @@ import React from 'react';
 import {Col, Grid, PageHeader, Row} from 'react-bootstrap';
 import {Route} from "react-router-dom";
 import {withCookies} from 'react-cookie';
+import AddNews from './AddNews';
 
 import Header from "./Header";
 import ContestsList from './ContestsList';
@@ -69,11 +70,14 @@ class App extends React.Component {
                     <Route key="CreateContest" path="/contests/create" render={(props) =>
                         <ContestCreate {...props} />}
                     />
-                    <Route key="Contest" path="/contests/:id" render={(props) =>
+                    <Route key="Contest" exact path="/contests/:id" render={(props) =>
                         <Contest {...props}
                                  setContest={this.setContest}
                                  user={this.state.user}
                                  contest={this.state.contest} />}
+                    />
+                    <Route key="AddNews" path="/contests/:id/addnews" render={(props) =>
+                        <AddNews {...props} contest={this.state.contest}/>}
                     />
                 </Col>
             </Row>
