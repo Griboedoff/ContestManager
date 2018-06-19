@@ -33,10 +33,6 @@ namespace Core.Managers
 
         public void Send(EmailBase mail)
         {
-            // todo xackill: дропнуть перед релизом
-            if (mail.To != "teinlevi@gmail.com")
-                throw new Exception("You can send only to teinlevi@gmail.com");
-
             using (var message = new MailMessage())
             {
                 message.IsBodyHtml = true;

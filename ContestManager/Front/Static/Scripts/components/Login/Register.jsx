@@ -136,7 +136,7 @@ class Register extends React.Component {
             name: `${this.state.surname} ${this.state.firstName} ${this.state.patronymic}`,
             email: this.state.email,
             password: this.state.password,
-            confirmationCode: this.state.confirmationCode,
+            confirmationCode: this.state.confirmCode,
 
         })
             .then((resp) => {

@@ -89,6 +89,8 @@ class Login extends React.Component {
                 }
             ).catch(() => this.setState({error: true}));
     };
+    handleEmailChange = (e) => this.setState({email: e.target.value});
+    handlePasswordChange = (e) => this.setState({password: e.target.value});
 
     render() {
         return [
@@ -105,7 +107,7 @@ class Login extends React.Component {
                         Email
                     </Col>
                     <Col sm={4}>
-                        <FormControl type="email" placeholder="Email" />
+                        <FormControl type="email" placeholder="Email" onChange={this.handleEmailChange} />
                     </Col>
                 </FormGroup>
 
@@ -114,7 +116,7 @@ class Login extends React.Component {
                         Password
                     </Col>
                     <Col sm={4}>
-                        <FormControl type="password" placeholder="Пароль" />
+                        <FormControl type="password" placeholder="Пароль" onChange={this.handlePasswordChange} />
                     </Col>
                 </FormGroup>
 
