@@ -1,11 +1,12 @@
 import React from 'react';
 import {ListGroup, Well} from 'react-bootstrap';
 import Axios from 'axios';
+import Markdown from 'react-markdown';
 
 function News({children}) {
     return (
         <li className="list-group-item">
-            <ReactMarkdown source={children} />
+            <Markdown source={children} />
         </li>
     );
 }
@@ -28,7 +29,7 @@ class ContestNews extends React.Component {
     render() {
         return this.state.news.length !== 0 ? (
             <ListGroup>
-                {this.state.news.map(n => <News >n</News>)}
+                {this.state.news.map(n => <News >{n.MdContent}</News>)}
             </ListGroup>
         ) : <Well>Скоро здесь появятся новости</Well>;
     }

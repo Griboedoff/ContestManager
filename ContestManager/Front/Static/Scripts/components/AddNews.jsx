@@ -7,14 +7,19 @@ import {UnControlled as CodeMirror} from 'react-codemirror2';
 import Markdown from 'react-markdown';
 import Axios from 'axios';
 
-class ContestNews extends React.Component {
+class AddNews extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             markdownSrc: 'asdasd',
             htmlMode: 'raw',
+            contestId: '',
         };
+    }
+
+    componentDidMount() {
+        this.setState({contestId: this.props.location.pathname.split('/')[2]});
     }
 
     handleMarkdownChange = (e, d, v) => {
@@ -22,10 +27,12 @@ class ContestNews extends React.Component {
     };
 
     addNews = () => {
+
         Axios.post("/news", {
-            news: this.state.markdownSrc,
-            contestId: this.props.constet.Id,
-        });
+            mdContent: this.state.markdownSrc,
+            contestId: this.state.contestId,
+        })
+            .then(() => this.props.history.push(`/contests/${this.state.contestId}`));
     };
 
     render() {
@@ -52,4 +59,4 @@ class ContestNews extends React.Component {
     }
 }
 
-export default ContestNews;
+export default AddNews;

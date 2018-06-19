@@ -36,6 +36,7 @@ namespace Front
             container.RegisterType<IRegistrationManager, RegistrationManager>();
             container.RegisterType<IAuthenticationManager, AuthenticationManager>();
             container.RegisterType<IContestManager, ContestManager>();
+            container.RegisterType<INewsManager, NewsManager>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
