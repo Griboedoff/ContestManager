@@ -26,9 +26,7 @@ class Contest extends Navbar {
     render() {
         if (this.props.contest) {
             return [
-                <ContestHeader key="ContestHeader"
-                               {...this.props}
-                               contest={this.props.contest}>
+                <ContestHeader key="ContestHeader" {...this.props}>
                     {this.props.contest.Title}
                 </ContestHeader>,
                 <ContestNews key="ContestNews" {...this.props} contest={this.props.contest} />

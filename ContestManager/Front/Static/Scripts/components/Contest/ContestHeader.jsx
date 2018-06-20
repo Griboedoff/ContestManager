@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button, Nav, Navbar, NavItem} from 'react-bootstrap';
 import UserRole from '../../Common/UserRole';
+import ParticipateModal from './ParticipateModal';
 
 class ContestHeader extends Navbar {
     constructor(props) {
@@ -21,8 +22,8 @@ class ContestHeader extends Navbar {
 
     buildNav = () => {
         const items = [];
-        if (UserRole[this.props.user.role] & UserRole.User)
-            items.push(<NavItem onClick={this.handleShow}>
+        if (this.props.user && UserRole[this.props.user.role] & UserRole.User)
+            items.push(<NavItem key="Participate" onClick={this.handleShow}>
                 Участвовать
             </NavItem>);
         return (
@@ -34,27 +35,11 @@ class ContestHeader extends Navbar {
 
     render() {
         return [
+            <h2 key="CTitle">{this.props.contest.Title}</h2>,
             <Navbar key="ContestHeader">
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        {this.props.contest.Title}
-                    </Navbar.Brand>
-                </Navbar.Header>
                 {this.buildNav()}
-            </Navbar>
-            ,
-
-            <Modal.Dialog>
-                <Modal.Header>
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>One fine body...</Modal.Body>
-
-                <Modal.Footer>
-                    <Button bsStyle="primary">Save changes</Button>
-                </Modal.Footer>
-            </Modal.Dialog>
+            </Navbar>            ,
+            <ParticipateModal key="ParticipateModal" {...this.props} show={this.state.show} handleHide={this.handleHide} />
         ];
     }
 }

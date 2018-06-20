@@ -2,21 +2,9 @@ import React from 'react';
 import {Alert, Button, Col, Form, FormControl, FormGroup, Tooltip, ControlLabel} from 'react-bootstrap';
 import Axios from 'axios';
 import {EmailValidator, LengthValidator, RussianLettersValidator} from "../../Common/Validators";
-import FormGroupWithTooltip from './FormGroupWithTooltip'
+import FormGroupWithTooltip from '../FormFields/FormGroupWithTooltip'
 
-const tt = (val) => <Tooltip id={`tooltipHelp${Math.random()}`}>{val}</Tooltip>;
 
-const overlay = (val, text) => {
-    switch (val) {
-        case 'error':
-            return tt(text);
-        case 'warning':
-            return tt("Обязательное поле");
-        case 'success':
-        case null:
-            return <div />;
-    }
-};
 const parseRegisterStatus = (s) => {
     switch (s) {
         case "EmailAlreadyUsed" :
@@ -198,45 +186,45 @@ class Register extends React.Component {
                 <FormGroupWithTooltip controlId="formHorizontalName"
                                       label="Имя"
                                       validationState={Register.validateNotEmptyName(this.state.firstName)}
-                                      overlay={overlay(Register.validateNotEmptyName(this.state.firstName), "Имя должно быть из русских букв")}
+                                      overlay="Имя должно быть из русских букв"
                                       value={this.state.firstName}
-                                      ph={"Иван"}
+                                      ph="Иван"
                                       onChange={this.handleNameChange} />
                 <FormGroupWithTooltip controlId="formHorizontalSurname"
                                       label="Фамилия"
                                       validationState={Register.validateNotEmptyName(this.state.surname)}
-                                      overlay={overlay(Register.validateNotEmptyName(this.state.surname), "Фамилия должнa быть из русских букв")}
+                                      overlay="Фамилия должнa быть из русских букв"
                                       value={this.state.surname}
-                                      ph={"Иванов"}
+                                      ph="Иванов"
                                       onChange={this.handleSurnameChange} />
                 <FormGroupWithTooltip controlId="formHorizontalFathersName"
                                       label="Отчество"
                                       validationState={Register.validateName(this.state.patronymic)}
-                                      overlay={overlay(Register.validateName(this.state.patronymic), "Отчество должно быть из русских букв")}
+                                      overlay="Отчество должно быть из русских букв"
                                       value={this.state.patronymic}
-                                      ph={"Иванович"}
+                                      ph="Иванович"
                                       onChange={this.handlePatronymicChange} />
                 <FormGroupWithTooltip controlId="formHorizontalEmail"
                                       label="Email"
                                       validationState={Register.validateEmail(this.state.email)}
-                                      overlay={overlay(Register.validateEmail(this.state.email), "Неверный формат")}
+                                      overlay="Неверный формат"
                                       value={this.state.email}
-                                      ph={"Email"}
+                                      ph="Email"
                                       onChange={this.handleEmailChange} />
                 <FormGroupWithTooltip controlId="formHorizontalPassword"
                                       label="Пароль"
                                       validationState={Register.validatePass(this.state.password)}
-                                      overlay={overlay(Register.validatePass(this.state.password), "Пароль должен быть длиннее 8 символов")}
+                                      overlay="Пароль должен быть длиннее 8 символов"
                                       value={this.state.password}
-                                      ph={""}
+                                      ph=""
                                       onChange={this.handlePassChange}
                                       type="password" />
                 <FormGroupWithTooltip controlId="formHorizontalRepeatPass"
                                       label="Повторите пароль"
                                       validationState={this.validatePassRepeat(this.state.passwordRepeat)}
-                                      overlay={overlay(this.validatePassRepeat(this.state.passwordRepeat), "Пароли не совпадают")}
+                                      overlay="Пароли не совпадают"
                                       value={this.state.passwordRepeat}
-                                      ph={""}
+                                      ph=""
                                       onChange={this.handlePassRepeatChange}
                                       type="password" />
                 <FormGroup

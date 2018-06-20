@@ -4,6 +4,18 @@ export class RussianLettersValidator {
     }
 }
 
+export class ValidSymbolValidator {
+    static validate(value) {
+        return /^[' а-яё0-9.,"]*$/i.test(value);
+    }
+}
+
+export class NumberValidator {
+    static validate(value) {
+        return /^['0-9"]*$/i.test(value);
+    }
+}
+
 export class LengthValidator {
     constructor(min, max) {
         this.min = min;
