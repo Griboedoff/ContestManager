@@ -1,5 +1,6 @@
 import React from 'react';
 import {Navbar} from 'react-bootstrap';
+import ContestHeader from './ContestHeader';
 import ContestNews from './ContestNews';
 import Axios from 'axios';
 
@@ -25,7 +26,11 @@ class Contest extends Navbar {
     render() {
         if (this.props.contest) {
             return [
-                <h1 key="ContestHeader">{this.props.contest.Title}</h1>,
+                <ContestHeader key="ContestHeader"
+                               {...this.props}
+                               contest={this.props.contest}>
+                    {this.props.contest.Title}
+                </ContestHeader>,
                 <ContestNews key="ContestNews" {...this.props} contest={this.props.contest} />
             ];
         }

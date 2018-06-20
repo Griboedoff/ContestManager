@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
@@ -224,6 +224,7 @@
     <Content Include="Static\Scripts\components\ContestsList.jsx" />
     <Content Include="Static\Scripts\components\Contest\Contest.jsx" />
     <Content Include="Static\Scripts\components\Contest\ContestCreate.jsx" />
+    <Content Include="Static\Scripts\components\Contest\ContestHeader.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestField.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestFieldHeader.jsx" />
     <Content Include="Static\Scripts\components\Contest\Field\ContestFields.jsx" />
@@ -252,7 +253,6 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

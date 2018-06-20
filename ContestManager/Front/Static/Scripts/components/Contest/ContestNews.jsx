@@ -29,7 +29,7 @@ class ContestNews extends React.Component {
     render() {
         return this.state.news.length !== 0 ? (
             <ListGroup>
-                {this.state.news.map(n => <News >{n.MdContent}</News>)}
+                {this.state.news.map(n => <News key={n.Id}>{n.MdContent}</News>)}
             </ListGroup>
         ) : <Well>Скоро здесь появятся новости</Well>;
     }
