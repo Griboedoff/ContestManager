@@ -37,6 +37,7 @@ namespace Core.Managers
                 OwnerId = ownerId,
                 Fields = fields,
                 CreationDate = DateTime.Now,
+                State = ContestState.RegistrationOpen,
             };
 
             using (var db = contextFactory.Create())

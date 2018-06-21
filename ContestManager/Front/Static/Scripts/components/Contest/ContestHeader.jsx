@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Nav, Navbar, NavItem} from 'react-bootstrap';
+import {Nav, Navbar, NavItem} from 'react-bootstrap';
 import UserRole from '../../Common/UserRole';
 import ParticipateModal from './ParticipateModal';
 
@@ -22,7 +22,7 @@ class ContestHeader extends Navbar {
 
     buildNav = () => {
         const items = [];
-        if (this.props.user && UserRole[this.props.user.role] & UserRole.User)
+        if (this.props.user && UserRole[this.props.user.role] === UserRole.User)
             items.push(<NavItem key="Participate" onClick={this.handleShow}>
                 Участвовать
             </NavItem>);

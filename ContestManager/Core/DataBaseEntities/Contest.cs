@@ -19,6 +19,9 @@ namespace Core.DataBaseEntities
 
         [Column]
         public ContestOptions Options { get; set; }
+        
+        [Column]
+        public ContestState State { get; set; }
 
         [Column]
         public DateTime CreationDate { get; set; }
@@ -37,5 +40,15 @@ namespace Core.DataBaseEntities
                 ? null
                 : JsonConvert.SerializeObject(value);
         }
+    }
+
+    public enum ContestState
+    {
+        RegistrationOpen = 0,
+        RegistrationClosed = 100,
+        Running = 200,
+        Checking = 300,
+        Finished = 400,
+        
     }
 }
