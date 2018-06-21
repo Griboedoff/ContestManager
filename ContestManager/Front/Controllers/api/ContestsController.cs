@@ -12,11 +12,13 @@ namespace Front.Controllers.api
     {
         private readonly ICookieManager cookieManager;
         private readonly IContestManager contestManager;
+        private readonly IUserManager userManager;
 
-        public ContestsController(ICookieManager cookieManager, IContestManager contestManager)
+        public ContestsController(ICookieManager cookieManager, IContestManager contestManager, IUserManager userManager)
         {
             this.cookieManager = cookieManager;
             this.contestManager = contestManager;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -60,6 +62,16 @@ namespace Front.Controllers.api
             var contest = contestManager.Get(id);
 
             return JsonConvert.SerializeObject(contest);
+        }
+        
+        [HttpPost]
+        [Route("{id}/participate")]
+        public void Participate(Guid id, FieldWithValue[] values)
+        {
+            var user = cookieManager.GetUser(Request);
+
+            userManager.FillFields(id, values);
+            contestManager.AddParticipant(id, user.Id);
         }
     }
 }

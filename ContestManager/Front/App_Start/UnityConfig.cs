@@ -33,7 +33,7 @@ namespace Front
 
             container.RegisterType<IEmailManager, EmailManager>();
             container.RegisterType<ISecurityManager, SecurityManager>();
-            container.RegisterType<IRegistrationManager, RegistrationManager>();
+            container.RegisterType<IUserManager, UserManager>();
             container.RegisterType<IAuthenticationManager, AuthenticationManager>();
             container.RegisterType<IContestManager, ContestManager>();
             container.RegisterType<INewsManager, NewsManager>();

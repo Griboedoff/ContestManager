@@ -11,15 +11,15 @@ namespace Front.Controllers.api
     {
         private readonly ICookieManager cookieManager;
         private readonly IAuthenticationManager authenticationManager;
-        private readonly IRegistrationManager registrationManager;
+        private readonly IUserManager userManager;
 
         public UsersController(ICookieManager cookieManager,
             IAuthenticationManager authenticationManager,
-            IRegistrationManager registrationManager)
+            IUserManager userManager)
         {
             this.cookieManager = cookieManager;
             this.authenticationManager = authenticationManager;
-            this.registrationManager = registrationManager;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace Front.Controllers.api
         [Route("register/email")]
         public RegistrationStatus CreateEmailRegistrationRequest(string email)
         {
-            return registrationManager.CreateEmailRegistrationRequest(email);
+            return userManager.CreateEmailRegistrationRequest(email);
         }
 
         [HttpPost]
@@ -74,14 +74,14 @@ namespace Front.Controllers.api
         public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email,
             string password, string confirmationCode)
         {
-            return registrationManager.ConfirmEmailRegistrationRequest(name, email, password, confirmationCode);
+            return userManager.ConfirmEmailRegistrationRequest(name, email, password, confirmationCode);
         }
 
         [HttpPost]
         [Route("register/vk")]
         public RegistrationStatus RegisterByVk(string name, string vkId)
         {
-            return registrationManager.RegisterByVk(name, vkId);
+            return userManager.RegisterByVk(name, vkId);
         }
     }
 }

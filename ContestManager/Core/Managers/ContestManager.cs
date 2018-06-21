@@ -16,6 +16,7 @@ namespace Core.Managers
         News[] GetNews(Guid contestId);
         News AddNews(Guid contestId, string content);
         bool Exists(Guid contestId);
+        void AddParticipant(Guid contestId, Guid userId);
     }
 
     public class ContestManager : IContestManager
@@ -102,6 +103,21 @@ namespace Core.Managers
         {
             using (var db = contextFactory.Create())
                 return db.Find<Contest>(contestId) != null;
+        }
+
+        public void AddParticipant(Guid contestId, Guid userId)
+        {
+            var participant = new Participant
+            {
+                ContestId = contestId,
+                UserId = userId,
+            };
+
+            using (var db = contextFactory.Create())
+            {
+                db.AttachToInsert(participant);
+                db.SaveChanges();
+            }
         }
     }
 }
