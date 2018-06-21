@@ -1,22 +1,27 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
 using Core.Enums.RequestStatuses;
 using Core.Factories;
+using Core.Models;
 using Core.Models.Mails;
 
 namespace Core.Managers
 {
-    public interface IRegistrationManager
+    public interface IUserManager
     {
         RegistrationStatus CreateEmailRegistrationRequest(string email);
-        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode);
+
+        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password,
+            string confirmationCode);
 
         RegistrationStatus RegisterByVk(string name, string vkId);
+        void FillFields(Guid userId, FieldWithValue[] fields);
     }
 
-    public class RegistrationManager : IRegistrationManager
+    public class UserManager : IUserManager
     {
         private readonly IUserFactory userFactory;
         private readonly IEmailManager emailManager;
@@ -24,11 +29,11 @@ namespace Core.Managers
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
         private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
 
-        public RegistrationManager(
-            IUserFactory userFactory, 
-            IEmailManager emailManager, 
-            IContextAdapterFactory contextFactory, 
-            IAuthenticationAccountFactory authenticationAccountFactory, 
+        public UserManager(
+            IUserFactory userFactory,
+            IEmailManager emailManager,
+            IContextAdapterFactory contextFactory,
+            IAuthenticationAccountFactory authenticationAccountFactory,
             IEmailConfirmationRequestFactory emailConfirmationRequestFactory)
         {
             this.userFactory = userFactory;
@@ -55,13 +60,16 @@ namespace Core.Managers
             return RegistrationStatus.RequestCreated;
         }
 
-        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode)
+        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password,
+            string confirmationCode)
         {
             using (var db = contextFactory.Create())
             {
                 var request = db
-                    .SetWithAttach<EmailConfirmationRequest>()
-                    .FirstOrDefault(r => r.Type == ConfirmationType.Registration && r.Email == email && r.ConfirmationCode == confirmationCode);
+                              .SetWithAttach<EmailConfirmationRequest>()
+                              .FirstOrDefault(r =>
+                                  r.Type == ConfirmationType.Registration && r.Email == email &&
+                                  r.ConfirmationCode == confirmationCode);
 
                 if (request == null)
                     return RegistrationStatus.WrongConfirmationCode;
@@ -100,6 +108,20 @@ namespace Core.Managers
             }
 
             return RegistrationStatus.Success;
+        }
+
+        public void FillFields(Guid userId, FieldWithValue[] fields)
+        {
+            using (var db = contextFactory.Create())
+            {
+                var user = db.FindAndAttach<User>(userId);
+                foreach (var field in fields)
+                    foreach (var userField in user.Fields)
+                        if (userField.Title == field.Title)
+                            userField.Value = field.Value;
+
+                db.SaveChanges();
+            }
         }
 
         private static bool IsServiceIdAlreadyUsed(IContextAdapter db, string serviceId)
