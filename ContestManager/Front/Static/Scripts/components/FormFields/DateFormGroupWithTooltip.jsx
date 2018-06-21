@@ -8,8 +8,9 @@ class DateFormGroupWithTooltip extends React.Component {
                                      validationState={null}
                                      overlay={this.props.overlay}
                                      value={this.props.value}
-                                     onChange={this.onChange}
+                                     onChange={this.props.onChange}
                                      ph=""
+                                     size={7}
                                      type="date" />;
     }
 }

@@ -70,7 +70,7 @@ namespace Front.Controllers.api
         {
             var user = cookieManager.GetUser(Request);
 
-            userManager.FillFields(id, values);
+            userManager.FillFields(user.Id, values);
             contestManager.AddParticipant(id, user.Id);
         }
     }

@@ -23,20 +23,17 @@ namespace Core.Managers
 
     public class UserManager : IUserManager
     {
-        private readonly IUserFactory userFactory;
         private readonly IEmailManager emailManager;
         private readonly IContextAdapterFactory contextFactory;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
         private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
 
         public UserManager(
-            IUserFactory userFactory,
             IEmailManager emailManager,
             IContextAdapterFactory contextFactory,
             IAuthenticationAccountFactory authenticationAccountFactory,
             IEmailConfirmationRequestFactory emailConfirmationRequestFactory)
         {
-            this.userFactory = userFactory;
             this.emailManager = emailManager;
             this.contextFactory = contextFactory;
             this.authenticationAccountFactory = authenticationAccountFactory;
@@ -77,7 +74,7 @@ namespace Core.Managers
                 if (request.IsUsed)
                     return RegistrationStatus.RequestAlreadyUsed;
 
-                var user = userFactory.Create(name, UserRole.User);
+                var user = Create(name, UserRole.User);
                 db.AttachToInsert(user);
 
                 var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
@@ -98,7 +95,7 @@ namespace Core.Managers
                 if (IsServiceIdAlreadyUsed(db, vkId))
                     return RegistrationStatus.VkIdAlreadyUsed;
 
-                var user = userFactory.Create(name, UserRole.User);
+                var user = Create(name, UserRole.User);
                 db.AttachToInsert(user);
 
                 var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
@@ -115,11 +112,14 @@ namespace Core.Managers
             using (var db = contextFactory.Create())
             {
                 var user = db.FindAndAttach<User>(userId);
-                foreach (var field in fields)
-                    foreach (var userField in user.Fields)
+                var userFields = user.Fields.ToList();
+                foreach (var userField in userFields)
+                    foreach (var field in fields)
                         if (userField.Title == field.Title)
                             userField.Value = field.Value;
+                userFields.AddRange(fields.Where(f => !user.Fields.Contains(f)));
 
+                user.Fields = userFields.ToArray();
                 db.SaveChanges();
             }
         }
@@ -131,6 +131,17 @@ namespace Core.Managers
         {
             var mail = new RegistrationConfirmEmail(request.Email, request.ConfirmationCode);
             emailManager.Send(mail);
+        }
+
+        private static User Create(string userName, UserRole role)
+        {
+            return new User
+            {
+                Id = Guid.NewGuid(),
+                Name = userName,
+                Role = role,
+                Fields = new FieldWithValue[0],
+            };
         }
     }
 }

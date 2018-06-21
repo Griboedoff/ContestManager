@@ -118,7 +118,6 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factories\AuthenticationAccountFactory.cs" />
     <Compile Include="Managers\SecurityManager.cs" />
-    <Compile Include="Factories\UserFactory.cs" />
     <Compile Include="Factories\EmailConfirmationRequestFactory.cs" />
     <Compile Include="Factories\ContextAdapterFactory.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />

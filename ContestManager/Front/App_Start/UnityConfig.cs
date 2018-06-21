@@ -21,7 +21,6 @@ namespace Front
 
             RegisterStoredConfigs(container);
 
-            container.RegisterType<IUserFactory, UserFactory>();
             container.RegisterType<ICookieManager, CookieManager>();
             container.RegisterType<IContextAdapterFactory, ContextAdapterFactory>();
             container.RegisterType<IAuthenticationAccountFactory, AuthenticationAccountFactory>();

@@ -5,7 +5,7 @@ import FormGroupWithTooltip from './FormGroupWithTooltip';
 class NumberFormGroupWithTooltip extends React.Component {
     validateValue = (val) => val
         ? (NumberValidator.validate(val)
-            ? 'success'
+            ? null
             : 'error')
         : null;
 
@@ -13,10 +13,11 @@ class NumberFormGroupWithTooltip extends React.Component {
         return <FormGroupWithTooltip controlId={this.props.controlId}
                                      label={this.props.label}
                                      validationState={this.validateValue(this.props.value)}
-                                     overlay={this.props.overlay}
+                                     overlay="только цифры"
                                      value={this.props.value}
-                                     onChange={this.onChange}
+                                     onChange={this.props.onChange}
                                      ph=""
+                                     size={7}
                                      type="input" />;
     }
 }

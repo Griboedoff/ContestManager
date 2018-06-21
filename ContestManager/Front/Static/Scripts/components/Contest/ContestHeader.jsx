@@ -38,8 +38,10 @@ class ContestHeader extends Navbar {
             <h2 key="CTitle">{this.props.contest.Title}</h2>,
             <Navbar key="ContestHeader">
                 {this.buildNav()}
-            </Navbar>            ,
-            <ParticipateModal key="ParticipateModal" {...this.props} show={this.state.show} handleHide={this.handleHide} />
+            </Navbar>,
+            <ParticipateModal key="ParticipateModal" {...this.props}
+                              show={this.state.show}
+                              handleHide={this.handleHide} />
         ];
     }
 }

@@ -22,7 +22,7 @@ class FormGroupWithTooltip extends React.Component {
 
     render() {
         const formControl = (
-            <Col sm={5}>
+            <Col sm={this.props.size || 5}>
                 <FormControl type={this.props.type}
                              value={this.props.value}
                              placeholder={this.props.ph}

@@ -1,58 +1,52 @@
 import React from 'react';
-import {Button, Navbar, Modal, Form} from 'react-bootstrap';
+import {Button, Modal, Form, Alert} from 'react-bootstrap';
 import DateFormGroupWithTooltip from '../FormFields/DateFormGroupWithTooltip';
 import NumberFormGroupWithTooltip from '../FormFields/NumberFormGroupWithTooltip';
 import StringFormGroupWithTooltip from '../FormFields/StringFormGroupWithTooltip';
+import Axios from 'axios';
 
 class ParticipateModal extends React.Component {
     constructor(props) {
         super(props);
 
-        const val = [];
-        for (let _ in props.contest.Fields) {
-            val.push('');
-        }
-
-        this.state = {
-            values: val,
-        };
+        this.state = {error: false};
+        for (let f of props.contest.Fields)
+            this.state[f.Title] = '';
     }
 
-    handleChange = (i) => {
-        return function(e) {
-            console.log(123213)
-            const newValues = this.state.values.slice();
-            newValues[i] = e.target.valueOf();
-            this.setState({values: newValues});
-        };
-    };
+    handleChange = (k) => (e) => this.setState({
+        error: false,
+        [k]: e.target.value
+    });
 
-    createFields(fields) {
+    createFields = (fields) => {
         const res = [];
         for (let i = 0; i < fields.length; i++) {
             const f = fields[i];
+            let handleChange = this.handleChange(f.Title);
+
             let comp;
-            let handleChange = this.handleChange(i);
             switch (f.FieldType) {
                 case "String":
-                    comp = <StringFormGroupWithTooltip onChange={handleChange}
-                                                       value={this.state.values[i]}
+                    comp = <StringFormGroupWithTooltip key={f.Title}
+                                                       onChange={handleChange}
+                                                       value={this.state[f.Title]}
                                                        label={f.Title}
                                                        overlay=""
-                                                       controlId={`f${i}`}
-
-                    />;
+                                                       controlId={`f${i}`} />;
                     break;
                 case "Number":
-                    comp = <NumberFormGroupWithTooltip onChange={handleChange}
-                                                       value={this.state.values[i]}
+                    comp = <NumberFormGroupWithTooltip key={f.Title}
+                                                       onChange={handleChange}
+                                                       value={this.state[f.Title]}
                                                        label={f.Title}
                                                        overlay=""
                                                        controlId={`f${i}`} />;
                     break;
                 case "Date":
-                    comp = <DateFormGroupWithTooltip onChange={handleChange}
-                                                     value={this.state.values[i]}
+                    comp = <DateFormGroupWithTooltip key={f.Title}
+                                                     onChange={handleChange}
+                                                     value={this.state[f.Title]}
                                                      label={f.Title}
                                                      overlay=""
                                                      controlId={`f${i}`} />;
@@ -63,18 +57,36 @@ class ParticipateModal extends React.Component {
         }
 
         return res;
-    }
+    };
 
     send = () => {
-
+        console.log(this.state);
+        const fields = [];
+        for (let f of this.props.contest.Fields)
+            if (!this.state[f.Title])
+                fields.push(f.Title);
+        if (fields.length)
+            this.setState({error: fields});
+        else
+            Axios
+                .post(`/contests/${this.props.contest.Id}/participate`,
+                    this.props.contest.Fields.map(f => {
+                        return {
+                            Title: f.Title,
+                            value: this.state[f.Title]
+                        };
+                    })
+                )
+                .then(this.props.handleHide());
     };
 
     render() {
         return (
-            <Modal show={this.props.show} onHide={this.props.handleHide}>
+            <Modal key="Modal" show={this.props.show} onHide={this.props.handleHide}>
                 <Modal.Header closeButton>
                     <Modal.Title>Заполните форму регистрации</Modal.Title>
                 </Modal.Header>
+                {this.state.error ? <Alert bsStyle='danger'>Заполните поля: {this.state.error.join(', ')}</Alert> : ''}
                 <Modal.Body>
                     <Form style={{display: 'grid'}}>
                         {this.createFields(this.props.contest.Fields)}
