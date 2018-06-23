@@ -22,10 +22,13 @@ class ContestHeader extends Navbar {
 
     buildNav = () => {
         const items = [];
-        if (this.props.user && UserRole[this.props.user.role] === UserRole.User)
-            items.push(<NavItem key="Participate" onClick={this.handleShow}>
-                Участвовать
-            </NavItem>);
+        if (this.props.user
+            && UserRole[this.props.user.role] === UserRole.User
+            && this.props.contest.State === "RegistrationOpen")
+            items.push(
+                <NavItem key="Participate" onClick={this.handleShow}>
+                    Участвовать
+                </NavItem>);
         return (
             <Nav>
                 {items}
