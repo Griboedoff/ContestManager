@@ -32,7 +32,6 @@ class Header extends Navbar {
                 <LinkContainer key="createContestLink" to="/contests/create">
                     <NavItem> Создать контест </NavItem>
                 </LinkContainer>
-                    
             )
             : "";
 
