@@ -1,5 +1,6 @@
 import React from 'react';
 import {Navbar} from 'react-bootstrap';
+import {Route, Switch} from 'react-router-dom';
 import ContestHeader from './ContestHeader';
 import ContestNews from './ContestNews';
 import Axios from 'axios';
@@ -29,7 +30,14 @@ class Contest extends Navbar {
                 <ContestHeader key="ContestHeader" {...this.props}>
                     {this.props.contest.Title}
                 </ContestHeader>,
-                <ContestNews key="ContestNews" {...this.props} contest={this.props.contest} />
+                <Switch>
+                    <Route key="ContestNews" exact path="" render={(props) =>
+                        <ContestNews {...props} contest={this.props.contest} />}
+                    />   
+                    <Route key="Results" path="results" render={(props) =>
+                        <ContestResults {...props} contest={this.props.contest} />}
+                    />
+                </Switch>
             ];
         }
 

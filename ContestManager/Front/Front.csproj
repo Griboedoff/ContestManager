@@ -216,6 +216,7 @@
     </Content>
     <Content Include="Static\Scripts\App.js" />
     <Content Include="Static\Scripts\AppDispatcher.js" />
+    <Content Include="Static\Scripts\Common\ContestState.js" />
     <Content Include="Static\Scripts\Common\FieldType.js" />
     <Content Include="Static\Scripts\Common\UserRole.js" />
     <Content Include="Static\Scripts\Common\Validators.js" />

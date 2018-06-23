@@ -93,6 +93,10 @@
     <Compile Include="DataBaseMigrations\201806211318560_ContestState.Designer.cs">
       <DependentUpon>201806211318560_ContestState.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataBaseMigrations\201806230931108_Results.cs" />
+    <Compile Include="DataBaseMigrations\201806230931108_Results.Designer.cs">
+      <DependentUpon>201806230931108_Results.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\ContestOptions.cs" />
     <Compile Include="Enums\FieldType.cs" />
     <Compile Include="Exceptions\AuthenticationFailedException.cs" />
@@ -165,6 +169,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataBaseMigrations\201806211318560_ContestState.resx">
       <DependentUpon>201806211318560_ContestState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataBaseMigrations\201806230931108_Results.resx">
+      <DependentUpon>201806230931108_Results.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

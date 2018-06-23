@@ -2,6 +2,7 @@ import React from 'react';
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap/lib/ReactRouterBootstrap';
 import UserRole from '../../Common/UserRole';
+import ContestState from '../../Common/ContestState';
 import ParticipateModal from './ParticipateModal';
 
 class ContestHeader extends Navbar {
@@ -25,17 +26,19 @@ class ContestHeader extends Navbar {
         const items = [];
         if (this.props.user
             && UserRole[this.props.user.role] === UserRole.User
-            && this.props.contest.State === "RegistrationOpen")
+            && this.props.contest.State === ContestState.RegistrationOpen)
             items.push(
                 <NavItem key="Participate" onClick={this.handleShow}>
                     Участвовать
                 </NavItem>);
-        if (this.props.contest.State === "")
+        if (this.props.contest.State === ContestState.Finished)
             items.push(
-                <NavItem key="Participate" onClick={this.handleShow}>
-                    Участвовать
-                </NavItem>);
-        
+                <LinkContainer key="results" to={`${this.props.location.pathname}/results`}>
+                    <NavItem>
+                        Результаты
+                    </NavItem>
+                </LinkContainer>);
+
         if (this.props.user
             && UserRole[this.props.user.role] & UserRole.Admin)
             items.push(
