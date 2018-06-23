@@ -27,22 +27,12 @@ class Header extends Navbar {
         };
 
         const isAdmin = UserRole[user.role] & UserRole.ContestManager;
-        const controls = isAdmin
+        const controls = isAdmin && !this.inContest()
             ? (
-                !this.inContest()
-                    ? (
-                        <LinkContainer key="createContestLink" to="/contests/create">
-                            <NavItem> Создать контест </NavItem>
-                        </LinkContainer>
-                    )
-                    : ([
-                        <LinkContainer key="addNewsLink" to={`${this.props.location.pathname}/addnews`}>
-                            <NavItem> Добавить новость </NavItem>
-                        </LinkContainer>,
-                        <LinkContainer key="optionsLink" to={`${this.props.location.pathname}/options`}>
-                            <NavItem> Настройки контеста </NavItem>
-                        </LinkContainer>
-                    ])
+                <LinkContainer key="createContestLink" to="/contests/create">
+                    <NavItem> Создать контест </NavItem>
+                </LinkContainer>
+                    
             )
             : "";
 
