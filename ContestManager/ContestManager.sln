@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Front", "Front\Front.csproj", "{6CA79378-589C-4DB5-A44D-ACEAF3119D59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Front.React", "Front.React\Front.React.csproj", "{6DCF5614-A5B0-4F45-8A64-3B4763638253}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6CA79378-589C-4DB5-A44D-ACEAF3119D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CA79378-589C-4DB5-A44D-ACEAF3119D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CA79378-589C-4DB5-A44D-ACEAF3119D59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DCF5614-A5B0-4F45-8A64-3B4763638253}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DCF5614-A5B0-4F45-8A64-3B4763638253}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DCF5614-A5B0-4F45-8A64-3B4763638253}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DCF5614-A5B0-4F45-8A64-3B4763638253}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
