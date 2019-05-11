@@ -11,7 +11,7 @@ namespace Core.DataBaseEntities
 
         [Column]
         public Guid UserId { get; set; }
-        
+
         [JsonIgnore]
         [Column]
         public string SerializedResults { get; set; }

@@ -23,19 +23,19 @@ namespace Core.Managers
 
         public PasswordToken CreatePasswordToken(string userPassword)
         {
-            var sult = dataGenerator.GenerateSequence(FieldsLength.Sult);
-            var hash = GetHash(userPassword, sult);
+            var salt = dataGenerator.GenerateSequence(FieldsLength.Salt);
+            var hash = GetHash(userPassword, salt);
 
-            return new PasswordToken { Sult = sult, Base64Hash = hash.ToBase64() };
+            return new PasswordToken { Salt = salt, Base64Hash = hash.ToBase64() };
         }
 
         public bool ValidatePassword(PasswordToken token, string password)
         {
-            var hash = GetHash(password, token.Sult);
+            var hash = GetHash(password, token.Salt);
             return hash.ToBase64() == token.Base64Hash;
         }
 
-        private byte[] GetHash(string password, string sult)
-            => cryptoHelper.ComputeSHA1((password + sult).ToBytes());
+        private byte[] GetHash(string password, string salt)
+            => cryptoHelper.ComputeSHA1((password + salt).ToBytes());
     }
 }

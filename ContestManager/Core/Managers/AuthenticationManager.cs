@@ -67,7 +67,7 @@ namespace Core.Managers
 
                 if (account == default(AuthenticationAccount))
                     throw new AuthenticationFailedException();
-                
+
                 return db.Read<User>(account.UserId);
             }
         }

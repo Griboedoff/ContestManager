@@ -1,7 +1,7 @@
 ﻿namespace Core.DataBaseMigrations
 {
     using System.Data.Entity.Migrations;
-    
+
     public partial class News : DbMigration
     {
         public override void Up()
@@ -20,7 +20,7 @@
                 .Index(t => t.ContestId);
             
         }
-        
+
         public override void Down()
         {
             DropForeignKey("public.News", "ContestId", "public.Contests");

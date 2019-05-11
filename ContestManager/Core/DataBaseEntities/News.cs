@@ -7,8 +7,9 @@ namespace Core.DataBaseEntities
     {
         [ForeignKey("Contest")]
         public Guid ContestId { get; set; }
-        
+
         public Contest Contest { get; set; }
+
         [Column]
         public DateTime CreationDate{ get; set; }
 

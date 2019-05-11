@@ -19,7 +19,7 @@ namespace Core.DataBaseEntities
 
         [Column]
         public ContestOptions Options { get; set; }
-        
+
         [Column]
         public ContestState State { get; set; }
 
@@ -49,6 +49,5 @@ namespace Core.DataBaseEntities
         Running = 200,
         Checking = 300,
         Finished = 400,
-        
     }
 }

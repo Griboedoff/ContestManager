@@ -1,7 +1,7 @@
 namespace Core.DataBaseMigrations
 {
     using System.Data.Entity.Migrations;
-    
+
     public partial class InitDataContext : DbMigration
     {
         public override void Up()
@@ -66,7 +66,7 @@ namespace Core.DataBaseMigrations
                 .PrimaryKey(t => t.Id);
             
         }
-        
+
         public override void Down()
         {
             DropIndex("public.EmailConfirmationRequests", "EmailConfirmationRequest_Type_Email_ConfirmationCode_Index");
