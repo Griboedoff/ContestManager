@@ -1,178 +1,88 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A4DD49D9-4F72-4FD1-BF14-E52FE2A9F9AD}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Core</RootNamespace>
-    <AssemblyName>Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net472</TargetFramework>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework6.Npgsql, Version=3.1.1.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework6.Npgsql.3.1.1\lib\net45\EntityFramework6.Npgsql.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql, Version=3.2.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7">
-      <HintPath>..\packages\Npgsql.3.2.7\lib\net451\Npgsql.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
+    <PackageReference Include="EntityFramework" Version="6.2.0" />
+    <PackageReference Include="EntityFramework6.Npgsql" Version="3.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Npgsql" Version="3.2.7" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Collections" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBaseEntities\Contest.cs" />
-    <Compile Include="DataBaseEntities\News.cs" />
-    <Compile Include="DataBaseEntities\Participant.cs" />
-    <Compile Include="DataBaseEntities\StoredConfig.cs" />
-    <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.cs" />
-    <Compile Include="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs">
+    <Compile Update="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs">
       <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.cs" />
-    <Compile Include="DataBaseMigrations\201806141322199_CreationDateInContest.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806141322199_CreationDateInContest.Designer.cs">
       <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806141414261_News.cs" />
-    <Compile Include="DataBaseMigrations\201806141414261_News.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806141414261_News.Designer.cs">
       <DependentUpon>201806141414261_News.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806210859143_FieldsInUser.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806210859143_FieldsInUser.Designer.cs">
       <DependentUpon>201806210859143_FieldsInUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806210859143_FieldsInUser.cs" />
-    <Compile Include="DataBaseMigrations\201806211120104_Participant.cs" />
-    <Compile Include="DataBaseMigrations\201806211120104_Participant.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806211120104_Participant.Designer.cs">
       <DependentUpon>201806211120104_Participant.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806211318560_ContestState.cs" />
-    <Compile Include="DataBaseMigrations\201806211318560_ContestState.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806211318560_ContestState.Designer.cs">
       <DependentUpon>201806211318560_ContestState.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataBaseMigrations\201806230931108_Results.cs" />
-    <Compile Include="DataBaseMigrations\201806230931108_Results.Designer.cs">
+    <Compile Update="DataBaseMigrations\201806230931108_Results.Designer.cs">
       <DependentUpon>201806230931108_Results.cs</DependentUpon>
     </Compile>
-    <Compile Include="Enums\ContestOptions.cs" />
-    <Compile Include="Enums\FieldType.cs" />
-    <Compile Include="Exceptions\AuthenticationFailedException.cs" />
-    <Compile Include="Managers\AuthenticationManager.cs" />
-    <Compile Include="Managers\ContestManager.cs" />
-    <Compile Include="Managers\CookieManager.cs" />
-    <Compile Include="Managers\NewsManager.cs" />
-    <Compile Include="Models\Configs\RSACryptoConfig.cs" />
-    <Compile Include="Models\Configs\EmailConfig.cs" />
-    <Compile Include="DataBase\Context.cs" />
-    <Compile Include="DataBase\ContextAdapter.cs" />
-    <Compile Include="DataBase\NpgsqlConfiguration.cs" />
-    <Compile Include="DataBaseEntities\DataBaseEntity.cs" />
-    <Compile Include="DataBaseEntities\AuthenticationAccount.cs" />
-    <Compile Include="DataBaseEntities\EmailConfirmationRequest.cs" />
-    <Compile Include="DataBaseEntities\User.cs" />
-    <Compile Include="Enums\DataBaseEnums\ConfirmationType.cs" />
-    <Compile Include="Enums\RequestStatuses\LoginStatus.cs" />
-    <Compile Include="Enums\RequestStatuses\RegistrationStatus.cs" />
-    <Compile Include="Enums\DataBaseEnums\AuthenticationType.cs" />
-    <Compile Include="Enums\DataBaseEnums\UserRole.cs" />
-    <Compile Include="Exceptions\ConfigNotConsistentException.cs" />
-    <Compile Include="Exceptions\EntityNotFoundException.cs" />
-    <Compile Include="DataBaseMigrations\MigrationsConfiguration.cs" />
-    <Compile Include="Extensions\ByteArrrayExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Factories\AuthenticationAccountFactory.cs" />
-    <Compile Include="Managers\SecurityManager.cs" />
-    <Compile Include="Factories\EmailConfirmationRequestFactory.cs" />
-    <Compile Include="Factories\ContextAdapterFactory.cs" />
-    <Compile Include="Helpers\CryptoHelper.cs" />
-    <Compile Include="Helpers\DataGenerator.cs" />
-    <Compile Include="Helpers\FieldsLength.cs" />
-    <Compile Include="Helpers\Secret.cs" />
-    <Compile Include="Managers\EmailManager.cs" />
-    <Compile Include="Managers\UserManager.cs" />
-    <Compile Include="Models\Configs\IConfig.cs" />
-    <Compile Include="Models\Configs\VkAppConfig.cs" />
-    <Compile Include="Models\ContestField.cs" />
-    <Compile Include="Models\ContestFieldsModel.cs" />
-    <Compile Include="Models\FieldDescription.cs" />
-    <Compile Include="Models\FieldWithValue.cs" />
-    <Compile Include="Models\PasswordToken.cs" />
-    <Compile Include="Models\Mails\EmailBase.cs" />
-    <Compile Include="Models\Mails\RegistrationConfirmEmail.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DataBaseMigrations\201803101602571_InitDataContext.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201803101602571_InitDataContext.resx">
       <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806141322199_CreationDateInContest.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806141322199_CreationDateInContest.resx">
       <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806141414261_News.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806141414261_News.resx">
       <DependentUpon>201806141414261_News.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806210859143_FieldsInUser.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806210859143_FieldsInUser.resx">
       <DependentUpon>201806210859143_FieldsInUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806211120104_Participant.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806211120104_Participant.resx">
       <DependentUpon>201806211120104_Participant.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806211318560_ContestState.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806211318560_ContestState.resx">
       <DependentUpon>201806211318560_ContestState.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataBaseMigrations\201806230931108_Results.resx">
+    <EmbeddedResource Update="DataBaseMigrations\201806230931108_Results.resx">
       <DependentUpon>201806230931108_Results.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806141322199_CreationDateInContest.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806141414261_News.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806210859143_FieldsInUser.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806211120104_Participant.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806211318560_ContestState.Designer.cs" />
+    <Compile Remove="DataBaseMigrations\201806230931108_Results.Designer.cs" />
+    <Compile Remove="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Remove="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Remove="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+  </ItemGroup>
 </Project>
