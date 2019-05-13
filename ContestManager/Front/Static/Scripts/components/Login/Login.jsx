@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormGroup, FormControl, ControlLabel, Form, Col, ButtonGroup, Alert} from 'react-bootstrap';
+import { FormGroup, FormControl, ControlLabel, Form, Col, ButtonGroup, Alert } from 'react-bootstrap';
 import Button from "react-bootstrap/es/Button";
 import Axios from 'axios';
 
@@ -23,13 +23,13 @@ class Login extends React.Component {
             this.sdkLoaded();
             return;
         }
-        this.setVkAsyncInit();
+            this.setVkAsyncInit();
         Login.loadSdkAsynchronously();
     }
 
     setVkAsyncInit() {
         window.vkAsyncInit = () => {
-            window.VK.init({apiId: 5186294});
+            window.VK.init({ apiId: 5186294 });
             this.setState({isSdkLoaded: true});
         };
     }
@@ -51,7 +51,7 @@ class Login extends React.Component {
         if (this.props.user)
             return;
 
-        this.setState({isProcessing: false, error: false});
+        this.setState({ isProcessing: false, error: false });
 
         const session = response.session;
 
@@ -66,19 +66,19 @@ class Login extends React.Component {
                     this.props.history.push(`/`);
                     this.props.onLogIn();
                 }
-            ).catch(() => this.setState({error: true}));
+            ).catch(() => this.setState({ error: true }));
     };
 
     loginVK = () => {
         if (!this.state.isSdkLoaded || this.state.isProcessing || this.props.disabled) {
             return;
         }
-        this.setState({isProcessing: true});
+        this.setState({ isProcessing: true });
         window.VK.Auth.login(this.checkLoginState);
     };
 
     loginPassword = () => {
-        this.setState({error: false});
+        this.setState({ error: false });
         Axios.post('login/email', {
             email: this.state.email,
             password: this.state.password,
@@ -87,10 +87,10 @@ class Login extends React.Component {
                     this.props.history.push(`/`);
                     this.props.onLogIn();
                 }
-            ).catch(() => this.setState({error: true}));
+            ).catch(() => this.setState({ error: true }));
     };
-    handleEmailChange = (e) => this.setState({email: e.target.value});
-    handlePasswordChange = (e) => this.setState({password: e.target.value});
+    handleEmailChange = (e) => this.setState({ email: e.target.value });
+    handlePasswordChange = (e) => this.setState({ password: e.target.value });
 
     render() {
         return [
