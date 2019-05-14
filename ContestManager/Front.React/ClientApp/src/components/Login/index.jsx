@@ -37,7 +37,7 @@ class Login extends React.Component {
     };
 
     loginVK = () => {
-        if (!this.state.isSdkInitialized || this.state.isProcessing || this.props.disabled) {
+        if (this.state.isProcessing || this.props.disabled) {
             return;
         }
         this.setState({ isProcessing: true });
@@ -79,13 +79,13 @@ class Login extends React.Component {
                     <FormGroup row>
                         <Label sm={3}>Email</Label>
                         <Col sm={9}>
-                            <Input type="email" placeholder="Email" onChange={this.handleChange} />
+                            <Input type="email" placeholder="Email" name="email" onChange={this.handleChange} />
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label sm={3}>Пароль</Label>
                         <Col sm={9}>
-                            <Input type="password" placeholder="Пароль" onChange={this.handleChange} />
+                            <Input type="password" placeholder="Пароль" name="password" onChange={this.handleChange} />
                         </Col>
                     </FormGroup>
 
