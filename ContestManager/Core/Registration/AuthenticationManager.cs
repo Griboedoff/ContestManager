@@ -1,20 +1,20 @@
 ﻿using System.Linq;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
-using Core.Exceptions;
 using Core.Extensions;
 using Core.Factories;
 using Core.Helpers;
+using Core.Managers;
 using Core.Models;
 using Core.Models.Configs;
 using Newtonsoft.Json;
 
-namespace Core.Managers
+namespace Core.Registration
 {
     public interface IAuthenticationManager
     {
         User Authenticate(string email, string password);
-        User Authenticate(long expire, string mid, string secret, string sid, string sig);
+        User Authenticate(VkLoginInfo loginInfo);
     }
 
     public class AuthenticationManager : IAuthenticationManager
@@ -24,7 +24,11 @@ namespace Core.Managers
         private readonly ISecurityManager securityManager;
         private readonly IContextAdapterFactory contextFactory;
 
-        public AuthenticationManager(VkAppConfig vkAppConfig, ICryptoHelper cryptoHelper, ISecurityManager securityManager, IContextAdapterFactory contextFactory)
+        public AuthenticationManager(
+            VkAppConfig vkAppConfig,
+            ICryptoHelper cryptoHelper,
+            ISecurityManager securityManager,
+            IContextAdapterFactory contextFactory)
         {
             this.vkAppConfig = vkAppConfig;
             this.cryptoHelper = cryptoHelper;
@@ -51,19 +55,19 @@ namespace Core.Managers
             }
         }
 
-        public User Authenticate(long expire, string mid, string secret, string sid, string sig)
+        public User Authenticate(VkLoginInfo loginInfo)
         {
-            var bytes = $"expire={expire}mid={mid}secret={secret}sid={sid}{vkAppConfig.SecretKey}".ToBytes();
+            var bytes = $"expire={loginInfo.Expire}mid={loginInfo.Mid}secret={loginInfo.Secret}sid={loginInfo.Sid}{vkAppConfig.SecretKey}".ToBytes();
             var md5Hash = cryptoHelper.ComputeMD5(bytes);
 
-            if (md5Hash.ToHex() != sig.ToUpper())
+            if (md5Hash.ToHex() != loginInfo.Sig.ToUpper())
                 throw new AuthenticationFailedException();
 
             using (var db = contextFactory.Create())
             {
                 var account = db
                     .Set<AuthenticationAccount>()
-                    .FirstOrDefault(a => a.Type == AuthenticationType.Vk && a.ServiceId == mid);
+                    .FirstOrDefault(a => a.Type == AuthenticationType.Vk && a.ServiceId == loginInfo.Mid);
 
                 if (account == default(AuthenticationAccount))
                     throw new AuthenticationFailedException();

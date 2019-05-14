@@ -1,6 +1,5 @@
 using Core.Enums.RequestStatuses;
-using Core.Exceptions;
-using Core.Managers;
+using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +11,8 @@ namespace Front.React.Controllers
         private readonly IAuthenticationManager authenticationManager;
         private readonly IUserManager userManager;
 
-        public UsersController(IUserCookieManager userCookieManager,
+        public UsersController(
+            IUserCookieManager userCookieManager,
             IAuthenticationManager authenticationManager,
             IUserManager userManager)
         {
@@ -40,11 +40,11 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("login/vk")]
-        public ActionResult Login(long expire, string mid, string secret, string sid, string sig)
+        public ActionResult Login([FromBody] VkLoginInfo vkLoginInfo)
         {
             try
             {
-                var user = authenticationManager.Authenticate(expire, mid, secret, sid, sig);
+                var user = authenticationManager.Authenticate(vkLoginInfo);
                 userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
@@ -64,8 +64,11 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("register/email/confirm")]
-        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email,
-            string password, string confirmationCode)
+        public RegistrationStatus ConfirmEmailRegistrationRequest(
+            string name,
+            string email,
+            string password,
+            string confirmationCode)
         {
             return userManager.ConfirmEmailRegistrationRequest(name, email, password, confirmationCode);
         }

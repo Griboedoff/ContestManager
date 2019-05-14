@@ -36,6 +36,6 @@ namespace Core.Managers
         }
 
         private byte[] GetHash(string password, string salt)
-            => cryptoHelper.ComputeSHA1((password + salt).ToBytes());
+            => cryptoHelper.ComputeSHA1($"{password}{salt}".ToBytes());
     }
 }

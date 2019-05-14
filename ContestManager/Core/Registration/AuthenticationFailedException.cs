@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Exceptions
+namespace Core.Registration
 {
     public class AuthenticationFailedException : Exception
     {

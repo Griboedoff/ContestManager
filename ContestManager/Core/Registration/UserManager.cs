@@ -5,17 +5,17 @@ using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
 using Core.Enums.RequestStatuses;
 using Core.Factories;
+using Core.Managers;
 using Core.Models;
 using Core.Models.Mails;
 
-namespace Core.Managers
+namespace Core.Registration
 {
     public interface IUserManager
     {
         RegistrationStatus CreateEmailRegistrationRequest(string email);
 
-        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password,
-            string confirmationCode);
+        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode);
 
         RegistrationStatus RegisterByVk(string name, string vkId);
         void FillFields(Guid userId, FieldWithValue[] fields);
