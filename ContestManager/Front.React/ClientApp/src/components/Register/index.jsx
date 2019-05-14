@@ -4,7 +4,7 @@ import { post } from '../../Proxy';
 import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation';
 import './../../common.css';
 
-const parseRegisterStatus = (s) => {
+function parseRegisterStatus(s) {
     switch (s) {
         case "EmailAlreadyUsed" :
             return "Такой email уже зарегистрирован";
@@ -13,11 +13,11 @@ const parseRegisterStatus = (s) => {
             return "Неверный код подтверждения";
         case "VkIdAlreadyUsed" :
             return "Пользователь с таким VK уже зарегистрирован";
-        case"Success" :
-        case"RequestCreated" :
+        case "Success":
+        case "RequestCreated":
             return "";
     }
-};
+}
 
 class Register extends React.Component {
     constructor(props, context) {
@@ -33,7 +33,6 @@ class Register extends React.Component {
             isProcessing: false,
             error: false,
             errorMessage: '',
-            confirmSend: false,
             tooltipOpen: false
         };
         document.title = "Регистрация";
@@ -42,7 +41,8 @@ class Register extends React.Component {
     }
 
     russianLetters = "^[' а-яё-]*$";
-    registerInternal = response => {
+
+    registerVKInternal = response => {
         if (this.props.user)
             return;
 
@@ -50,7 +50,7 @@ class Register extends React.Component {
 
         const user = response.session.user;
 
-        post('register/vk', {
+        post('users/register/vk', {
             name: `${user.last_name} ${user.first_name}`,
             vkId: user.id,
         }).then((resp) => {
@@ -68,15 +68,15 @@ class Register extends React.Component {
             return;
         }
         this.setState({ isProcessing: true, error: false, errorMessage: '' });
-        window.VK.Auth.login(this.registerInternal);
+        window.VK.Auth.login(this.registerVKInternal);
     };
 
     registerEmail = () => {
         this.setState({ error: false, errorMessage: '' });
 
-        post('register/email', {
+        post('users/register/email', {
             email: this.state.email,
-        }).then((resp) => {
+        }).then(resp => {
                 this.setState({ errorMessage: parseRegisterStatus(resp.data) });
                 if (this.state.errorMessage)
                     this.setState({ error: true });
@@ -163,9 +163,9 @@ class Register extends React.Component {
                     <Col sm={9}>
                         <AvInput onChange={this.handleChange}
                                  name="password"
-                                 type="text"
+                                 type="password"
                                  required
-                                 min="8"
+                                 min="7"
                                  id="password"
                         />
                         <AvFeedback>Пароль не должен быть короче 8 символов</AvFeedback>
@@ -192,4 +192,3 @@ class Register extends React.Component {
 }
 
 export default Register;
-;

@@ -1,4 +1,3 @@
-using Core.Enums.RequestStatuses;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -57,27 +56,16 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("register/email")]
-        public RegistrationStatus CreateEmailRegistrationRequest(string email)
+        public JsonResult CreateEmailRegistrationRequest(string email)
         {
-            return userManager.CreateEmailRegistrationRequest(email);
-        }
-
-        [HttpPost]
-        [Route("register/email/confirm")]
-        public RegistrationStatus ConfirmEmailRegistrationRequest(
-            string name,
-            string email,
-            string password,
-            string confirmationCode)
-        {
-            return userManager.ConfirmEmailRegistrationRequest(name, email, password, confirmationCode);
+            return Json(userManager.CreateEmailRegistrationRequest(email));
         }
 
         [HttpPost]
         [Route("register/vk")]
-        public RegistrationStatus RegisterByVk(string name, string vkId)
+        public JsonResult RegisterByVk(string name, string vkId)
         {
-            return userManager.RegisterByVk(name, vkId);
+            return Json(userManager.RegisterByVk(name, vkId));
         }
     }
 }
