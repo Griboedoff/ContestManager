@@ -9,19 +9,13 @@ using Core.Factories;
 using Core.Managers;
 using Core.Models;
 using Core.Models.Mails;
+using Microsoft.Extensions.Options;
 
 namespace Core.Registration
 {
     public interface IUserManager
     {
         Task<RegistrationStatus> CreateEmailRegistrationRequest(string email);
-
-        Task<RegistrationStatus> ConfirmEmailRegistrationRequest(
-            string name,
-            string email,
-            string password,
-            string confirmationCode);
-
         Task<RegistrationStatus> RegisterByVk(string name, string vkId);
         Task FillFields(Guid userId, FieldWithValue[] fields);
     }
@@ -34,6 +28,7 @@ namespace Core.Registration
         private readonly IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo;
         private readonly IAsyncRepository<User> usersRepo;
         private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
+        private readonly IOptions<ConfigOptions> options;
 
         public UserManager(
             IEmailManager emailManager,
@@ -41,7 +36,8 @@ namespace Core.Registration
             IEmailConfirmationRequestFactory emailConfirmationRequestFactory,
             IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo,
             IAsyncRepository<User> usersRepo,
-            IAsyncRepository<AuthenticationAccount> authenticationAccountRepo)
+            IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
+            IOptions<ConfigOptions> options)
         {
             this.emailManager = emailManager;
             this.authenticationAccountFactory = authenticationAccountFactory;
@@ -49,6 +45,7 @@ namespace Core.Registration
             this.confirmationRequestsRepo = confirmationRequestsRepo;
             this.usersRepo = usersRepo;
             this.authenticationAccountRepo = authenticationAccountRepo;
+            this.options = options;
         }
 
         public async Task<RegistrationStatus> CreateEmailRegistrationRequest(string email)
@@ -62,36 +59,6 @@ namespace Core.Registration
             await confirmationRequestsRepo.AddAsync(request);
 
             return RegistrationStatus.RequestCreated;
-        }
-
-        public async Task<RegistrationStatus> ConfirmEmailRegistrationRequest(
-            string name,
-            string email,
-            string password,
-            string confirmationCode)
-        {
-            var request = await confirmationRequestsRepo.FirstOrDefaultAsync(
-                r =>
-                    r.Type == ConfirmationType.Registration &&
-                    r.Email == email &&
-                    r.ConfirmationCode == confirmationCode);
-
-            if (request == null)
-                return RegistrationStatus.WrongConfirmationCode;
-
-            if (request.IsUsed)
-                return RegistrationStatus.RequestAlreadyUsed;
-
-            var user = Create(name, UserRole.User);
-            await usersRepo.AddAsync(user);
-
-            var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
-            await authenticationAccountRepo.AddAsync(account);
-
-            request.IsUsed = true;
-            await confirmationRequestsRepo.UpdateAsync(request);
-
-            return RegistrationStatus.Success;
         }
 
         public async Task<RegistrationStatus> RegisterByVk(string name, string vkId)
@@ -128,7 +95,7 @@ namespace Core.Registration
 
         private void SendEmail(EmailConfirmationRequest request)
         {
-            var mail = new RegistrationConfirmEmail(request.Email, request.ConfirmationCode);
+            var mail = new RegistrationConfirmEmail(request.Email, request.ConfirmationCode, options);
             emailManager.Send(mail);
         }
 

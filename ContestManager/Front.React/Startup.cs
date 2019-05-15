@@ -8,6 +8,7 @@ using Core.Factories;
 using Core.Helpers;
 using Core.Managers;
 using Core.Models.Configs;
+using Core.Models.Mails;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +47,8 @@ namespace Front.React
                     b => b.MigrationsAssembly("AspNet5MultipleProject")
                 )
             );
+
+            services.Configure<ConfigOptions>(Configuration);
 
             ConfigureDI(services);
             RegisterStoredConfigs(services).Wait();
