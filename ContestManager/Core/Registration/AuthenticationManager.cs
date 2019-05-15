@@ -7,7 +7,6 @@ using Core.Helpers;
 using Core.Managers;
 using Core.Models;
 using Core.Models.Configs;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Core.Registration
@@ -23,24 +22,27 @@ namespace Core.Registration
         private readonly VkAppConfig vkAppConfig;
         private readonly ICryptoHelper cryptoHelper;
         private readonly ISecurityManager securityManager;
+        private readonly IAsyncRepository<AuthenticationAccount> accountsRepo;
+        private readonly IAsyncRepository<User> usersRepo;
 
         public AuthenticationManager(
             VkAppConfig vkAppConfig,
             ICryptoHelper cryptoHelper,
-            ISecurityManager securityManager)
+            ISecurityManager securityManager,
+            IAsyncRepository<AuthenticationAccount> accountsRepo,
+            IAsyncRepository<User> usersRepo)
         {
             this.vkAppConfig = vkAppConfig;
             this.cryptoHelper = cryptoHelper;
             this.securityManager = securityManager;
+            this.accountsRepo = accountsRepo;
+            this.usersRepo = usersRepo;
         }
 
         public async Task<User> Authenticate(string email, string password)
         {
-            using var db = new Context();
-
-            var account = await db
-                .AuthenticationAccounts
-                .FirstOrDefaultAsync(a => a.Type == AuthenticationType.Password && a.ServiceId == email);
+            var account = await accountsRepo.FirstOrDefaultAsync(
+                a => a.Type == AuthenticationType.Password && a.ServiceId == email);
 
             if (account == default(AuthenticationAccount))
                 throw new AuthenticationFailedException();
@@ -49,7 +51,7 @@ namespace Core.Registration
             if (!securityManager.ValidatePassword(token, password))
                 throw new AuthenticationFailedException();
 
-            return await db.Users.Read(account.UserId);
+            return await usersRepo.GetByIdAsync(account.UserId);
         }
 
         public async Task<User> Authenticate(VkLoginInfo loginInfo)
@@ -57,21 +59,18 @@ namespace Core.Registration
             var bytes =
                 $"expire={loginInfo.Expire}mid={loginInfo.Mid}secret={loginInfo.Secret}sid={loginInfo.Sid}{vkAppConfig.SecretKey}"
                     .ToBytes();
-            var md5Hash = cryptoHelper.ComputeMD5(bytes);
 
+            var md5Hash = cryptoHelper.ComputeMD5(bytes);
             if (md5Hash.ToHex() != loginInfo.Sig.ToUpper())
                 throw new AuthenticationFailedException();
 
-            using var db = new Context();
-
-            var account = await db
-                .AuthenticationAccounts
-                .FirstOrDefaultAsync(a => a.Type == AuthenticationType.Vk && a.ServiceId == loginInfo.Mid);
+            var account = await accountsRepo.FirstOrDefaultAsync(
+                a => a.Type == AuthenticationType.Vk && a.ServiceId == loginInfo.Mid);
 
             if (account == default(AuthenticationAccount))
                 throw new AuthenticationFailedException();
 
-            return await db.Users.Read(account.UserId);
+            return await usersRepo.GetByIdAsync(account.UserId);
         }
     }
 }

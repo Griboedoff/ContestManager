@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Core.Managers
 {
@@ -16,10 +15,15 @@ namespace Core.Managers
 
     public class NewsManager : INewsManager
     {
+        private readonly IAsyncRepository<News> newsRepo;
+
+        public NewsManager(IAsyncRepository<News> newsRepo)
+        {
+            this.newsRepo = newsRepo;
+        }
+
         public async Task<News> Create(string mdContent, Guid contestId)
         {
-            using var db = new Context();
-
             var news = new News
             {
                 Id = Guid.NewGuid(),
@@ -28,27 +32,12 @@ namespace Core.Managers
                 MdContent = mdContent,
             };
 
-            db.News.Add(news);
-            await db.SaveChangesAsync();
-
-            return news;
+            return await newsRepo.AddAsync(news);
         }
 
-        public async Task<News> Get(Guid newsId)
-        {
-            using var db = new Context();
-
-            return await db.News.Read(newsId);
-        }
+        public async Task<News> Get(Guid newsId) => await newsRepo.GetByIdAsync(newsId);
 
         public async Task<News[]> GetByContest(Guid contestId)
-        {
-            using var db = new Context();
-
-            return await db.Set<News>()
-                .Where(n => n.ContestId == contestId)
-                .OrderBy(n => n.CreationDate)
-                .ToArrayAsync();
-        }
+            => (await newsRepo.WhereAsync(n => n.ContestId == contestId)).OrderBy(n => n.CreationDate).ToArray();
     }
 }

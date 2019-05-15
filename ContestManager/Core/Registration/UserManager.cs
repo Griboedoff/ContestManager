@@ -9,7 +9,6 @@ using Core.Factories;
 using Core.Managers;
 using Core.Models;
 using Core.Models.Mails;
-using Microsoft.EntityFrameworkCore;
 
 namespace Core.Registration
 {
@@ -32,29 +31,35 @@ namespace Core.Registration
         private readonly IEmailManager emailManager;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
         private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
+        private readonly IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo;
+        private readonly IAsyncRepository<User> usersRepo;
+        private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
 
         public UserManager(
             IEmailManager emailManager,
             IAuthenticationAccountFactory authenticationAccountFactory,
-            IEmailConfirmationRequestFactory emailConfirmationRequestFactory)
+            IEmailConfirmationRequestFactory emailConfirmationRequestFactory,
+            IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo,
+            IAsyncRepository<User> usersRepo,
+            IAsyncRepository<AuthenticationAccount> authenticationAccountRepo)
         {
             this.emailManager = emailManager;
             this.authenticationAccountFactory = authenticationAccountFactory;
             this.emailConfirmationRequestFactory = emailConfirmationRequestFactory;
+            this.confirmationRequestsRepo = confirmationRequestsRepo;
+            this.usersRepo = usersRepo;
+            this.authenticationAccountRepo = authenticationAccountRepo;
         }
 
         public async Task<RegistrationStatus> CreateEmailRegistrationRequest(string email)
         {
-            using var db = new Context();
-
             if (await IsServiceIdAlreadyUsed(email))
                 return RegistrationStatus.EmailAlreadyUsed;
 
             var request = emailConfirmationRequestFactory.Create(email, ConfirmationType.Registration);
             SendEmail(request);
 
-            db.EmailConfirmationRequests.Add(request);
-            await db.SaveChangesAsync();
+            await confirmationRequestsRepo.AddAsync(request);
 
             return RegistrationStatus.RequestCreated;
         }
@@ -65,14 +70,11 @@ namespace Core.Registration
             string password,
             string confirmationCode)
         {
-            using var db = new Context();
-
-            var request = await db
-                .EmailConfirmationRequests
-                .FirstOrDefaultAsync(
-                    r =>
-                        r.Type == ConfirmationType.Registration && r.Email == email &&
-                        r.ConfirmationCode == confirmationCode);
+            var request = await confirmationRequestsRepo.FirstOrDefaultAsync(
+                r =>
+                    r.Type == ConfirmationType.Registration &&
+                    r.Email == email &&
+                    r.ConfirmationCode == confirmationCode);
 
             if (request == null)
                 return RegistrationStatus.WrongConfirmationCode;
@@ -81,40 +83,35 @@ namespace Core.Registration
                 return RegistrationStatus.RequestAlreadyUsed;
 
             var user = Create(name, UserRole.User);
-            db.Users.Add(user);
+            await usersRepo.AddAsync(user);
 
             var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
-            db.AuthenticationAccounts.Add(account);
+            await authenticationAccountRepo.AddAsync(account);
 
             request.IsUsed = true;
-            await db.SaveChangesAsync();
+            await confirmationRequestsRepo.UpdateAsync(request);
 
             return RegistrationStatus.Success;
         }
 
         public async Task<RegistrationStatus> RegisterByVk(string name, string vkId)
         {
-            using var db = new Context();
-
             if (await IsServiceIdAlreadyUsed(vkId))
                 return RegistrationStatus.VkIdAlreadyUsed;
 
             var user = Create(name, UserRole.User);
-            db.Users.Add(user);
+            await usersRepo.AddAsync(user);
 
             var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
-            db.AuthenticationAccounts.Add(account);
-
-            await db.SaveChangesAsync();
+            await authenticationAccountRepo.AddAsync(account);
 
             return RegistrationStatus.Success;
         }
 
+
         public async Task FillFields(Guid userId, FieldWithValue[] fields)
         {
-            using var db = new Context();
-
-            var user = db.Users.Find(userId);
+            var user = await usersRepo.GetByIdAsync(userId);
             var userFields = user.Fields.ToList();
             foreach (var userField in userFields)
                 foreach (var field in fields)
@@ -123,15 +120,11 @@ namespace Core.Registration
             userFields.AddRange(fields.Where(f => !user.Fields.Contains(f)));
 
             user.Fields = userFields.ToArray();
-            await db.SaveChangesAsync();
+            await usersRepo.UpdateAsync(user);
         }
 
-        private static async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
-        {
-            using var db = new Context();
-
-            return await db.Set<AuthenticationAccount>().AnyAsync(r => r.ServiceId == serviceId);
-        }
+        private async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
+            => await authenticationAccountRepo.AnyAsync(r => r.ServiceId == serviceId);
 
         private void SendEmail(EmailConfirmationRequest request)
         {
