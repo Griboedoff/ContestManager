@@ -1,27 +1,28 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using Core.DataBaseEntities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.DataBase
 {
     public interface IContext : IDisposable
     {
         DbSet<T> Set<T>() where T : class;
-        DbEntityEntry<T> Entry<T>(T entity) where T : class;
 
         int SaveChanges();
     }
 
-    [DbConfigurationType(typeof(NpgsqlConfiguration))]
     public class Context : DbContext, IContext
     {
-        public Context() : base(nameOrConnectionString: "DataContext")
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-        }
+            modelBuilder.HasDefaultSchema("public");
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-            => modelBuilder.HasDefaultSchema("public");
+            modelBuilder.Entity<AuthenticationAccount>().HasIndex(p => new { p.Type, p.ServiceId }).IsUnique();
+            modelBuilder.Entity<Contest>().HasIndex(p => p.Title).IsUnique();
+            modelBuilder.Entity<EmailConfirmationRequest>()
+                .HasIndex(p => new { p.Type, p.Email, p.ConfirmationCode })
+                .IsUnique();
+        }
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Contest> Contests { get; set; }

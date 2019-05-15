@@ -1,7 +1,11 @@
+using Core.DataBase;
+using Core.Registration;
+using Core.Sessions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +27,23 @@ namespace Front.React
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
+            var sqlConnectionString = Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
+ 
+            services.AddDbContext<Context>(options =>
+                options.UseNpgsql(
+                    sqlConnectionString,
+                    b => b.MigrationsAssembly("AspNet5MultipleProject")
+                )
+            );
+
+            ConfigureDI(services);
+        }
+
+        private void ConfigureDI(IServiceCollection services)
+        {
+            services.AddSingleton<IUserCookieManager, UserCookieManager>();
+            services.AddSingleton<IAuthenticationManager, AuthenticationManager>();
+            services.AddSingleton<IUserManager, UserManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

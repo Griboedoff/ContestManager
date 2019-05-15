@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using Core.DataBaseEntities;
 using Core.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.DataBase
 {
@@ -17,10 +17,6 @@ namespace Core.DataBase
 
         T FindAndAttach<T>(Guid id) where T : DataBaseEntity;
         T ReadAndAttach<T>(Guid id) where T : DataBaseEntity;
-
-        void AttachToInsert<T>(T entity) where T : DataBaseEntity;
-        void AttachToUpdate<T>(T entity) where T : DataBaseEntity;
-        void MarkAsDeleted<T>(Guid id) where T : DataBaseEntity;
 
         void SaveChanges();
     }
@@ -55,22 +51,10 @@ namespace Core.DataBase
         public T ReadAndAttach<T>(Guid id) where T : DataBaseEntity
             => FindAndAttach<T>(id) ?? throw new EntityNotFoundException<T>(id);
 
-        public void AttachToInsert<T>(T entity) where T : DataBaseEntity
-            => Attach(entity, EntityState.Added);
-
-        public void AttachToUpdate<T>(T entity) where T : DataBaseEntity
-            => Attach(entity, EntityState.Modified);
-
-        public void MarkAsDeleted<T>(Guid id) where T : DataBaseEntity
-            => Attach(ReadAndAttach<T>(id), EntityState.Deleted);
-
         public void SaveChanges()
             => context.SaveChanges();
 
         public void Dispose()
             => context.Dispose();
-
-        private void Attach<T>(T entity, EntityState state) where T : DataBaseEntity
-            => context.Entry(entity).State = state;
     }
 }

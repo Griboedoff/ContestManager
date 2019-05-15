@@ -11,12 +11,10 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.2.0" />
-    <PackageReference Include="EntityFramework6.Npgsql" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Npgsql" Version="3.2.7" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Collections" />
@@ -46,29 +44,6 @@
     <Compile Update="DataBaseMigrations\201806230931108_Results.Designer.cs">
       <DependentUpon>201806230931108_Results.cs</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="DataBaseMigrations\201803101602571_InitDataContext.resx">
-      <DependentUpon>201803101602571_InitDataContext.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806141322199_CreationDateInContest.resx">
-      <DependentUpon>201806141322199_CreationDateInContest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806141414261_News.resx">
-      <DependentUpon>201806141414261_News.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806210859143_FieldsInUser.resx">
-      <DependentUpon>201806210859143_FieldsInUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806211120104_Participant.resx">
-      <DependentUpon>201806211120104_Participant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806211318560_ContestState.resx">
-      <DependentUpon>201806211318560_ContestState.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DataBaseMigrations\201806230931108_Results.resx">
-      <DependentUpon>201806230931108_Results.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DataBaseMigrations\201803101602571_InitDataContext.Designer.cs" />
