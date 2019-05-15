@@ -24,11 +24,11 @@ class Login extends React.Component {
         const session = response.session;
 
         post('users/login/vk', {
-            expire: session.expire,
-            mid: session.mid,
-            secret: session.secret,
-            sid: session.sid,
-            sig: session.sig
+            Expire: session.expire,
+            Mid: session.mid,
+            Secret: session.secret,
+            Sid: session.sid,
+            Sig: session.sig
         }).then(() => {
                 this.props.history.push(`/`);
                 this.props.onLogIn();

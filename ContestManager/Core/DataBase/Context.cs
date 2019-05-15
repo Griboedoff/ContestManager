@@ -13,6 +13,10 @@ namespace Core.DataBase
 
     public class Context : DbContext, IContext
     {
+        public Context(DbContextOptions<Context> options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("public");
