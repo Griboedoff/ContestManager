@@ -27,6 +27,7 @@
         <Content Include="ClientApp\src\components\Register\index.jsx" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+        <None Include="ClientApp\src\store\User.js" />
     </ItemGroup>
 
     <ItemGroup>

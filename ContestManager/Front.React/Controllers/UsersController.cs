@@ -44,8 +44,8 @@ namespace Front.React.Controllers
         {
             try
             {
-                var user = authenticationManager.Authenticate(vkLoginInfo);
-                userCookieManager.SetLoginCookie(Response, await user);
+                var user = await authenticationManager.Authenticate(vkLoginInfo);
+                userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
             }

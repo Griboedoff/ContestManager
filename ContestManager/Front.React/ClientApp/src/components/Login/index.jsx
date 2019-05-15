@@ -1,7 +1,8 @@
 import React from 'react';
-import { Alert, Button, ButtonGroup, Col, Form, FormGroup, Input, Label} from 'reactstrap';
+import { Alert, Button, ButtonGroup, Col, Form, FormGroup, Input, Label } from 'reactstrap';
 import { post } from '../../Proxy';
 import './index.css';
+import withUser from '../HOC/WithUser';
 
 class Login extends React.Component {
     constructor(props, context) {
@@ -29,11 +30,16 @@ class Login extends React.Component {
             Secret: session.secret,
             Sid: session.sid,
             Sig: session.sig
-        }).then(() => {
-                this.props.history.push(`/`);
-                this.props.onLogIn();
+        }).then(resp => {
+            if (resp.ok) {
+                return resp.json();
             }
-        ).catch(() => this.setState({ error: true }));
+
+            throw Error();
+        }).then(u => {
+            this.props.setUser(u);
+            this.props.history.push(`/`);
+        }).catch(() => this.setState({ error: true }));
     };
 
     loginVK = () => {
@@ -46,15 +52,19 @@ class Login extends React.Component {
 
     loginPassword = () => {
         this.setState({ error: false });
-        post('login/email',
-            {
-                email: this.state.email,
-                password: this.state.password,
-            })
-            .then(() => {
-                    this.props.history.push(`/`);
-                }
-            ).catch(() => this.setState({ error: true }));
+        post('login/email', {
+            email: this.state.email,
+            password: this.state.password,
+        }).then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            }
+
+            throw Error();
+        }).then(u => {
+            this.props.setUser(u);
+            this.props.history.push(`/`);
+        }).catch(() => this.setState({ error: true }));
     };
 
     handleChange = async (event) => {
@@ -92,8 +102,9 @@ class Login extends React.Component {
                     <FormGroup row>
                         <Col sm={{ size: 6, offset: 3 }}>
                             <ButtonGroup>
-                                <Button key="loginEmail" bsStyle="primary" onClick={this.loginPassword}>Войти</Button>
-                                <Button key="loginVk" className="vk-button" onClick={this.loginVK}>Войти через VK</Button>
+                                <Button key="loginEmail" onClick={this.loginPassword}>Войти</Button>
+                                <Button key="loginVk" className="vk-button" onClick={this.loginVK}>Войти через
+                                    VK</Button>
                             </ButtonGroup></Col>
                     </FormGroup>
                 </Form>
@@ -102,4 +113,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default withUser(Login);
