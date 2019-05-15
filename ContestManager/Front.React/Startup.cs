@@ -27,8 +27,9 @@ namespace Front.React
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
-            var sqlConnectionString = Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
- 
+
+            var sqlConnectionString = Configuration.GetConnectionString("DataContext");
+
             services.AddDbContext<Context>(options =>
                 options.UseNpgsql(
                     sqlConnectionString,

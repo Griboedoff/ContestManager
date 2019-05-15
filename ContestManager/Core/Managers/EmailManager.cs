@@ -32,19 +32,19 @@ namespace Core.Managers
 
         public void Send(EmailBase mail)
         {
-            using (var message = new MailMessage())
+            using var message = new MailMessage
             {
-                message.IsBodyHtml = true;
+                IsBodyHtml = true,
+                From = new MailAddress(mailFrom, mail.Subject)
+            };
 
-                message.From = new MailAddress(mailFrom, mail.Subject);
-                message.To.Add(new MailAddress(mail.To));
+            message.To.Add(new MailAddress(mail.To));
 
-                message.Subject = mail.Subject;
-                message.Body = mail.Message;
-                message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
+            message.Subject = mail.Subject;
+            message.Body = mail.Message;
+            message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
-                client.Send(message);
-            }
+            client.Send(message);
         }
     }
 }

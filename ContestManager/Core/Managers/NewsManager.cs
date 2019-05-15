@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Core.DataBase;
 using Core.DataBaseEntities;
-using Core.Factories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Managers
 {
     public interface INewsManager
     {
-        News Create(string mdContent, Guid contestId);
-        News Get(Guid newsId);
-        News[] GetByContest(Guid contestId);
+        Task<News> Create(string mdContent, Guid contestId);
+        Task<News> Get(Guid newsId);
+        Task<News[]> GetByContest(Guid contestId);
     }
 
     public class NewsManager : INewsManager
     {
-        private readonly IContextAdapterFactory contextFactory;
-
-        public NewsManager(IContextAdapterFactory contextFactory)
+        public async Task<News> Create(string mdContent, Guid contestId)
         {
-            this.contextFactory = contextFactory;
-        }
+            using var db = new Context();
 
-        public News Create(string mdContent, Guid contestId)
-        {
             var news = new News
             {
                 Id = Guid.NewGuid(),
@@ -31,28 +28,27 @@ namespace Core.Managers
                 MdContent = mdContent,
             };
 
-            using (var db = contextFactory.Create())
-            {
-                db.AttachToInsert(news);
-                db.SaveChanges();
-            }
+            db.News.Add(news);
+            await db.SaveChangesAsync();
 
             return news;
         }
 
-        public News Get(Guid newsId)
+        public async Task<News> Get(Guid newsId)
         {
-            using (var db = contextFactory.Create())
-                return db.Read<News>(newsId);
+            using var db = new Context();
+
+            return await db.News.Read(newsId);
         }
 
-        public News[] GetByContest(Guid contestId)
+        public async Task<News[]> GetByContest(Guid contestId)
         {
-            using (var db = contextFactory.Create())
-                return db.Set<News>()
-                         .Where(n => n.ContestId == contestId)
-                         .OrderBy(n => n.CreationDate)
-                         .ToArray();
+            using var db = new Context();
+
+            return await db.Set<News>()
+                .Where(n => n.ContestId == contestId)
+                .OrderBy(n => n.CreationDate)
+                .ToArrayAsync();
         }
     }
-}    
+}

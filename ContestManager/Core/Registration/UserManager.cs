@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
@@ -8,124 +9,129 @@ using Core.Factories;
 using Core.Managers;
 using Core.Models;
 using Core.Models.Mails;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Registration
 {
     public interface IUserManager
     {
-        RegistrationStatus CreateEmailRegistrationRequest(string email);
+        Task<RegistrationStatus> CreateEmailRegistrationRequest(string email);
 
-        RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password, string confirmationCode);
+        Task<RegistrationStatus> ConfirmEmailRegistrationRequest(
+            string name,
+            string email,
+            string password,
+            string confirmationCode);
 
-        RegistrationStatus RegisterByVk(string name, string vkId);
-        void FillFields(Guid userId, FieldWithValue[] fields);
+        Task<RegistrationStatus> RegisterByVk(string name, string vkId);
+        Task FillFields(Guid userId, FieldWithValue[] fields);
     }
 
     public class UserManager : IUserManager
     {
         private readonly IEmailManager emailManager;
-        private readonly IContextAdapterFactory contextFactory;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
         private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
 
         public UserManager(
             IEmailManager emailManager,
-            IContextAdapterFactory contextFactory,
             IAuthenticationAccountFactory authenticationAccountFactory,
             IEmailConfirmationRequestFactory emailConfirmationRequestFactory)
         {
             this.emailManager = emailManager;
-            this.contextFactory = contextFactory;
             this.authenticationAccountFactory = authenticationAccountFactory;
             this.emailConfirmationRequestFactory = emailConfirmationRequestFactory;
         }
 
-        public RegistrationStatus CreateEmailRegistrationRequest(string email)
+        public async Task<RegistrationStatus> CreateEmailRegistrationRequest(string email)
         {
-            using (var db = contextFactory.Create())
-            {
-                if (IsServiceIdAlreadyUsed(db, email))
-                    return RegistrationStatus.EmailAlreadyUsed;
+            using var db = new Context();
 
-                var request = emailConfirmationRequestFactory.Create(email, ConfirmationType.Registration);
-                SendEmail(request);
+            if (await IsServiceIdAlreadyUsed(email))
+                return RegistrationStatus.EmailAlreadyUsed;
 
-                db.AttachToInsert(request);
-                db.SaveChanges();
-            }
+            var request = emailConfirmationRequestFactory.Create(email, ConfirmationType.Registration);
+            SendEmail(request);
+
+            db.EmailConfirmationRequests.Add(request);
+            await db.SaveChangesAsync();
 
             return RegistrationStatus.RequestCreated;
         }
 
-        public RegistrationStatus ConfirmEmailRegistrationRequest(string name, string email, string password,
+        public async Task<RegistrationStatus> ConfirmEmailRegistrationRequest(
+            string name,
+            string email,
+            string password,
             string confirmationCode)
         {
-            using (var db = contextFactory.Create())
-            {
-                var request = db
-                              .SetWithAttach<EmailConfirmationRequest>()
-                              .FirstOrDefault(r =>
-                                  r.Type == ConfirmationType.Registration && r.Email == email &&
-                                  r.ConfirmationCode == confirmationCode);
+            using var db = new Context();
 
-                if (request == null)
-                    return RegistrationStatus.WrongConfirmationCode;
+            var request = await db
+                .EmailConfirmationRequests
+                .FirstOrDefaultAsync(
+                    r =>
+                        r.Type == ConfirmationType.Registration && r.Email == email &&
+                        r.ConfirmationCode == confirmationCode);
 
-                if (request.IsUsed)
-                    return RegistrationStatus.RequestAlreadyUsed;
+            if (request == null)
+                return RegistrationStatus.WrongConfirmationCode;
 
-                var user = Create(name, UserRole.User);
-                db.AttachToInsert(user);
+            if (request.IsUsed)
+                return RegistrationStatus.RequestAlreadyUsed;
 
-                var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
-                db.AttachToInsert(account);
+            var user = Create(name, UserRole.User);
+            db.Users.Add(user);
 
-                request.IsUsed = true;
+            var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(user, email, password);
+            db.AuthenticationAccounts.Add(account);
 
-                db.SaveChanges();
-            }
-
-            return RegistrationStatus.Success;
-        }
-
-        public RegistrationStatus RegisterByVk(string name, string vkId)
-        {
-            using (var db = contextFactory.Create())
-            {
-                if (IsServiceIdAlreadyUsed(db, vkId))
-                    return RegistrationStatus.VkIdAlreadyUsed;
-
-                var user = Create(name, UserRole.User);
-                db.AttachToInsert(user);
-
-                var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
-                db.AttachToInsert(account);
-
-                db.SaveChanges();
-            }
+            request.IsUsed = true;
+            await db.SaveChangesAsync();
 
             return RegistrationStatus.Success;
         }
 
-        public void FillFields(Guid userId, FieldWithValue[] fields)
+        public async Task<RegistrationStatus> RegisterByVk(string name, string vkId)
         {
-            using (var db = contextFactory.Create())
-            {
-                var user = db.FindAndAttach<User>(userId);
-                var userFields = user.Fields.ToList();
-                foreach (var userField in userFields)
-                    foreach (var field in fields)
-                        if (userField.Title == field.Title)
-                            userField.Value = field.Value;
-                userFields.AddRange(fields.Where(f => !user.Fields.Contains(f)));
+            using var db = new Context();
 
-                user.Fields = userFields.ToArray();
-                db.SaveChanges();
-            }
+            if (await IsServiceIdAlreadyUsed(vkId))
+                return RegistrationStatus.VkIdAlreadyUsed;
+
+            var user = Create(name, UserRole.User);
+            db.Users.Add(user);
+
+            var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
+            db.AuthenticationAccounts.Add(account);
+
+            await db.SaveChangesAsync();
+
+            return RegistrationStatus.Success;
         }
 
-        private static bool IsServiceIdAlreadyUsed(IContextAdapter db, string serviceId)
-            => db.Set<AuthenticationAccount>().Any(r => r.ServiceId == serviceId);
+        public async Task FillFields(Guid userId, FieldWithValue[] fields)
+        {
+            using var db = new Context();
+
+            var user = db.Users.Find(userId);
+            var userFields = user.Fields.ToList();
+            foreach (var userField in userFields)
+                foreach (var field in fields)
+                    if (userField.Title == field.Title)
+                        userField.Value = field.Value;
+            userFields.AddRange(fields.Where(f => !user.Fields.Contains(f)));
+
+            user.Fields = userFields.ToArray();
+            await db.SaveChangesAsync();
+        }
+
+        private static async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
+        {
+            using var db = new Context();
+
+            return await db.Set<AuthenticationAccount>().AnyAsync(r => r.ServiceId == serviceId);
+        }
 
         private void SendEmail(EmailConfirmationRequest request)
         {

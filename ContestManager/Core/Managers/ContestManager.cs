@@ -1,36 +1,33 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
-using Core.Factories;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Managers
 {
     public interface IContestManager
     {
         Contest Create(string title, Guid ownerId, FieldDescription[] fields);
-        void Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
-        Contest Get(Guid contestId);
-        Contest[] GetAll();
-        News[] GetNews(Guid contestId);
-        News AddNews(Guid contestId, string content);
-        bool Exists(Guid contestId);
-        void AddParticipant(Guid contestId, Guid userId);
-        Participant[] GetParticipants(Guid contestId);
+        Task Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
+        Task<Contest> Get(Guid contestId);
+        Task<Contest[]> GetAll();
+        Task<News[]> GetNews(Guid contestId);
+        Task<News> AddNews(Guid contestId, string content);
+        Task<bool> Exists(Guid contestId);
+        Task<Participant> AddParticipant(Guid contestId, Guid userId);
+        Task<Participant[]> GetParticipants(Guid contestId);
     }
 
     public class ContestManager : IContestManager
     {
-        private readonly IContextAdapterFactory contextFactory;
-
-        public ContestManager(IContextAdapterFactory contextFactory)
-        {
-            this.contextFactory = contextFactory;
-        }
-
         public Contest Create(string title, Guid ownerId, FieldDescription[] fields)
         {
+            using var db = new Context();
+
             var contest = new Contest
             {
                 Id = Guid.NewGuid(),
@@ -40,51 +37,51 @@ namespace Core.Managers
                 CreationDate = DateTime.Now,
                 State = ContestState.RegistrationOpen,
             };
-
-            using (var db = contextFactory.Create())
-            {
-                db.AttachToInsert(contest);
-                db.SaveChanges();
-            }
+            db.Contests.Add(contest);
+            db.SaveChanges();
 
             return contest;
         }
 
-        public void Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields)
+        public async Task Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields)
         {
-            using (var db = contextFactory.Create())
-            {
-                var contest = db.ReadAndAttach<Contest>(contestId);
+            using var db = new Context();
 
-                if (ownerId.HasValue)
-                    contest.OwnerId = ownerId.Value;
-                contest.Options = options;
-                contest.Fields = fields;
+            var contest = await db.Contests.Read(contestId);
 
-                db.SaveChanges();
-            }
+            if (ownerId.HasValue)
+                contest.OwnerId = ownerId.Value;
+            contest.Options = options;
+            contest.Fields = fields;
+
+            db.SaveChanges();
         }
 
-        public Contest Get(Guid contestId)
+        public async Task<Contest> Get(Guid contestId)
         {
-            using (var db = contextFactory.Create())
-                return db.Read<Contest>(contestId);
+            using var db = new Context();
+
+            return await db.Contests.Read(contestId);
         }
 
-        public Contest[] GetAll()
+        public async Task<Contest[]> GetAll()
         {
-            using (var db = contextFactory.Create())
-                return db.GetAll<Contest>();
+            using var db = new Context();
+
+            return await db.Contests.ToArrayAsync();
         }
 
-        public News[] GetNews(Guid contestId)
+        public Task<News[]> GetNews(Guid contestId)
         {
-            using (var db = contextFactory.Create())
-                return db.GetAll<News>().Where(n => n.ContestId == contestId).ToArray();
+            using var db = new Context();
+
+            return db.News.Where(n => n.ContestId == contestId).ToArrayAsync();
         }
 
-        public News AddNews(Guid contestId, string content)
+        public async Task<News> AddNews(Guid contestId, string content)
         {
+            using var db = new Context();
+
             var news = new News
             {
                 ContestId = contestId,
@@ -92,40 +89,40 @@ namespace Core.Managers
                 MdContent = content,
             };
 
-            using (var db = contextFactory.Create())
-            {
-                db.AttachToInsert(news);
-                db.SaveChanges();
-            }
+            db.News.Add(news);
+            await db.SaveChangesAsync();
 
             return news;
         }
 
-        public bool Exists(Guid contestId)
+        public async Task<bool> Exists(Guid contestId)
         {
-            using (var db = contextFactory.Create())
-                return db.Find<Contest>(contestId) != null;
+            using var db = new Context();
+
+            return await db.Contests.FindAsync(contestId) != null;
         }
 
-        public void AddParticipant(Guid contestId, Guid userId)
+        public async Task<Participant> AddParticipant(Guid contestId, Guid userId)
         {
+            using var db = new Context();
+
             var participant = new Participant
             {
                 ContestId = contestId,
                 UserId = userId,
             };
 
-            using (var db = contextFactory.Create())
-            {
-                db.AttachToInsert(participant);
-                db.SaveChanges();
-            }
+            db.Participants.Add(participant);
+            await db.SaveChangesAsync();
+
+            return participant;
         }
 
-        public Participant[] GetParticipants(Guid contestId)
+        public Task<Participant[]> GetParticipants(Guid contestId)
         {
-            using (var db = contextFactory.Create())
-                return db.Set<Participant>().Where(p => p.ContestId == contestId).ToArray();
+            using var db = new Context();
+            return db.Participants.Where(p => p.ContestId == contestId).ToArrayAsync();
         }
+ 
     }
 }

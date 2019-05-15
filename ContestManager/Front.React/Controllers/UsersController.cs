@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,11 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("login/email")]
-        public ActionResult Login(string email, string password)
+        public async Task<ActionResult> Login(string email, string password)
         {
             try
             {
-                var user = authenticationManager.Authenticate(email, password);
+                var user = await authenticationManager.Authenticate(email, password);
                 userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
@@ -39,12 +40,12 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("login/vk")]
-        public ActionResult Login([FromBody] VkLoginInfo vkLoginInfo)
+        public async Task<ActionResult> Login([FromBody] VkLoginInfo vkLoginInfo)
         {
             try
             {
                 var user = authenticationManager.Authenticate(vkLoginInfo);
-                userCookieManager.SetLoginCookie(Response, user);
+                userCookieManager.SetLoginCookie(Response, await user);
 
                 return Json(user);
             }
