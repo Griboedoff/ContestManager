@@ -7,8 +7,8 @@ using Core.Exceptions;
 using Core.Factories;
 using Core.Helpers;
 using Core.Managers;
+using Core.Models;
 using Core.Models.Configs;
-using Core.Models.Mails;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Builder;
@@ -80,7 +80,6 @@ namespace Front.React
                 var configs = await configRepo.ListAllAsync();
                 RegisterStoredConfig<EmailConfig>(services, configs);
                 RegisterStoredConfig<VkAppConfig>(services, configs);
-                RegisterStoredConfig<RSACryptoConfig>(services, configs);
             }
         }
 

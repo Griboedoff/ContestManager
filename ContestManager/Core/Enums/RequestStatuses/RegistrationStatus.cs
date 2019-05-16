@@ -2,11 +2,9 @@
 {
     public enum RegistrationStatus
     {
-        Success,
-        EmailAlreadyUsed,
-        RequestCreated,
-        RequestAlreadyUsed,
-        WrongConfirmationCode,
-        VkIdAlreadyUsed,
+        Success = 0,
+        EmailAlreadyUsed = 1,
+        RequestCreated = 2,
+        VkIdAlreadyUsed = 3,
     }
 }

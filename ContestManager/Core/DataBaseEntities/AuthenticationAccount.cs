@@ -11,6 +11,8 @@ namespace Core.DataBaseEntities
 
         public AuthenticationType Type { get; set; }
 
+        public bool IsActive { get; set; }
+
         [MaxLength(FieldsLength.ServiceId)]
         public string ServiceId { get; set; }
 

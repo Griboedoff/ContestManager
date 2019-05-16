@@ -1,4 +1,4 @@
-namespace Core.Models.Mails
+namespace Core.Models
 {
     public class ConfigOptions
     {

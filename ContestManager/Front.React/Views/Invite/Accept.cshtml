@@ -1,0 +1,35 @@
+@using Front.React.Controllers
+@model Front.React.Controllers.InviteModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<div>
+    @switch (Model.Status)
+    {
+        case InviteLinkStatus.WrongLink:
+            @:Неверная ссылка
+            break;
+        case InviteLinkStatus.AlreadyUsed:
+            @:Ссылка уже использована
+            break;
+        case InviteLinkStatus.Error:
+            @:Внутренняя ошибка
+            break;
+        case InviteLinkStatus.Ok:
+            <a href="@Model.Url">На сайт</a>
+            break;
+        default:
+            throw new ArgumentOutOfRangeException();
+    }
+</div>
+</body>
+</html>

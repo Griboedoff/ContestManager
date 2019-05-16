@@ -24,6 +24,8 @@ namespace Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("IsActive");
+
                     b.Property<string>("ServiceId")
                         .HasMaxLength(100);
 
@@ -71,8 +73,10 @@ namespace Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("AccountId");
+
                     b.Property<string>("ConfirmationCode")
-                        .HasMaxLength(7);
+                        .HasMaxLength(30);
 
                     b.Property<string>("Email")
                         .HasMaxLength(100);

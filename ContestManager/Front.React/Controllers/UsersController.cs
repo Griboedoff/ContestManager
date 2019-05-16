@@ -57,16 +57,20 @@ namespace Front.React.Controllers
 
         [HttpPost]
         [Route("register/email")]
-        public JsonResult CreateEmailRegistrationRequest(string email)
+        public async Task<JsonResult> CreateEmailRegistrationRequest([FromBody] EmailRegisterInfo emailInfo)
         {
-            return Json(userManager.CreateEmailRegistrationRequest(email));
+            var emailRegistrationRequest = await userManager.CreateEmailRegistrationRequest(emailInfo);
+
+            return Json(emailRegistrationRequest);
         }
 
         [HttpPost]
         [Route("register/vk")]
-        public JsonResult RegisterByVk(string name, string vkId)
+        public async Task<JsonResult> RegisterByVk([FromBody] VKRegisterInfo vkRegisterInfo)
         {
-            return Json(userManager.RegisterByVk(name, vkId));
+            var registerByVk = await userManager.RegisterByVk(vkRegisterInfo.Name, vkRegisterInfo.VkId);
+
+            return Json(registerByVk);
         }
     }
 }

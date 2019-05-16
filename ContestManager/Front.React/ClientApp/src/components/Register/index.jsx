@@ -6,16 +6,12 @@ import './../../common.css';
 
 function parseRegisterStatus(s) {
     switch (s) {
-        case "EmailAlreadyUsed" :
+        case 1:
             return "Такой email уже зарегистрирован";
-        case "RequestAlreadyUsed" :
-        case "WrongConfirmationCode" :
-            return "Неверный код подтверждения";
-        case "VkIdAlreadyUsed" :
+        case 3:
             return "Пользователь с таким VK уже зарегистрирован";
-        case "Success":
-        case "RequestCreated":
-            return "";
+        default:
+           return "";
     }
 }
 
@@ -51,16 +47,21 @@ class Register extends React.Component {
         const user = response.session.user;
 
         post('users/register/vk', {
-            name: `${user.last_name} ${user.first_name}`,
-            vkId: user.id,
-        }).then((resp) => {
-                this.setState({ errorMessage: parseRegisterStatus(resp.data) });
-                if (this.state.errorMessage)
-                    this.setState({ error: true });
-                else
-                    this.props.history.push(`/`);
+            Name: `${user.last_name} ${user.first_name}`,
+            VkId: user.id,
+        }).then(resp => {
+            if (resp.ok) {
+                return resp.json();
             }
-        ).catch(() => this.setState({ error: true }));
+
+            throw Error();
+        }).then(status => {
+            this.setState({ errorMessage: parseRegisterStatus(status) });
+            if (this.state.errorMessage)
+                this.setState({ error: true });
+            else
+                this.props.history.push(`/`);
+        }).catch(() => this.setState({ error: true }));
     };
 
     registerVK = () => {
@@ -75,15 +76,24 @@ class Register extends React.Component {
         this.setState({ error: false, errorMessage: '' });
 
         post('users/register/email', {
-            email: this.state.email,
+            Email: this.state.email,
+            Name: this.state.name,
+            Surname: this.state.surname,
+            Password: this.state.password,
+            Patronymic: this.state.patronymic
         }).then(resp => {
-                this.setState({ errorMessage: parseRegisterStatus(resp.data) });
-                if (this.state.errorMessage)
-                    this.setState({ error: true });
-                else
-                    this.setState({ confirmSend: true });
+            if (resp.ok) {
+                return resp.json();
             }
-        ).catch(() => this.setState({ error: true }));
+
+            throw Error();
+        }).then(status => {
+            this.setState({ errorMessage: parseRegisterStatus(status) });
+            if (this.state.errorMessage)
+                this.setState({ error: true });
+            else
+                this.setState({ confirmSend: true });
+        }).catch(() => this.setState({ error: true }));
     };
 
     handleChange = async (event) => {
@@ -102,7 +112,7 @@ class Register extends React.Component {
 
     render() {
         return <div className="form-container row flex-column">
-            {this.state.error && <Alert bsStyle="danger">
+            {this.state.error && <Alert color="danger">
                 {this.state.errorMessage ? this.state.errorMessage :
                     <div>Ой! Что-то пошло не так
                         <br />
@@ -165,7 +175,7 @@ class Register extends React.Component {
                                  name="password"
                                  type="password"
                                  required
-                                 min="7"
+                                 pattern=".{8}.*"
                                  id="password"
                         />
                         <AvFeedback>Пароль не должен быть короче 8 символов</AvFeedback>
@@ -186,6 +196,7 @@ class Register extends React.Component {
                         <Button className="align-self-right" onClick={this.registerEmail}> Зарегистрироваться </Button>
                     </Col>
                 </FormGroup>
+                {this.state.confirmSend && <Alert>На адрес {this.state.email} отправлено письмо с подтверждением</Alert>}
             </AvForm>
         </div>;
     }

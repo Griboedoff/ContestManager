@@ -31,7 +31,8 @@ namespace Core.Factories
                 UserId = user.Id,
                 Type = AuthenticationType.Password,
                 ServiceId = userEmail,
-                ServiceToken = JsonConvert.SerializeObject(passwordToken)
+                ServiceToken = JsonConvert.SerializeObject(passwordToken),
+                IsActive = false,
             };
         }
 
@@ -43,6 +44,7 @@ namespace Core.Factories
                 UserId = user.Id,
                 Type = AuthenticationType.Vk,
                 ServiceId = vkId,
+                IsActive = true,
             };
         }
     }
