@@ -76,40 +76,38 @@ class Login extends React.Component {
     };
 
     render() {
-        return [
-            this.state.error
-                ? <Alert bsStyle="danger">
+        return <div className="form-container">
+            {
+                this.state.error && <Alert color="danger">
                     Ой! Что-то пошло не так
                     <br />
                     Попробуйте позже
                 </Alert>
-                : "",
-            <div className="form-container">
-                <Form>
-                    <FormGroup row>
-                        <Label sm={3}>Email</Label>
-                        <Col sm={9}>
-                            <Input type="email" placeholder="Email" name="email" onChange={this.handleChange} />
-                        </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                        <Label sm={3}>Пароль</Label>
-                        <Col sm={9}>
-                            <Input type="password" placeholder="Пароль" name="password" onChange={this.handleChange} />
-                        </Col>
-                    </FormGroup>
+            }
+            <Form>
+                <FormGroup row>
+                    <Label sm={3}>Email</Label>
+                    <Col sm={9}>
+                        <Input type="email" placeholder="Email" name="email" onChange={this.handleChange} />
+                    </Col>
+                </FormGroup>
+                <FormGroup row>
+                    <Label sm={3}>Пароль</Label>
+                    <Col sm={9}>
+                        <Input type="password" placeholder="Пароль" name="password" onChange={this.handleChange} />
+                    </Col>
+                </FormGroup>
 
-                    <FormGroup row>
-                        <Col sm={{ size: 6, offset: 3 }}>
-                            <ButtonGroup>
-                                <Button key="loginEmail" onClick={this.loginPassword}>Войти</Button>
-                                <Button key="loginVk" className="vk-button" onClick={this.loginVK}>Войти через
-                                    VK</Button>
-                            </ButtonGroup></Col>
-                    </FormGroup>
-                </Form>
-            </div>
-        ];
+                <FormGroup row>
+                    <Col sm={{ size: 6, offset: 3 }}>
+                        <ButtonGroup>
+                            <Button key="loginEmail" onClick={this.loginPassword}>Войти</Button>
+                            <Button key="loginVk" className="vk-button" onClick={this.loginVK}>Войти через
+                                VK</Button>
+                        </ButtonGroup></Col>
+                </FormGroup>
+            </Form>
+        </div>;
     }
 }
 
