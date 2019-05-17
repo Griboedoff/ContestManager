@@ -1,14 +1,22 @@
+import { get } from '../Proxy';
+
 const setUser = 'SET_USER';
 const logout = 'LOGOUT';
 const initialState = { user: null };
 
 export const actionCreators = {
-    setUser: user => (dispatch, getState) => {
-        dispatch({ type: setUser, user });
-    },
-    logout: (dispatch, getState) => {
-        dispatch({ type: logout });
-    }
+    setUser: user => dispatch => dispatch({ type: setUser, user }),
+    setUserFromCookie: t => dispatch =>
+        get('users/check').then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            }
+
+            return null;
+        }).then(user => {
+            dispatch({ type: setUser, user });
+        }),
+    logout: dispatch => dispatch({ type: logout })
 };
 
 export const reducer = (state, action) => {

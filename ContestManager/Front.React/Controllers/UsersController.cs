@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Core.Registration;
 using Core.Sessions;
@@ -71,6 +72,20 @@ namespace Front.React.Controllers
             var registerByVk = await userManager.RegisterByVk(vkRegisterInfo.Name, vkRegisterInfo.VkId);
 
             return Json(registerByVk);
+        }
+
+        [HttpGet]
+        [Route("check")]
+        public ActionResult Check()
+        {
+            try
+            {
+                return Json(userCookieManager.GetUser(Request));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return StatusCode(403);
+            }
         }
     }
 }

@@ -28,7 +28,10 @@ namespace Core.Sessions
         {
             var sid = SessionManager.CreateSession(user.Name);
 
-            response.Cookies.Append(Sid, sid);
+            response.Cookies.Append(
+                Sid,
+                sid,
+                new CookieOptions { Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)) });
             response.Cookies.Append(UserInfo, CreateUserInfo(user));
         }
 
