@@ -1,20 +1,23 @@
 import React from 'react';
 import { Container } from 'reactstrap';
+import Spinner from 'reactstrap/es/Spinner';
 import withUser from './HOC/WithUser';
 import NavMenu from './NavMenu';
 
 class Layout extends React.Component {
-    componentDidMount() {
-        this.props.setUserFromCookie();
+    async componentDidMount() {
+        if (!this.props.user)
+            await this.props.setUserFromCookie();
     }
 
     render() {
-        return <div>
-            <NavMenu />
-            <Container>
-                {this.props.children}
-            </Container>
-        </div>;
+        return this.props.fetching ? <Spinner type="primary"/> :
+            <div>
+                <NavMenu />
+                <Container>
+                    {this.props.children}
+                </Container>
+            </div>;
     }
 }
 

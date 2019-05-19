@@ -8,6 +8,7 @@ export function post(url, body) {
         body: JSON.stringify(body)
     });
 }
+
 export function get(url) {
     return fetch(`api/${url}`, {
         method: 'GET',
@@ -15,5 +16,16 @@ export function get(url) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
+    });
+}
+
+export function patch(url, body) {
+    return fetch(`api/${url}`, {
+        method: 'PATCH',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
     });
 }

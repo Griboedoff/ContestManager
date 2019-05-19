@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
@@ -17,7 +16,6 @@ namespace Core.Registration
     {
         Task<RegistrationStatus> CreateEmailRegistrationRequest(EmailRegisterInfo email);
         Task<RegistrationStatus> RegisterByVk(string name, string vkId);
-        Task FillFields(Guid userId, FieldWithValue[] fields);
     }
 
     public class UserManager : IUserManager
@@ -83,21 +81,6 @@ namespace Core.Registration
             return RegistrationStatus.Success;
         }
 
-
-        public async Task FillFields(Guid userId, FieldWithValue[] fields)
-        {
-            var user = await usersRepo.GetByIdAsync(userId);
-            var userFields = user.Fields.ToList();
-            foreach (var userField in userFields)
-                foreach (var field in fields)
-                    if (userField.Title == field.Title)
-                        userField.Value = field.Value;
-            userFields.AddRange(fields.Where(f => !user.Fields.Contains(f)));
-
-            user.Fields = userFields.ToArray();
-            await usersRepo.UpdateAsync(user);
-        }
-
         private async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
             => await authenticationAccountRepo.AnyAsync(r => r.ServiceId == serviceId);
 
@@ -114,7 +97,6 @@ namespace Core.Registration
                 Id = Guid.NewGuid(),
                 Name = userName,
                 Role = role,
-                Fields = new FieldWithValue[0],
             };
         }
 

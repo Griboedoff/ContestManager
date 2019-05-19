@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Core.DataBase;
+using Core.DataBaseEntities;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +13,18 @@ namespace Front.React.Controllers
         private readonly IUserCookieManager userCookieManager;
         private readonly IAuthenticationManager authenticationManager;
         private readonly IUserManager userManager;
+        private readonly IAsyncRepository<User> usersRepo;
 
         public UsersController(
             IUserCookieManager userCookieManager,
             IAuthenticationManager authenticationManager,
-            IUserManager userManager)
+            IUserManager userManager,
+            IAsyncRepository<User> usersRepo)
         {
             this.userCookieManager = userCookieManager;
             this.authenticationManager = authenticationManager;
             this.userManager = userManager;
+            this.usersRepo = usersRepo;
         }
 
         [HttpPost]
@@ -48,7 +53,8 @@ namespace Front.React.Controllers
                 var user = await authenticationManager.Authenticate(vkLoginInfo);
                 userCookieManager.SetLoginCookie(Response, user);
 
-                return Json(user);
+                var actionResult = Json(user);
+                return actionResult;
             }
             catch (AuthenticationFailedException)
             {
@@ -80,7 +86,27 @@ namespace Front.React.Controllers
         {
             try
             {
-                return Json(userCookieManager.GetUser(Request));
+                var user = userCookieManager.GetUser(Request);
+                return Json(user);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return StatusCode(403);
+            }
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult> Patch([FromBody] User user)
+        {
+            try
+            {
+                var userFromDb = userCookieManager.GetUser(Request);
+
+                if (user.Role != userFromDb.Role)
+                    throw new UnauthorizedAccessException("Can't change role");
+
+                await usersRepo.UpdateAsync(user);
+                return Json(user);
             }
             catch (UnauthorizedAccessException)
             {

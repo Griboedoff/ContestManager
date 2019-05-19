@@ -3,14 +3,17 @@ using System;
 using Core.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Core.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20190516085544_AccountId")]
+    partial class AccountId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,16 +149,12 @@ namespace Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("Class");
-
                     b.Property<string>("Name")
                         .HasMaxLength(100);
 
                     b.Property<int>("Role");
 
-                    b.Property<string>("School");
-
-                    b.Property<int>("Sex");
+                    b.Property<string>("SerializedFields");
 
                     b.HasKey("Id");
 

@@ -51,7 +51,7 @@ class NavMenu extends React.Component {
     ActionsBlock() {
         return <React.Fragment>
             <NavItem>
-                <NavLink className="text-dark" disabled>{this.props.user.name}</NavLink>
+                <NavLink tag={Link} className="text-dark" to="/user">{this.props.user.name}</NavLink>
             </NavItem>
         </React.Fragment>;
     }
