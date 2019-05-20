@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
+using Core.Managers;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -82,11 +83,13 @@ namespace Front.React.Controllers
 
         [HttpGet]
         [Route("check")]
-        public ActionResult Check()
+        public async Task<ActionResult> Check()
         {
             try
             {
-                var user = userCookieManager.GetUser(Request);
+                var userId = userCookieManager.GetUser(Request).Id;
+                var user = await usersRepo.GetByIdAsync(userId);
+
                 return Json(user);
             }
             catch (UnauthorizedAccessException)
@@ -102,8 +105,10 @@ namespace Front.React.Controllers
             {
                 var userFromDb = userCookieManager.GetUser(Request);
 
-                if (user.Role != userFromDb.Role)
-                    throw new UnauthorizedAccessException("Can't change role");
+                if (!RoleChangeValidator.Validate(userFromDb.Role, user.Role))
+                    return StatusCode(
+                        403,
+                        new { error = "Нельзя менять роль", from = userFromDb.Role, to = user.Role });
 
                 await usersRepo.UpdateAsync(user);
                 return Json(user);

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Alert, Col, Container, Row } from 'reactstrap';
+import { Alert, Button, Col, Container, Form, FormGroup, FormText, Input, Label, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import Input from 'reactstrap/es/Input';
+import { patch } from '../../Proxy';
 import { roleToString, sexToString } from '../../UserFieldsMap';
 import withUser from '../HOC/WithUser';
 import './index.css';
@@ -9,19 +9,33 @@ import './index.css';
 class UserPage extends React.Component {
     constructor(props) {
         super(props);
+        this.onEdit = this.onEdit.bind(this);
+        this.save = this.save.bind(this);
 
         this.state = {
-            ...this.props.user
+            user: this.props.user,
+            isEditable: false,
         };
+    }
+
+    onEdit() {
+        this.setState({
+            isEditable: !this.state.isEditable
+        });
+    }
+
+    async save() {
+        this.onEdit();
+        await patch('users', this.state.user);
+        this.props.setUser(this.state.user);
     }
 
     handleChange = async (event) => {
         const { target } = event;
         const { name } = target;
         await this.setState({
-            [name]: target.value
+            user: { ...this.state.user, [name]: target.value }
         });
-        this.props.updateUser(this.state);
     };
 
     render() {
@@ -29,55 +43,92 @@ class UserPage extends React.Component {
             return <Alert color="danger"> <Link to="/login">Войдите</Link> в систему.</Alert>;
 
         return <Container className="form-container">
-            <UserInfoRow
-                label="Имя"
-                value={this.state.name}
-                isEditable
-                input={<Input type="text" placeholder="" name="name" onChange={this.handleChange} />}
-            />
-            <UserInfoRow
-                label="Роль"
-                value={this.state.role}
-                showValue={r => roleToString[r]}
-            />
-            <UserInfoRow
-                label="Пол"
-                value={this.state.sex}
-                showValue={r => sexToString[r]}
-                isEditable
-                input={<Input type="select" name="sex" onChange={this.handleChange} value={this.state.sex}>
-                    <option value={0}>М</option>
-                    <option value={1}>Ж</option>
-                </Input>}
-            />
-            <UserInfoRow
-                label="Класс"
-                value={this.state.class}
-                isEditable
-                input={<Input type="select" name="class" onChange={this.handleChange} value={this.state.class}>
-                    <option value={5}>5</option>
-                    <option value={6}>6</option>
-                    <option value={7}>7</option>
-                    <option value={8}>8</option>
-                    <option value={9}>9</option>
-                    <option value={10}>10</option>
-                    <option value={11}>11</option>
-                </Input>}
-            />
-            <UserInfoRow
-                label="Школа"
-                value={this.state.school}
-                isEditable
-                input={<Input type="text" placeholder="" name="school" onChange={this.handleChange} />}
-            />
+            {this.state.isEditable ? this.EditableView() : this.ReadonlyView()}
         </Container>;
+    }
+
+    ReadonlyView() {
+        return <React.Fragment>
+            <UserInfoRow label="Имя" value={this.state.user.name} />
+            <UserInfoRow label="Роль" value={this.state.user.role} showValue={r => roleToString[r]} />
+            {this.props.user.role === 1 &&
+            <UserInfoRow label="Пол" value={this.state.user.sex} showValue={r => sexToString[r]} />}
+            {this.props.user.role === 1 && <UserInfoRow label="Класс" value={this.state.user.class} />}
+            {(this.props.user.role === 1 || this.props.user.role === 2) &&
+            <UserInfoRow label="Школа" value={this.state.user.school} />}
+            <Col sm={{ offset: 1 }}>
+                <Button onClick={this.onEdit}>Редактировать</Button>
+            </Col>
+        </React.Fragment>;
+    }
+
+    EditableView() {
+        return <Form>
+            <FormGroup row>
+                <Label sm={1}>Имя</Label>
+                <Col sm={4}>
+                    <Input type="text" name="name" onChange={this.handleChange} value={this.state.user.name} />
+                </Col>
+            </FormGroup>
+            <FormGroup row>
+                <Label sm={1}>Роль</Label>
+                <Col sm={4}>
+                    <Input type="select" name="role" onChange={this.handleChange} value={this.state.user.role}>
+                        <option value={1}>Участник</option>
+                        <option value={2}>Тренер</option>
+                        <option value={4}>Волонтер</option>
+                        <option value={8}>Проверяющий</option>
+                    </Input>
+                    <FormText>
+                        При смене роли на Волонтер/Проверяющий<br /> вы не сможете обратно стать Участником/Тренером
+                    </FormText>
+                </Col>
+            </FormGroup>
+            {this.props.user.role === 1 && <FormGroup row>
+                <Label sm={1}>Пол</Label>
+                <Col sm={4}>
+                    <Input type="select" name="sex" onChange={this.handleChange} value={this.state.user.sex}>
+                        <option value={0}>М</option>
+                        <option value={1}>Ж</option>
+                    </Input>
+                </Col>
+            </FormGroup>}
+            {this.props.user.role === 1 && <FormGroup row>
+                <Label sm={1}>Класс</Label>
+                <Col sm={4}>
+                    <Input type="select" name="class" onChange={this.handleChange} value={this.state.user.class}>
+                        <option value={5}>5</option>
+                        <option value={6}>6</option>
+                        <option value={7}>7</option>
+                        <option value={8}>8</option>
+                        <option value={9}>9</option>
+                        <option value={10}>10</option>
+                        <option value={11}>11</option>
+                    </Input>
+                </Col>
+            </FormGroup>}
+            {(this.props.user.role === 1 || this.props.user.role === 2) && <FormGroup row>
+                <Label sm={1}>Школа</Label>
+                <Col sm={4}>
+                    <Input type="text"
+                           placeholder=""
+                           name="school"
+                           onChange={this.handleChange}
+                           value={this.state.user.school} />
+                </Col>
+            </FormGroup>}
+            <FormGroup row>
+                <Col sm={{ offset: 2 }}>
+                    <Button onClick={this.save}>Сохранить</Button>
+                </Col>
+            </FormGroup>
+        </Form>;
     }
 }
 
 class UserInfoRow extends React.Component {
     constructor(props, context) {
         super(props, context);
-        this.onEdit = this.onEdit.bind(this);
         this.state = {
             isEditable: false,
         };
@@ -99,9 +150,6 @@ class UserInfoRow extends React.Component {
                         : this.props.value
                     : this.props.input}
                 </Col>
-                {this.props.isEditable && this.state.isEditable
-                    ? <i className="fas fa-save" onClick={this.onEdit} />
-                    : <i className="fas fa-pen" onClick={this.onEdit} />}
             </Row>
         );
     }

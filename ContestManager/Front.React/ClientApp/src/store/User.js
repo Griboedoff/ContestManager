@@ -1,4 +1,4 @@
-import { get, patch } from '../Proxy';
+import { get } from '../Proxy';
 
 const fetching = 'FETCHING';
 const setUser = 'SET_USER';
@@ -18,11 +18,6 @@ export const actionCreators = {
         }).then(user => {
             dispatch({ type: setUser, user });
         });
-    },
-    updateUser: user => async dispatch => {
-        dispatch({ type: fetching });
-        await patch('users', user);
-        dispatch({ type: setUser, user })
     },
     logout: dispatch => dispatch({ type: logout })
 };

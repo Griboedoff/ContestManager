@@ -2,10 +2,16 @@
 {
     public enum UserRole
     {
+        [Importance(0)]
         User = 1,
-        Volunteer = 2,
-        ContestManager = 4,
+        [Importance(0)]
+        Coach = 2,
+        [Importance(1)]
+        Volunteer = 3,
+        [Importance(1)]
+        Checker = 4,
 
+        [Importance(100)]
         Admin = int.MaxValue
     }
 }
