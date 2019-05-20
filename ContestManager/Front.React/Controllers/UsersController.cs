@@ -28,8 +28,7 @@ namespace Front.React.Controllers
             this.usersRepo = usersRepo;
         }
 
-        [HttpPost]
-        [Route("login/email")]
+        [HttpPost("login/email")]
         public async Task<ActionResult> Login(string email, string password)
         {
             try
@@ -45,8 +44,7 @@ namespace Front.React.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("login/vk")]
+        [HttpPost("login/vk")]
         public async Task<ActionResult> Login([FromBody] VkLoginInfo vkLoginInfo)
         {
             try
@@ -63,8 +61,7 @@ namespace Front.React.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("register/email")]
+        [HttpPost("register/email")]
         public async Task<JsonResult> CreateEmailRegistrationRequest([FromBody] EmailRegisterInfo emailInfo)
         {
             var emailRegistrationRequest = await userManager.CreateEmailRegistrationRequest(emailInfo);
@@ -72,8 +69,7 @@ namespace Front.React.Controllers
             return Json(emailRegistrationRequest);
         }
 
-        [HttpPost]
-        [Route("register/vk")]
+        [HttpPost("register/vk")]
         public async Task<JsonResult> RegisterByVk([FromBody] VKRegisterInfo vkRegisterInfo)
         {
             var registerByVk = await userManager.RegisterByVk(vkRegisterInfo.Name, vkRegisterInfo.VkId);
@@ -81,8 +77,7 @@ namespace Front.React.Controllers
             return Json(registerByVk);
         }
 
-        [HttpGet]
-        [Route("check")]
+        [HttpGet("check")]
         public async Task<ActionResult> Check()
         {
             try
@@ -118,5 +113,8 @@ namespace Front.React.Controllers
                 return StatusCode(403);
             }
         }
+
+        [HttpPost("logout")]
+        public void LogOut() => userCookieManager.Clear(Response);
     }
 }

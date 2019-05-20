@@ -11,6 +11,7 @@ namespace Core.Sessions
     {
         void SetLoginCookie(HttpResponse response, User user);
         User GetUser(HttpRequest request);
+        void Clear(HttpResponse response);
     }
 
     public class UserCookieManager : IUserCookieManager
@@ -43,6 +44,12 @@ namespace Core.Sessions
                 throw new UnauthorizedAccessException();
 
             return user;
+        }
+
+        public void Clear(HttpResponse response)
+        {
+            response.Cookies.Delete(Sid);
+            response.Cookies.Delete(UserInfo);
         }
 
         private static bool TryGetUser(HttpRequest request, out User user)

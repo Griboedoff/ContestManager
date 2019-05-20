@@ -1,5 +1,14 @@
 import React from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import {
+    Collapse,
+    Container, DropdownItem, DropdownMenu, DropdownToggle,
+    Navbar,
+    NavbarBrand,
+    NavbarToggler,
+    NavItem,
+    NavLink,
+    UncontrolledDropdown
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './index.css';
 import withUser from '../HOC/WithUser';
@@ -50,9 +59,23 @@ class NavMenu extends React.Component {
 
     ActionsBlock() {
         return <React.Fragment>
-            <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/user">{this.props.user.name}</NavLink>
-            </NavItem>
+            <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                    {this.props.user.name}
+                </DropdownToggle>
+                <DropdownMenu right>
+                    <DropdownItem>
+                        <Link className="text-dark" to="/user">Данные</Link>
+                    </DropdownItem>
+                    <DropdownItem>
+                        Option 2
+                    </DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem>
+                        <Link className="text-dark" to="/" onClick={this.props.logout}>Выйти</Link>
+                    </DropdownItem>
+                </DropdownMenu>
+            </UncontrolledDropdown>
         </React.Fragment>;
     }
 }

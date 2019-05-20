@@ -133,13 +133,7 @@ class UserInfoRow extends React.Component {
             isEditable: false,
         };
     }
-
-    onEdit() {
-        this.setState({
-            isEditable: !this.state.isEditable
-        });
-    }
-
+    
     render() {
         return (
             <Row className="info-row">

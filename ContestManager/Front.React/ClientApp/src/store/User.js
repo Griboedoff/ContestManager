@@ -1,4 +1,4 @@
-import { get } from '../Proxy';
+import { get, post } from '../Proxy';
 
 const fetching = 'FETCHING';
 const setUser = 'SET_USER';
@@ -19,7 +19,10 @@ export const actionCreators = {
             dispatch({ type: setUser, user });
         });
     },
-    logout: dispatch => dispatch({ type: logout })
+    logout: t => async dispatch => {
+        await post('users/logout');
+        dispatch({ type: logout });
+    }
 };
 
 export const reducer = (state, action) => {
