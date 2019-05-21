@@ -51,7 +51,7 @@ namespace Core.Registration
             if (await IsServiceIdAlreadyUsed(emailInfo.Email))
                 return RegistrationStatus.EmailAlreadyUsed;
 
-            var user = Create(GetName(emailInfo), UserRole.User);
+            var user = Create(GetName(emailInfo), UserRole.Participant);
             await usersRepo.AddAsync(user);
 
             var account = authenticationAccountFactory.CreatePasswordAuthenticationAccount(
@@ -73,7 +73,7 @@ namespace Core.Registration
             if (await IsServiceIdAlreadyUsed(vkId))
                 return RegistrationStatus.VkIdAlreadyUsed;
 
-            var user = await usersRepo.AddAsync(Create(name, UserRole.User));
+            var user = await usersRepo.AddAsync(Create(name, UserRole.Participant));
 
             var account = authenticationAccountFactory.CreateVkAuthenticationAccount(user, vkId);
             await authenticationAccountRepo.AddAsync(account);

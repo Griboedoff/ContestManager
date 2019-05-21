@@ -11,6 +11,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './index.css';
+import { UserRole } from '../../Enums/UserRole';
 import withUser from '../HOC/WithUser';
 
 class NavMenu extends React.Component {
@@ -64,12 +65,10 @@ class NavMenu extends React.Component {
                     {this.props.user.name}
                 </DropdownToggle>
                 <DropdownMenu right>
-                    <DropdownItem>
-                        <Link className="text-dark" to="/user">Данные</Link>
-                    </DropdownItem>
-                    <DropdownItem>
-                        Option 2
-                    </DropdownItem>
+                    <DropdownItem> <Link className="text-dark" to="/user">Мои данные</Link> </DropdownItem>
+                    {this.props.user.role === UserRole.Admin && <DropdownItem>
+                        <Link className="text-dark" to="/createContest">Новое соревнование</Link>
+                    </DropdownItem>}
                     <DropdownItem divider />
                     <DropdownItem>
                         <Link className="text-dark" to="/" onClick={this.props.logout}>Выйти</Link>

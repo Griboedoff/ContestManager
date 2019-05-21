@@ -1,9 +1,11 @@
+import { UserRole } from './Enums/UserRole';
+
 export const roleToString = {
-    1: "Участник",
-    2: "Тренер",
-    3: "Волонтер",
-    4: "Проверяющий",
-    2147483647: "Админ",
+    [UserRole.Participant]: "Участник",
+    [UserRole.Coach]: "Тренер",
+    [UserRole.Volunteer]: "Волонтер",
+    [UserRole.Checker]: "Проверяющий",
+    [UserRole.Admin]: "Админ",
 };
 
 export const sexToString = {

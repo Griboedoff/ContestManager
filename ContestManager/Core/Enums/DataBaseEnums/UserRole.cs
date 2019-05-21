@@ -3,7 +3,7 @@
     public enum UserRole
     {
         [Importance(0)]
-        User = 1,
+        Participant = 1,
         [Importance(0)]
         Coach = 2,
         [Importance(1)]
