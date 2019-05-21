@@ -24,6 +24,7 @@
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
         <Content Include="ClientApp\src\common.css" />
+        <Content Include="ClientApp\src\components\CreateContest\index.jsx" />
         <Content Include="ClientApp\src\components\Register\index.jsx" />
         <Content Include="ClientApp\src\components\UserPage\index.css" />
         <Content Include="ClientApp\src\components\UserPage\index.jsx" />

@@ -9,8 +9,8 @@ namespace Core.Contests
 {
     public interface IContestManager
     {
-        Task<Contest> Create(string title, Guid ownerId);
-        Task Update(Guid contestId, Guid? ownerId, ContestOptions options);
+        Task<Contest> Create(CreateContestModel title, Guid ownerId);
+        Task Update(Guid contestId, Guid? ownerId, ContestType type);
         Task<Contest> Get(Guid contestId);
         Task<IReadOnlyList<Contest>> GetAll();
         Task<IReadOnlyList<News>> GetNews(Guid contestId);
@@ -36,26 +36,28 @@ namespace Core.Contests
             this.participantsRepo = participantsRepo;
         }
 
-        public async Task<Contest> Create(string title, Guid ownerId)
+        public async Task<Contest> Create(CreateContestModel contestModel, Guid ownerId)
         {
             var contest = new Contest
             {
                 Id = Guid.NewGuid(),
-                Title = title,
+                Title = contestModel.Title,
+                Type = contestModel.Type,
                 OwnerId = ownerId,
                 CreationDate = DateTime.Now,
                 State = ContestState.RegistrationOpen,
             };
+
             return await contestsRepo.AddAsync(contest);
         }
 
-        public async Task Update(Guid contestId, Guid? ownerId, ContestOptions options)
+        public async Task Update(Guid contestId, Guid? ownerId, ContestType type)
         {
             var contest = await contestsRepo.GetByIdAsync(contestId);
 
             if (ownerId.HasValue)
                 contest.OwnerId = ownerId.Value;
-            contest.Options = options;
+            contest.Type = type;
 
             await contestsRepo.UpdateAsync(contest);
         }

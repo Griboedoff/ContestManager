@@ -50,13 +50,13 @@ namespace Core.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("Options");
-
                     b.Property<Guid>("OwnerId");
 
                     b.Property<int>("State");
 
                     b.Property<string>("Title");
+
+                    b.Property<int>("Type");
 
                     b.HasKey("Id");
 

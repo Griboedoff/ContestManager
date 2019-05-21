@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Contests;
+using Core.Enums.DataBaseEnums;
 using Core.Models;
 using Core.Registration;
 using Core.Sessions;
@@ -27,12 +28,15 @@ namespace Front.React.Controllers
         }
 
         [HttpPost]
-        public string Create(string name)
+        public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel)
         {
-            var user = cookieManager.GetUser(Request);
-            var contest = contestManager.Create(name, user.Id);
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
 
-            return JsonConvert.SerializeObject(contest);
+            var contest = await contestManager.Create(contestModel, user.Id);
+
+            return Json(contest);
         }
 
         [HttpGet]

@@ -82,8 +82,7 @@ namespace Front.React.Controllers
         {
             try
             {
-                var userId = userCookieManager.GetUser(Request).Id;
-                var user = await usersRepo.GetByIdAsync(userId);
+                var user = await userCookieManager.GetUser(Request);
 
                 return Json(user);
             }
@@ -98,7 +97,7 @@ namespace Front.React.Controllers
         {
             try
             {
-                var userFromDb = userCookieManager.GetUser(Request);
+                var userFromDb = await userCookieManager.GetUser(Request);
 
                 if (!RoleChangeValidator.Validate(userFromDb.Role, user.Role))
                     return StatusCode(

@@ -9,7 +9,7 @@ namespace Core.DataBaseEntities
 
         public Guid OwnerId { get; set; }
 
-        public ContestOptions Options { get; set; }
+        public ContestType Type { get; set; }
 
         public ContestState State { get; set; }
 

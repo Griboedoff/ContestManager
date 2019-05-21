@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
-using Core.Helpers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -10,20 +11,17 @@ namespace Core.Sessions
     public interface IUserCookieManager
     {
         void SetLoginCookie(HttpResponse response, User user);
-        User GetUser(HttpRequest request);
+        Task<User> GetUser(HttpRequest request);
         void Clear(HttpResponse response);
     }
 
     public class UserCookieManager : IUserCookieManager
     {
-        private readonly ICryptoHelper cryptoHelper;
+        private readonly IAsyncRepository<User> userRepo;
         private const string Sid = "sid";
         private const string UserInfo = "User";
 
-        public UserCookieManager(ICryptoHelper cryptoHelper)
-        {
-            this.cryptoHelper = cryptoHelper;
-        }
+        public UserCookieManager(IAsyncRepository<User> userRepo) => this.userRepo = userRepo;
 
         public void SetLoginCookie(HttpResponse response, User user)
         {
@@ -36,14 +34,14 @@ namespace Core.Sessions
             response.Cookies.Append(UserInfo, CreateUserInfo(user));
         }
 
-        public User GetUser(HttpRequest request)
+        public async Task<User> GetUser(HttpRequest request)
         {
             if (!request.Cookies.TryGetValue(Sid, out var sid) ||
                 !TryGetUser(request, out var user) ||
                 !SessionManager.ValidateSession(user.Name, sid))
                 throw new UnauthorizedAccessException();
 
-            return user;
+            return await userRepo.GetByIdAsync(user.Id);
         }
 
         public void Clear(HttpResponse response)
