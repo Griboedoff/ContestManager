@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
-using Core.Models;
 
-namespace Core.Managers
+namespace Core.Contests
 {
     public interface IContestManager
     {
-        Task<Contest> Create(string title, Guid ownerId, FieldDescription[] fields);
-        Task Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields);
+        Task<Contest> Create(string title, Guid ownerId);
+        Task Update(Guid contestId, Guid? ownerId, ContestOptions options);
         Task<Contest> Get(Guid contestId);
         Task<IReadOnlyList<Contest>> GetAll();
         Task<IReadOnlyList<News>> GetNews(Guid contestId);
@@ -37,28 +36,26 @@ namespace Core.Managers
             this.participantsRepo = participantsRepo;
         }
 
-        public async Task<Contest> Create(string title, Guid ownerId, FieldDescription[] fields)
+        public async Task<Contest> Create(string title, Guid ownerId)
         {
             var contest = new Contest
             {
                 Id = Guid.NewGuid(),
                 Title = title,
                 OwnerId = ownerId,
-                Fields = fields,
                 CreationDate = DateTime.Now,
                 State = ContestState.RegistrationOpen,
             };
             return await contestsRepo.AddAsync(contest);
         }
 
-        public async Task Update(Guid contestId, Guid? ownerId, ContestOptions options, FieldDescription[] fields)
+        public async Task Update(Guid contestId, Guid? ownerId, ContestOptions options)
         {
             var contest = await contestsRepo.GetByIdAsync(contestId);
 
             if (ownerId.HasValue)
                 contest.OwnerId = ownerId.Value;
             contest.Options = options;
-            contest.Fields = fields;
 
             await contestsRepo.UpdateAsync(contest);
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Contests;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Exceptions;
@@ -63,7 +64,7 @@ namespace Front.React
             services.AddSingleton<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
             services.AddSingleton<ICryptoHelper, CryptoHelper>();
             services.AddSingleton<IDataGenerator, DataGenerator>();
-            services.AddSingleton<IContestManager, ContestManager>();
+            services.AddScoped<IContestManager, ContestManager>();
             services.AddSingleton<IEmailManager, EmailManager>();
             services.AddSingleton<INewsManager, NewsManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();

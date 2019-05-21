@@ -11,8 +11,9 @@ class Layout extends React.Component {
     }
 
     render() {
-        return this.props.fetching ? <Spinner type="primary"/> :
-            <div>
+        return this.props.fetching
+            ? <Spinner style={{ width: '3rem', height: '3rem' }} />
+            : <div>
                 <NavMenu />
                 <Container>
                     {this.props.children}

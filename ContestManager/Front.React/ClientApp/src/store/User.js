@@ -1,6 +1,6 @@
 import { get, post } from '../Proxy';
 
-const fetching = 'FETCHING';
+const fetching = 'FETCHING_USER';
 const setUser = 'SET_USER';
 const logout = 'LOGOUT';
 const initialState = { user: null, fetching: false };

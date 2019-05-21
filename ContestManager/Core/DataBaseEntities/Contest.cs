@@ -1,8 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using Core.Enums;
-using Core.Models;
-using Newtonsoft.Json;
 
 namespace Core.DataBaseEntities
 {
@@ -17,20 +14,6 @@ namespace Core.DataBaseEntities
         public ContestState State { get; set; }
 
         public DateTime CreationDate { get; set; }
-
-        [JsonIgnore]
-        public string SerializedFields { get; set; }
-
-        [NotMapped]
-        public FieldDescription[] Fields
-        {
-            get => SerializedFields == null
-                ? new FieldDescription[0]
-                : JsonConvert.DeserializeObject<FieldDescription[]>(SerializedFields);
-            set => SerializedFields = value == null
-                ? null
-                : JsonConvert.SerializeObject(value);
-        }
     }
 
     public enum ContestState
