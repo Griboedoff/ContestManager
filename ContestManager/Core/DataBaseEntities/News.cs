@@ -8,8 +8,8 @@ namespace Core.DataBaseEntities
 
         public Contest Contest { get; set; }
 
-        public DateTime CreationDate{ get; set; }
-
-        public string MdContent{ get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

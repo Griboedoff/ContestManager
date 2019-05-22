@@ -51,11 +51,11 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/news")]
-        public async Task<string> GetNews(Guid id)
+        public async Task<JsonResult> GetNews(Guid id)
         {
             var news = await contestManager.GetNews(id);
 
-            return JsonConvert.SerializeObject(news);
+            return Json(news);
         }
 
         [HttpGet("{id}")]

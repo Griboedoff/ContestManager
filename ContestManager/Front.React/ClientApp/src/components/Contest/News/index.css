@@ -1,0 +1,9 @@
+.time{
+    font-size: 75%;
+    color: #6c757d;
+}
+
+.header-block{
+    /*padding: 0 10px;*/
+    position: relative; 
+}

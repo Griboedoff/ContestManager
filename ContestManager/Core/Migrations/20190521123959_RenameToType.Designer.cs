@@ -3,14 +3,17 @@ using System;
 using Core.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Core.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20190521123959_RenameToType")]
+    partial class RenameToType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,13 +99,11 @@ namespace Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Content");
-
                     b.Property<Guid>("ContestId");
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("MdContent");
 
                     b.HasKey("Id");
 

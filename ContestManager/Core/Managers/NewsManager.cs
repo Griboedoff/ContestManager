@@ -8,7 +8,7 @@ namespace Core.Managers
 {
     public interface INewsManager
     {
-        Task<News> Create(string mdContent, Guid contestId);
+        Task<News> Create(string content, Guid contestId);
         Task<News> Get(Guid newsId);
         Task<News[]> GetByContest(Guid contestId);
     }
@@ -22,14 +22,14 @@ namespace Core.Managers
             this.newsRepo = newsRepo;
         }
 
-        public async Task<News> Create(string mdContent, Guid contestId)
+        public async Task<News> Create(string content, Guid contestId)
         {
             var news = new News
             {
                 Id = Guid.NewGuid(),
                 ContestId = contestId,
                 CreationDate = DateTime.Now,
-                MdContent = mdContent,
+                Content = content,
             };
 
             return await newsRepo.AddAsync(news);

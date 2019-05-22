@@ -75,7 +75,7 @@ namespace Core.Contests
             {
                 ContestId = contestId,
                 CreationDate = DateTime.Now,
-                MdContent = content,
+                Content = content,
             };
 
             return await newsRepo.AddAsync(news);

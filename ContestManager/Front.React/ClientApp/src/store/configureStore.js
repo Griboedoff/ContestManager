@@ -3,11 +3,13 @@ import thunk from 'redux-thunk';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import * as Contest from './Contest';
 import * as User from './User';
+import * as News from './News';
 
 export default function configureStore(history, initialState) {
     const reducers = {
         user: User.reducer,
-        contests: Contest.reducer
+        contests: Contest.reducer,
+        news: News.reducer
     };
 
     const middleware = [
