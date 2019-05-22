@@ -58,12 +58,12 @@ namespace Front.React.Controllers
             return JsonConvert.SerializeObject(news);
         }
 
-        [HttpGet("{id}/info")]
-        public async Task<string> Get(Guid id)
+        [HttpGet("{id}")]
+        public async Task<JsonResult> Get(Guid id)
         {
             var contest = await contestManager.Get(id);
 
-            return JsonConvert.SerializeObject(contest);
+            return Json(contest);
         }
 
         [HttpPost("{id}/participate")]

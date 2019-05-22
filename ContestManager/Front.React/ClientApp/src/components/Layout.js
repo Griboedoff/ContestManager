@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'reactstrap';
 import Spinner from 'reactstrap/es/Spinner';
-import withUser from './HOC/WithUser';
+import WithUser from './HOC/WithUser';
 import NavMenu from './NavMenu';
 
 class Layout extends React.Component {
@@ -22,4 +22,4 @@ class Layout extends React.Component {
     }
 }
 
-export default withUser(Layout);
+export default WithUser(Layout);

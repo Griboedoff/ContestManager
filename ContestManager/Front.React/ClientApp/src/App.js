@@ -5,6 +5,7 @@ import Home from './components/ContestList';
 import Login from './components/Login';
 import UserPage from './components/UserPage';
 import CreateContest from './components/CreateContest';
+import Contest from './components/Contest';
 import Register from './components/Register';
 
 export default () => (
@@ -14,5 +15,6 @@ export default () => (
         <Route path='/register' component={Register} />
         <Route path='/user' component={UserPage} />
         <Route path='/createContest' component={CreateContest} />
+        <Route path='/contests/:id' component={Contest} />
     </Layout>
 );
