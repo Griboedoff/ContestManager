@@ -1,8 +1,9 @@
 import React from 'react';
-import { Alert, Button, ButtonGroup, Col, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Alert, Button, Col, Form, FormGroup, FormText, Input, Label } from 'reactstrap';
 import { post } from '../../Proxy';
 import './index.css';
 import withUser from '../HOC/WithUser';
+import ChangePasswordModal from './ChangePasswordModal';
 
 class Login extends React.Component {
     constructor(props, context) {
@@ -13,7 +14,10 @@ class Login extends React.Component {
             password: '',
             isProcessing: false,
             error: false,
+            isOpen: false,
         };
+
+        this.toggle = this.toggle.bind(this);
     }
 
     checkLoginState = response => {
@@ -75,8 +79,20 @@ class Login extends React.Component {
         });
     };
 
+    toggle() {
+        this.setState(state => ({
+            isOpen: !state.isOpen
+        }));
+    }
+
+    restorePassword = () => {
+        this.toggle();
+    };
+
+    getEmail = () => this.state.email;
+
     render() {
-        return <div className="form-container">
+        return <div className="form-container row flex-column">
             {
                 this.state.error && <Alert color="danger">
                     Ой! Что-то пошло не так
@@ -84,6 +100,10 @@ class Login extends React.Component {
                     Попробуйте позже
                 </Alert>
             }
+            <Button
+                className="mb-5 align-self-center vk-button"
+                onClick={this.loginVK}>Войти через ВКонтакте</Button>
+
             <Form>
                 <FormGroup row>
                     <Label sm={3}>Email</Label>
@@ -95,18 +115,17 @@ class Login extends React.Component {
                     <Label sm={3}>Пароль</Label>
                     <Col sm={9}>
                         <Input type="password" placeholder="Пароль" name="password" onChange={this.handleChange} />
+                        <FormText onClick={this.restorePassword} className="link">Я забыл пароль</FormText>
                     </Col>
                 </FormGroup>
 
                 <FormGroup row>
                     <Col sm={{ size: 6, offset: 3 }}>
-                        <ButtonGroup>
-                            <Button key="loginEmail" onClick={this.loginPassword}>Войти</Button>
-                            <Button key="loginVk" className="vk-button" onClick={this.loginVK}>Войти через
-                                VK</Button>
-                        </ButtonGroup></Col>
+                        <Button key="loginEmail" onClick={this.loginPassword}>Войти</Button>
+                    </Col>
                 </FormGroup>
             </Form>
+            {this.state.isOpen && <ChangePasswordModal email={this.state.email} isOpen={this.state.isOpen} toggle={this.toggle}/>}
         </div>;
     }
 }

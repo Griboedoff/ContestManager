@@ -31,7 +31,6 @@ class Register extends React.Component {
             errorMessage: '',
             tooltipOpen: false
         };
-        document.title = "Регистрация";
 
         this.toggle = this.toggle.bind(this);
     }
@@ -120,9 +119,9 @@ class Register extends React.Component {
                     </div>
                 }
             </Alert>}
-            <Button className="align-self-center row vk-button" onClick={this.registerVK}>Зарегистрироваться через
-                ВКонтакте</Button>
-            <hr />
+            <Button 
+                className="mb-5 align-self-center row vk-button" 
+                onClick={this.registerVK}>Зарегистрироваться через ВКонтакте</Button>
 
             <AvForm>
                 <legend>Регистрация по email</legend>

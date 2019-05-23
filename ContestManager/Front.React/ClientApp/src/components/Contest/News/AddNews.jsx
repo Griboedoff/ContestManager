@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button, Col, Container, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
+import { Alert, Button, Col, Container, Form, FormGroup, Input, Row, Spinner } from 'reactstrap';
 import Textarea from 'react-textarea-autosize';
 import { post } from '../../../Proxy';
 import NewsArticle from './NewsArticle';
