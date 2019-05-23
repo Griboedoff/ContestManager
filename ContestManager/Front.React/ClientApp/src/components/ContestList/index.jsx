@@ -13,13 +13,17 @@ class ContestList extends React.Component {
             {ongoing.length !== 0 && <>
                 <h3>Текущие</h3>
                 <ListGroup className="mb-3">
-                    {ongoing.map(c => <ListGroupItem tag={Link} to={`contests/${c.id}`}>{c.title}</ListGroupItem>)}
+                    {ongoing.map(c => <ListGroupItem tag={Link}
+                                                     to={`contests/${c.id}`}
+                                                     id={c.id}>{c.title}</ListGroupItem>)}
                 </ListGroup>
             </>}
             {finished.length !== 0 && <>
                 <h3>Прошедшие</h3>
                 <ListGroup>
-                    {finished.map(c => <ListGroupItem tag={Link} to={`contests/${c.id}`}>{c.title}</ListGroupItem>)}
+                    {finished.map(c => <ListGroupItem tag={Link}
+                                                      to={`contests/${c.id}`}
+                                                      id={c.id}>{c.title}</ListGroupItem>)}
                 </ListGroup>
             </>}
         </>;

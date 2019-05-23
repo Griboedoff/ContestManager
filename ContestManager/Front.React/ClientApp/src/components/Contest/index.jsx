@@ -1,30 +1,37 @@
 import React from 'react';
-import { Nav, NavItem, NavLink } from 'reactstrap';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink } from 'reactstrap';
 import Spinner from 'reactstrap/es/Spinner';
 import { ContestState } from '../../Enums/ContestsState';
 import { UserRole } from '../../Enums/UserRole';
 import WithContest from '../HOC/WithContest';
 import WithUser from '../HOC/WithUser';
 import News from './News';
+import AddNews from './News/AddNews';
 
 class Contest extends React.Component {
     constructor(props) {
         super(props);
+        this.contestId = this.props.match.params.id;
 
+        this.toggleDropdown = this.toggleDropdown.bind(this);
         this.state = {
             activeTab: 1,
+            dropdownOpen: false,
         };
+    }
 
+    toggleDropdown() {
+        this.setState({
+            dropdownOpen: !this.state.dropdownOpen
+        });
     }
 
     componentDidMount() {
-        const contestId = this.props.match.params.id;
-
-        if (this.props.contest && this.props.contest.id === contestId) {
+        if (this.props.contest && this.props.contest.id === this.contestId) {
             return;
         }
 
-        this.props.getContest(contestId);
+        this.props.getContest(this.contestId);
     }
 
 
@@ -41,19 +48,24 @@ class Contest extends React.Component {
             <Nav tabs>
                 <NavItem>
                     <NavLink href="#"
-                             active={this.state.activeTab === 1}
-                             onClick={this.handleTabChange(1)}>Информация</NavLink>
+                             active={this.state.activeTab === Tab.News}
+                             onClick={this.handleTabChange(Tab.News)}>Информация</NavLink>
                 </NavItem>
                 {this.props.contest.state === ContestState.Finished && <NavItem>
                     <NavLink href="#"
-                             active={this.state.activeTab === 2}
-                             onClick={this.handleTabChange(2)}>Результаты</NavLink>
+                             active={this.state.activeTab === Tab.Results}
+                             onClick={this.handleTabChange(Tab.Results)}>Результаты</NavLink>
                 </NavItem>}
-                {this.props.user && this.props.user.role === UserRole.Admin && <NavItem>
-                    <NavLink href="#"
-                             active={this.state.activeTab === 3}
-                             onClick={this.handleTabChange(3)}>Настройки</NavLink>
-                </NavItem>}
+                {this.props.user && this.props.user.role === UserRole.Admin &&
+                <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} className="ml-auto">
+                    <DropdownToggle nav caret>
+                        Админка
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</DropdownItem>
+                        <DropdownItem onClick={this.handleTabChange(Tab.Settings)}>Настройки</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>}
             </Nav>
             {this.renderTab()}
         </>;
@@ -61,13 +73,20 @@ class Contest extends React.Component {
 
     renderTab() {
         switch (this.state.activeTab) {
-            case 1:
-                return <News contestId={this.props.contest.id} />;
-
+            case Tab.AddNews:
+                return <AddNews contestId={this.contestId} />;
+            case Tab.News:
             default:
-                return null;
+                return <News contestId={this.contestId} />;
         }
     }
 }
+
+const Tab = {
+    News: 1,
+    Results: 2,
+    AddNews: 3,
+    Settings: 4,
+};
 
 export default WithUser(WithContest(Contest));

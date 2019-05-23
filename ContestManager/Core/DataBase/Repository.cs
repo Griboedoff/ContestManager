@@ -26,7 +26,7 @@ namespace Core.DataBase
 
         public Repository(Context dbContext) => this.dbContext = dbContext;
 
-        public virtual async Task<T> GetByIdAsync(Guid id) => await dbContext.Set<T>().FindAsync(id);
+        public async Task<T> GetByIdAsync(Guid id) => await dbContext.Set<T>().FindAsync(id);
         public async Task<IReadOnlyList<T>> ListAllAsync() => await dbContext.Set<T>().ToListAsync();
 
         public async Task<IReadOnlyList<T>> WhereAsync(Expression<Func<T, bool>> selector)

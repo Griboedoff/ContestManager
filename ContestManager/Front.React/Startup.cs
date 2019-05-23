@@ -10,6 +10,7 @@ using Core.Helpers;
 using Core.Managers;
 using Core.Models;
 using Core.Models.Configs;
+using Core.News_;
 using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Builder;
@@ -66,7 +67,7 @@ namespace Front.React
             services.AddSingleton<IDataGenerator, DataGenerator>();
             services.AddScoped<IContestManager, ContestManager>();
             services.AddSingleton<IEmailManager, EmailManager>();
-            services.AddSingleton<INewsManager, NewsManager>();
+            services.AddScoped<INewsManager, NewsManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
         }

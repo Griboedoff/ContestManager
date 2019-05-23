@@ -81,7 +81,10 @@ namespace Core.Contests
             return await newsRepo.AddAsync(news);
         }
 
-        public async Task<bool> Exists(Guid contestId) => await contestsRepo.GetByIdAsync(contestId) != null;
+        public async Task<bool> Exists(Guid contestId)
+        {
+            return await contestsRepo.GetByIdAsync(contestId) != null;
+        }
 
         public async Task<Participant> AddParticipant(Guid contestId, Guid userId)
         {

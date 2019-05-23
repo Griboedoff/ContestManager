@@ -1,9 +1,13 @@
-.time{
+.time {
     font-size: 75%;
     color: #6c757d;
 }
 
-.header-block{
+.header-block {
     /*padding: 0 10px;*/
-    position: relative; 
+    position: relative;
+}
+
+.news-item:nth-child(1) {
+    border-top: none;
 }

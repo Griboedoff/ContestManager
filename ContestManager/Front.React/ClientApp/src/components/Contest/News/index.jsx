@@ -30,7 +30,7 @@ class News extends React.Component {
             return <Alert color="info">Скоро здесь появятся новости</Alert>;
 
         return <ListGroup>
-            {this.props.news[this.props.contestId].map(n => <ListGroupItem key={n.id}>
+            {this.props.news[this.props.contestId].map(n => <ListGroupItem key={n.id} className="news-item">
                 <NewsArticle article={n} />
             </ListGroupItem>)}
         </ListGroup>;

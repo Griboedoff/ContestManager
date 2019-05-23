@@ -55,7 +55,7 @@ namespace Front.React.Controllers
         {
             var news = await contestManager.GetNews(id);
 
-            return Json(news);
+            return Json(news.OrderByDescending(n => n.CreationDate));
         }
 
         [HttpGet("{id}")]

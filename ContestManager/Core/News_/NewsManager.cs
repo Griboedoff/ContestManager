@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 
-namespace Core.Managers
+namespace Core.News_
 {
     public interface INewsManager
     {
-        Task<News> Create(string content, Guid contestId);
+        Task<News> Create(CreateNewsModel createNewsModel);
         Task<News> Get(Guid newsId);
         Task<News[]> GetByContest(Guid contestId);
     }
@@ -22,14 +22,15 @@ namespace Core.Managers
             this.newsRepo = newsRepo;
         }
 
-        public async Task<News> Create(string content, Guid contestId)
+        public async Task<News> Create(CreateNewsModel createNewsModel)
         {
             var news = new News
             {
                 Id = Guid.NewGuid(),
-                ContestId = contestId,
+                ContestId = createNewsModel.ContestId,
                 CreationDate = DateTime.Now,
-                Content = content,
+                Content = createNewsModel.Content,
+                Title = createNewsModel.Title,
             };
 
             return await newsRepo.AddAsync(news);
