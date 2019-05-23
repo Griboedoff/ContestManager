@@ -1,1 +1,0 @@
-import React from 'react';import {render} from 'react-dom';import {BrowserRouter as Router} from "react-router-dom";import {CookiesProvider} from 'react-cookie';import App from './components/App'render(    <Router>        <CookiesProvider>            <App className="main" />        </CookiesProvider>    </Router>,    document.getElementById('root'));
