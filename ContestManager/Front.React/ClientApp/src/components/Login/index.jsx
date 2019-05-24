@@ -56,7 +56,7 @@ class Login extends React.Component {
 
     loginPassword = () => {
         this.setState({ error: false });
-        post('login/email', {
+        post('users/login/email', {
             email: this.state.email,
             password: this.state.password,
         }).then(resp => {

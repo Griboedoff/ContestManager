@@ -24,8 +24,17 @@
         case InviteLinkStatus.Error:
             @:Внутренняя ошибка
             break;
+        case InviteLinkStatus.RestorePassword:
+            <form action="/api/users/changePass" method="post">
+                <label>
+                    Новый пароль
+                    <input type="password" placeholder="password" name="password"/>
+                </label>
+                <button type="submit">Сменить</button>
+            </form>
+            break;
         case InviteLinkStatus.Ok:
-            @:Аккаунт активирован<br />
+            @:Аккаунт активирован<br/>
             <a href="@Model.Url">На сайт</a>
             break;
         default:

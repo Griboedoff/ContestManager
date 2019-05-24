@@ -29,18 +29,18 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("login/email")]
-        public async Task<ActionResult> Login(string email, string password)
+        public async Task<ActionResult> Login([FromBody] EmailLoginInfo emailLoginInfo)
         {
             try
             {
-                var user = await authenticationManager.Authenticate(email, password);
+                var user = await authenticationManager.Authenticate(emailLoginInfo);
                 userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
             }
             catch (AuthenticationFailedException)
             {
-                return null;
+                return Unauthorized();
             }
         }
 
@@ -57,7 +57,7 @@ namespace Front.React.Controllers
             }
             catch (AuthenticationFailedException)
             {
-                return null;
+                return Unauthorized();
             }
         }
 
@@ -120,6 +120,19 @@ namespace Front.React.Controllers
                 return StatusCode(403);
             }
         }
+
+        [HttpPost("changePass")]
+        public async Task<ActionResult> ChangePass(string password)
+        {
+            var user = await userCookieManager.GetUser(Request);
+
+            var isChanged = await userManager.ChangePassword(user, password);
+            if (isChanged)
+                return Redirect("/");
+
+            return StatusCode(400);
+        }
+
 
         [HttpPost("logout")]
         public void LogOut() => userCookieManager.Clear(Response);

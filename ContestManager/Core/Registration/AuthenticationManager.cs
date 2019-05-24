@@ -13,7 +13,7 @@ namespace Core.Registration
 {
     public interface IAuthenticationManager
     {
-        Task<User> Authenticate(string email, string password);
+        Task<User> Authenticate(EmailLoginInfo loginInfo);
         Task<User> Authenticate(VkLoginInfo loginInfo);
     }
 
@@ -39,16 +39,16 @@ namespace Core.Registration
             this.usersRepo = usersRepo;
         }
 
-        public async Task<User> Authenticate(string email, string password)
+        public async Task<User> Authenticate(EmailLoginInfo loginInfo)
         {
             var account = await accountsRepo.FirstOrDefaultAsync(
-                a => a.Type == AuthenticationType.Password && a.ServiceId == email);
+                a => a.Type == AuthenticationType.Password && a.ServiceId == loginInfo.Email);
 
             if (account == default(AuthenticationAccount))
                 throw new AuthenticationFailedException();
 
             var token = JsonConvert.DeserializeObject<PasswordToken>(account.ServiceToken);
-            if (!securityManager.ValidatePassword(token, password))
+            if (!securityManager.ValidatePassword(token, loginInfo.Password))
                 throw new AuthenticationFailedException();
 
             return await usersRepo.GetByIdAsync(account.UserId);

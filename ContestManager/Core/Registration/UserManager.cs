@@ -16,6 +16,7 @@ namespace Core.Registration
     {
         Task<RegistrationStatus> CreateEmailConfirmRequest(EmailRegisterInfo email);
         Task<bool> CreatePasswordRestoreRequest(string email);
+        Task<bool> ChangePassword(User user, string newPassword);
         Task<RegistrationStatus> RegisterByVk(string name, string vkId);
     }
 
@@ -82,6 +83,18 @@ namespace Core.Registration
             SendEmail(request);
 
             await invitesRepo.AddAsync(request);
+
+            return true;
+        }
+
+        public async Task<bool> ChangePassword(User user, string newPassword)
+        {
+            var account = await authenticationAccountRepo.FirstOrDefaultAsync(a => a.UserId == user.Id);
+            if (account == null)
+                return false;
+
+            account = authenticationAccountFactory.ChangePassword(account, newPassword);
+            await authenticationAccountRepo.UpdateAsync(account);
 
             return true;
         }

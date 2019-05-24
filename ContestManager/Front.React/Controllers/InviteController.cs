@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
+using Core.Factories;
 using Core.Models;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace Front.React.Controllers
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
             IAsyncRepository<User> userRepo,
             IOptions<ConfigOptions> options,
+            IAuthenticationAccountFactory authenticationAccountFactory,
             IUserCookieManager userCookieManager
         )
         {
@@ -34,8 +36,7 @@ namespace Front.React.Controllers
             this.userCookieManager = userCookieManager;
         }
 
-        [HttpGet]
-        [Route("{code}")]
+        [HttpGet("{code}")]
         public async Task<ActionResult> Accept(string code)
         {
             var invite = await invitesRepo.FirstOrDefaultAsync(
@@ -43,7 +44,7 @@ namespace Front.React.Controllers
 
             var (inviteLinkStatus, authenticationAccount) = await CheckInvite(invite);
 
-            if (inviteLinkStatus == InviteLinkStatus.Ok)
+            if (inviteLinkStatus == InviteLinkStatus.Ok || inviteLinkStatus == InviteLinkStatus.RestorePassword)
             {
                 var user = await userRepo.GetByIdAsync(authenticationAccount.UserId);
                 userCookieManager.SetLoginCookie(Response, user);
@@ -73,7 +74,7 @@ namespace Front.React.Controllers
                 invite.IsUsed = true;
                 await invitesRepo.UpdateAsync(invite);
 
-                return (InviteLinkStatus.Ok, account);
+                return (invite.PasswordRestore ? InviteLinkStatus.RestorePassword : InviteLinkStatus.Ok, account);
             }
             catch (Exception)
             {
@@ -94,5 +95,6 @@ namespace Front.React.Controllers
         AlreadyUsed,
         Ok,
         Error,
+        RestorePassword,
     }
 }

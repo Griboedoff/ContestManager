@@ -8,7 +8,8 @@ namespace Core.Factories
 {
     public interface IAuthenticationAccountFactory
     {
-        AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword);
+        AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string email, string password);
+        AuthenticationAccount ChangePassword(AuthenticationAccount account, string newPassword);
         AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId);
     }
 
@@ -21,19 +22,27 @@ namespace Core.Factories
             this.securityManager = securityManager;
         }
 
-        public AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string userEmail, string userPassword)
+        public AuthenticationAccount CreatePasswordAuthenticationAccount(User user, string email, string password)
         {
-            var passwordToken = securityManager.CreatePasswordToken(userPassword);
+            var passwordToken = securityManager.CreatePasswordToken(password);
 
             return new AuthenticationAccount
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
                 Type = AuthenticationType.Password,
-                ServiceId = userEmail,
+                ServiceId = email,
                 ServiceToken = JsonConvert.SerializeObject(passwordToken),
                 IsActive = false,
             };
+        }
+
+        public AuthenticationAccount ChangePassword(AuthenticationAccount account, string newPassword)
+        {
+            var passwordToken = securityManager.CreatePasswordToken(newPassword);
+            account.ServiceToken = JsonConvert.SerializeObject(passwordToken);
+
+            return account;
         }
 
         public AuthenticationAccount CreateVkAuthenticationAccount(User user, string vkId)
