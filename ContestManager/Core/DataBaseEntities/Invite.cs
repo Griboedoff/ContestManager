@@ -5,7 +5,7 @@ using Core.Helpers;
 
 namespace Core.DataBaseEntities
 {
-    public class EmailConfirmationRequest : DataBaseEntity
+    public class Invite : DataBaseEntity
     {
         public Guid AccountId { get; set; }
         public ConfirmationType Type { get; set; }
@@ -17,5 +17,7 @@ namespace Core.DataBaseEntities
         public string ConfirmationCode { get; set; }
 
         public bool IsUsed { get; set; }
+
+        public bool PasswordRestore { get; set; }
     }
 }

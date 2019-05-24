@@ -5,22 +5,23 @@ using Core.Helpers;
 
 namespace Core.Factories
 {
-    public interface IEmailConfirmationRequestFactory
+    public interface IInviteEmailFactory
     {
-        EmailConfirmationRequest Create(AuthenticationAccount email, ConfirmationType type);
+        Invite CreateInvite(AuthenticationAccount account, ConfirmationType type);
+        Invite CreateRestorePassword(AuthenticationAccount account, ConfirmationType type);
     }
 
-    public class EmailConfirmationRequestFactory : IEmailConfirmationRequestFactory
+    public class InviteEmailFactory : IInviteEmailFactory
     {
         private readonly IDataGenerator dataGenerator;
 
-        public EmailConfirmationRequestFactory(IDataGenerator dataGenerator)
+        public InviteEmailFactory(IDataGenerator dataGenerator)
         {
             this.dataGenerator = dataGenerator;
         }
 
-        public EmailConfirmationRequest Create(AuthenticationAccount account, ConfirmationType type)
-            => new EmailConfirmationRequest
+        public Invite CreateInvite(AuthenticationAccount account, ConfirmationType type)
+            => new Invite
             {
                 Id = Guid.NewGuid(),
                 Type = type,
@@ -28,6 +29,19 @@ namespace Core.Factories
                 ConfirmationCode = dataGenerator.GenerateSequence(FieldsLength.ConfirmationCode),
                 IsUsed = false,
                 AccountId = account.Id,
+                PasswordRestore = false,
+            };
+
+        public Invite CreateRestorePassword(AuthenticationAccount account, ConfirmationType type)
+            => new Invite
+            {
+                Id = Guid.NewGuid(),
+                Type = type,
+                Email = account.ServiceId,
+                ConfirmationCode = dataGenerator.GenerateSequence(FieldsLength.ConfirmationCode),
+                IsUsed = false,
+                AccountId = account.Id,
+                PasswordRestore = true,
             };
     }
 }

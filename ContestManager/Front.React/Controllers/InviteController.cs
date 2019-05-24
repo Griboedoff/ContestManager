@@ -4,6 +4,7 @@ using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
 using Core.Models;
+using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,29 +13,42 @@ namespace Front.React.Controllers
     [Route("[controller]")]
     public class InviteController : Controller
     {
-        private readonly IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo;
+        private readonly IAsyncRepository<Invite> invitesRepo;
         private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
+        private readonly IAsyncRepository<User> userRepo;
         private readonly IOptions<ConfigOptions> options;
+        private readonly IUserCookieManager userCookieManager;
 
         public InviteController(
-            IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo,
+            IAsyncRepository<Invite> invitesRepo,
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
-            IOptions<ConfigOptions> options
+            IAsyncRepository<User> userRepo,
+            IOptions<ConfigOptions> options,
+            IUserCookieManager userCookieManager
         )
         {
-            this.confirmationRequestsRepo = confirmationRequestsRepo;
+            this.invitesRepo = invitesRepo;
             this.authenticationAccountRepo = authenticationAccountRepo;
+            this.userRepo = userRepo;
             this.options = options;
+            this.userCookieManager = userCookieManager;
         }
 
         [HttpGet]
         [Route("{code}")]
         public async Task<ActionResult> Accept(string code)
         {
-            var request = await confirmationRequestsRepo.FirstOrDefaultAsync(
+            var invite = await invitesRepo.FirstOrDefaultAsync(
                 r => r.Type == ConfirmationType.Registration && r.ConfirmationCode == code);
 
-            var inviteLinkStatus = await CheckRequest(request);
+            var (inviteLinkStatus, authenticationAccount) = await CheckInvite(invite);
+
+            if (inviteLinkStatus == InviteLinkStatus.Ok)
+            {
+                var user = await userRepo.GetByIdAsync(authenticationAccount.UserId);
+                userCookieManager.SetLoginCookie(Response, user);
+            }
+
             return View(
                 new InviteModel
                 {
@@ -43,28 +57,28 @@ namespace Front.React.Controllers
                 });
         }
 
-        private async Task<InviteLinkStatus> CheckRequest(EmailConfirmationRequest request)
+        private async Task<(InviteLinkStatus, AuthenticationAccount)> CheckInvite(Invite invite)
         {
-            if (request == null)
-                return InviteLinkStatus.WrongLink;
-            if (request.IsUsed)
-                return InviteLinkStatus.AlreadyUsed;
+            if (invite == null)
+                return (InviteLinkStatus.WrongLink, null);
+            if (invite.IsUsed)
+                return (InviteLinkStatus.AlreadyUsed, null);
 
             try
             {
-                var account = await authenticationAccountRepo.GetByIdAsync(request.AccountId);
+                var account = await authenticationAccountRepo.GetByIdAsync(invite.AccountId);
                 account.IsActive = true;
                 await authenticationAccountRepo.UpdateAsync(account);
 
-                request.IsUsed = true;
-                await confirmationRequestsRepo.UpdateAsync(request);
-            }
-            catch (Exception e)
-            {
-                return InviteLinkStatus.Error;
-            }
+                invite.IsUsed = true;
+                await invitesRepo.UpdateAsync(invite);
 
-            return InviteLinkStatus.Ok;
+                return (InviteLinkStatus.Ok, account);
+            }
+            catch (Exception)
+            {
+                return (InviteLinkStatus.Error, null);
+            }
         }
     }
 

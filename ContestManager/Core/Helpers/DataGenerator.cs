@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 using Core.Extensions;
 
 namespace Core.Helpers
@@ -12,12 +13,11 @@ namespace Core.Helpers
     public class DataGenerator : IDataGenerator
     {
         private const string Symbols = "AaBbCcDdEeFfGgHhiJjKkLMmNnPpQqRrSsTtUuVvWwXxYyZz";
-
-        private readonly Random random;
+        private readonly RNGCryptoServiceProvider random;
 
         public DataGenerator()
         {
-            random = new Random((int)DateTime.Now.Ticks);
+            random = new RNGCryptoServiceProvider();
         }
 
         public string GenerateSequence(int len)
@@ -25,9 +25,11 @@ namespace Core.Helpers
             if (len < 1)
                 throw new ArgumentException($"{nameof(len)} must be 1 or grater");
 
-            return Enumerable
-                .Range(1, len)
-                .Select(num => Symbols[random.Next(1, 9999) % Symbols.Length])
+            var rndBytes = new byte[len];
+            random.GetNonZeroBytes(rndBytes);
+
+            return rndBytes
+                .Select(b => Symbols[b % Symbols.Length])
                 .JoinToString();
         }
     }

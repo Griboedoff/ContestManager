@@ -64,7 +64,7 @@ namespace Front.React.Controllers
         [HttpPost("register/email")]
         public async Task<JsonResult> CreateEmailRegistrationRequest([FromBody] EmailRegisterInfo emailInfo)
         {
-            var emailRegistrationRequest = await userManager.CreateEmailRegistrationRequest(emailInfo);
+            var emailRegistrationRequest = await userManager.CreateEmailConfirmRequest(emailInfo);
 
             return Json(emailRegistrationRequest);
         }
@@ -90,6 +90,14 @@ namespace Front.React.Controllers
             {
                 return StatusCode(403);
             }
+        }
+
+        [HttpPost("restore")]
+        public async Task<ActionResult> RestorePassword([FromBody] string email)
+        {
+            var registrationRequestStatus = await userManager.CreatePasswordRestoreRequest(email);
+
+            return Json(registrationRequestStatus);
         }
 
         [HttpPatch]

@@ -14,7 +14,8 @@ namespace Core.Registration
 {
     public interface IUserManager
     {
-        Task<RegistrationStatus> CreateEmailRegistrationRequest(EmailRegisterInfo email);
+        Task<RegistrationStatus> CreateEmailConfirmRequest(EmailRegisterInfo email);
+        Task<bool> CreatePasswordRestoreRequest(string email);
         Task<RegistrationStatus> RegisterByVk(string name, string vkId);
     }
 
@@ -22,8 +23,8 @@ namespace Core.Registration
     {
         private readonly IEmailManager emailManager;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
-        private readonly IEmailConfirmationRequestFactory emailConfirmationRequestFactory;
-        private readonly IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo;
+        private readonly IInviteEmailFactory inviteEmailFactory;
+        private readonly IAsyncRepository<Invite> invitesRepo;
         private readonly IAsyncRepository<User> usersRepo;
         private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
         private readonly IOptions<ConfigOptions> options;
@@ -31,22 +32,22 @@ namespace Core.Registration
         public UserManager(
             IEmailManager emailManager,
             IAuthenticationAccountFactory authenticationAccountFactory,
-            IEmailConfirmationRequestFactory emailConfirmationRequestFactory,
-            IAsyncRepository<EmailConfirmationRequest> confirmationRequestsRepo,
+            IInviteEmailFactory inviteEmailFactory,
+            IAsyncRepository<Invite> invitesRepo,
             IAsyncRepository<User> usersRepo,
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
             IOptions<ConfigOptions> options)
         {
             this.emailManager = emailManager;
             this.authenticationAccountFactory = authenticationAccountFactory;
-            this.emailConfirmationRequestFactory = emailConfirmationRequestFactory;
-            this.confirmationRequestsRepo = confirmationRequestsRepo;
+            this.inviteEmailFactory = inviteEmailFactory;
+            this.invitesRepo = invitesRepo;
             this.usersRepo = usersRepo;
             this.authenticationAccountRepo = authenticationAccountRepo;
             this.options = options;
         }
 
-        public async Task<RegistrationStatus> CreateEmailRegistrationRequest(EmailRegisterInfo emailInfo)
+        public async Task<RegistrationStatus> CreateEmailConfirmRequest(EmailRegisterInfo emailInfo)
         {
             if (await IsServiceIdAlreadyUsed(emailInfo.Email))
                 return RegistrationStatus.EmailAlreadyUsed;
@@ -60,12 +61,29 @@ namespace Core.Registration
                 emailInfo.Password);
             await authenticationAccountRepo.AddAsync(account);
 
-            var request = emailConfirmationRequestFactory.Create(account, ConfirmationType.Registration);
+            var request = inviteEmailFactory.CreateInvite(account, ConfirmationType.Registration);
             SendEmail(request);
 
-            await confirmationRequestsRepo.AddAsync(request);
+            await invitesRepo.AddAsync(request);
 
             return RegistrationStatus.RequestCreated;
+        }
+
+        public async Task<bool> CreatePasswordRestoreRequest(string email)
+        {
+            if (!await IsServiceIdAlreadyUsed(email))
+                return false;
+
+            var account = await authenticationAccountRepo.FirstOrDefaultAsync(a => a.ServiceId == email);
+            if (account == null)
+                return false;
+
+            var request = inviteEmailFactory.CreateInvite(account, ConfirmationType.Registration);
+            SendEmail(request);
+
+            await invitesRepo.AddAsync(request);
+
+            return true;
         }
 
         public async Task<RegistrationStatus> RegisterByVk(string name, string vkId)
@@ -84,9 +102,12 @@ namespace Core.Registration
         private async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
             => await authenticationAccountRepo.AnyAsync(r => r.ServiceId == serviceId);
 
-        private void SendEmail(EmailConfirmationRequest request)
+        private void SendEmail(Invite request)
         {
-            var mail = new RegistrationConfirmEmail(request.Email, request.ConfirmationCode, options);
+            var mail = request.PasswordRestore
+                ? (EmailBase) new PasswordRestoreEmail(request.Email, request.ConfirmationCode, options)
+                : new RegistrationConfirmEmail(request.Email, request.ConfirmationCode, options);
+
             emailManager.Send(mail);
         }
 

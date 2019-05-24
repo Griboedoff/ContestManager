@@ -62,7 +62,7 @@ namespace Front.React
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddSingleton<IAuthenticationAccountFactory, AuthenticationAccountFactory>();
-            services.AddSingleton<IEmailConfirmationRequestFactory, EmailConfirmationRequestFactory>();
+            services.AddSingleton<IInviteEmailFactory, InviteEmailFactory>();
             services.AddSingleton<ICryptoHelper, CryptoHelper>();
             services.AddSingleton<IDataGenerator, DataGenerator>();
             services.AddScoped<IContestManager, ContestManager>();
