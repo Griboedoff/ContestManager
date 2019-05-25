@@ -112,7 +112,11 @@ namespace Front.React.Controllers
                         403,
                         new { error = "Нельзя менять роль", from = userFromDb.Role, to = user.Role });
 
-                await usersRepo.UpdateAsync(user);
+                userFromDb.Class = user.Class;
+                userFromDb.School = user.School;
+                userFromDb.Name = user.Name;
+                userFromDb.Role = user.Role;
+                await usersRepo.UpdateAsync(userFromDb);
                 return Json(user);
             }
             catch (UnauthorizedAccessException)

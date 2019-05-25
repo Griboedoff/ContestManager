@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Contests;
 using Core.Enums.DataBaseEnums;
-using Core.Models;
-using Core.Registration;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,16 +13,11 @@ namespace Front.React.Controllers
     {
         private readonly IUserCookieManager cookieManager;
         private readonly IContestManager contestManager;
-        private readonly IUserManager userManager;
 
-        public ContestsController(
-            IUserCookieManager cookieManager,
-            IContestManager contestManager,
-            IUserManager userManager)
+        public ContestsController(IUserCookieManager cookieManager, IContestManager contestManager)
         {
             this.cookieManager = cookieManager;
             this.contestManager = contestManager;
-            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -67,12 +60,18 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("{id}/participate")]
-        public void Participate(Guid id, FieldWithValue[] values)
+        public async Task<ObjectResult> Participate(Guid id)
         {
-//            var user = cookieManager.GetUser(Request);
-//
-//            userManager.FillFields(user.Id, values);
-//            contestManager.AddParticipant(id, user.Id);
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Participant)
+                return StatusCode(400, "Неверная роль");
+            if (string.IsNullOrEmpty(user.School))
+                return StatusCode(400, "Не заполнена школа");
+            if (!user.Class.HasValue)
+                return StatusCode(400, "Не указан класс");
+
+            await contestManager.AddParticipant(id, user.Id);
+            return StatusCode(200, "Успешно");
         }
 
         [HttpGet("{id}/results")]

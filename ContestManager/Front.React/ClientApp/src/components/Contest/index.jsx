@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
+    Alert,
     Button,
     Dropdown,
     DropdownItem,
@@ -11,6 +13,7 @@ import {
 } from 'reactstrap';
 import { ContestState } from '../../Enums/ContestsState';
 import { UserRole } from '../../Enums/UserRole';
+import { post } from '../../Proxy';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithUser from '../HOC/WithUser';
@@ -23,9 +26,12 @@ class Contest extends React.Component {
         this.contestId = this.props.match.params.id;
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
+        this.participate = this.participate.bind(this);
         this.state = {
             activeTab: 1,
             dropdownOpen: false,
+            participateError: '',
+            participateSuccess: false,
         };
     }
 
@@ -57,6 +63,12 @@ class Contest extends React.Component {
 
         return <>
             <h2 className="mb-3">{this.props.contest.title}</h2>
+            {/*{this.props.user && this.props.user.role === UserRole.Participant &&*/}
+            <Button className="mb-3" onClick={this.participate}>Принять участие</Button>
+            {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
+            {this.state.participateSuccess &&
+            <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
+                себе</Link></Alert>}
             <Nav tabs>
                 <NavItem>
                     <NavLink href="#"
@@ -91,6 +103,17 @@ class Contest extends React.Component {
             default:
                 return <News contestId={this.contestId} />;
         }
+    }
+
+    participate() {
+        this.setState({ participateError: null, participateSuccess: false });
+        post(`contests/${this.contestId}/participate`)
+            .then(async resp => {
+                if (resp.ok)
+                    this.setState({ participateSuccess: true });
+
+                throw await resp.json();
+            }).catch(err => this.setState({ participateError: err }));
     }
 }
 
