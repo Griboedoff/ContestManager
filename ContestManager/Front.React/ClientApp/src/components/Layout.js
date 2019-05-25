@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'reactstrap';
-import Spinner from 'reactstrap/es/Spinner';
+import { CenterSpinner } from './CenterSpinner';
 import WithUser from './HOC/WithUser';
 import NavMenu from './NavMenu';
 
@@ -12,7 +12,7 @@ class Layout extends React.Component {
 
     render() {
         return this.props.fetching
-            ? <Spinner style={{ width: '3rem', height: '3rem' }} />
+            ? <CenterSpinner />
             : <div>
                 <NavMenu />
                 <Container>

@@ -11,7 +11,7 @@ export default function WithContest(WrappedComponent) {
     }
 
     return connect(
-        state => state.contests,
+        state => ({ ...state.contests, fetchingContests: state.contests.fetching }),
         dispatch => bindActionCreators(actionCreators, dispatch)
     )(EnhancedComponent);
 }

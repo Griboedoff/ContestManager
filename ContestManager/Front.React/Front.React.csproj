@@ -24,6 +24,7 @@
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
         <Content Include="ClientApp\src\common.css" />
+        <Content Include="ClientApp\src\components\CenterSpinner.jsx" />
         <Content Include="ClientApp\src\components\Contest\index.jsx" />
         <Content Include="ClientApp\src\components\Contest\News\AddNews.jsx" />
         <Content Include="ClientApp\src\components\Contest\News\index.css" />

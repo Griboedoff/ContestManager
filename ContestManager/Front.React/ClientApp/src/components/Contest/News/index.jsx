@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, ListGroup, ListGroupItem } from 'reactstrap';
+import { CenterSpinner } from '../../CenterSpinner';
 import WithNews from '../../HOC/WithNews';
 import { get } from '../../../Proxy';
 import NewsArticle from './NewsArticle';
@@ -14,7 +15,7 @@ class News extends React.Component {
     }
 
     componentDidMount() {
-        this.props.fetchingNews();
+        this.props.startFetchingNews();
         get(`contests/${this.props.contestId}/news`)
             .then(resp => {
                 if (resp.ok)
@@ -26,6 +27,9 @@ class News extends React.Component {
     }
 
     render() {
+        if (this.props.fetchingNews)
+            return <CenterSpinner />;
+
         if (!this.props.news || !this.props.news[this.props.contestId])
             return <Alert color="info">Скоро здесь появятся новости</Alert>;
 

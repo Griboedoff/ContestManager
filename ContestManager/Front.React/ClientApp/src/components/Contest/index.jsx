@@ -1,8 +1,17 @@
 import React from 'react';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink } from 'reactstrap';
-import Spinner from 'reactstrap/es/Spinner';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
+    Nav,
+    NavItem,
+    NavLink
+} from 'reactstrap';
 import { ContestState } from '../../Enums/ContestsState';
 import { UserRole } from '../../Enums/UserRole';
+import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithUser from '../HOC/WithUser';
 import News from './News';
@@ -34,14 +43,17 @@ class Contest extends React.Component {
         this.props.getContest(this.contestId);
     }
 
-
     handleTabChange = n => _ => {
         this.setState({ activeTab: n });
     };
 
+    fetching() {
+        return this.props.fetchingContests || this.props.fetchingUser;
+    }
+
     render() {
-        if (!this.props.contest || this.props.fetching)
-            return <Spinner style={{ width: '3rem', height: '3rem' }} />;
+        if (!this.props.contest || this.fetching())
+            return <CenterSpinner />;
 
         return <>
             <h2 className="mb-3">{this.props.contest.title}</h2>

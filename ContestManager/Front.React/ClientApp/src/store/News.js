@@ -7,7 +7,7 @@ export const actionCreators = {
     storeNews: (news, contestId) => dispatch => {
         dispatch({ type: FETCH_NEWS_SUCCESS, news, contestId });
     },
-    fetchingNews: t => dispatch => dispatch({ type: FETCH_NEWS_BEGIN }),
+    startFetchingNews: t => dispatch => dispatch({ type: FETCH_NEWS_BEGIN }),
     fetchingError: t => dispatch => dispatch({ type: FETCH_NEWS_FAILURE })
 };
 

@@ -4,7 +4,7 @@ import { actionCreators } from '../../store/User';
 
 export default function WithUser(wrappedComponent) {
     return connect(
-        state => state.user,
+        state => ({ ...state.user, fetchingUser: state.user.fetching }),
         dispatch => bindActionCreators(actionCreators, dispatch)
     )(wrappedComponent);
 }
