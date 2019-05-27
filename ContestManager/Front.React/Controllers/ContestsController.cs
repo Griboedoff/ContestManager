@@ -2,6 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Contests;
+using Core.DataBase;
+using Core.DataBaseEntities;
+using Core.Enums;
 using Core.Enums.DataBaseEnums;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +16,16 @@ namespace Front.React.Controllers
     {
         private readonly IUserCookieManager cookieManager;
         private readonly IContestManager contestManager;
+        private readonly IAsyncRepository<Contest> contestsRepo;
 
-        public ContestsController(IUserCookieManager cookieManager, IContestManager contestManager)
+        public ContestsController(
+            IUserCookieManager cookieManager,
+            IContestManager contestManager,
+            IAsyncRepository<Contest> contestsRepo)
         {
             this.cookieManager = cookieManager;
             this.contestManager = contestManager;
+            this.contestsRepo = contestsRepo;
         }
 
         [HttpPost]
@@ -35,7 +43,7 @@ namespace Front.React.Controllers
         [HttpGet]
         public async Task<JsonResult> List()
         {
-            var contests = await contestManager.GetAll();
+            var contests = await contestsRepo.ListAllAsync();
 
             return Json(
                 contests
@@ -54,7 +62,7 @@ namespace Front.React.Controllers
         [HttpGet("{id}")]
         public async Task<JsonResult> Get(Guid id)
         {
-            var contest = await contestManager.Get(id);
+            var contest = await contestsRepo.GetByIdAsync(id);
 
             return Json(contest);
         }
@@ -72,6 +80,21 @@ namespace Front.React.Controllers
 
             await contestManager.AddParticipant(id, user.Id);
             return StatusCode(200, "Успешно");
+        }
+
+        [HttpPatch("{id}/options")]
+        public async Task<ActionResult> UpdateOptions(Guid id, [FromBody] ContestOptions options)
+        {
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
+
+            var contest = await contestsRepo.GetByIdAsync(id);
+            contest.Options = options;
+
+            await contestsRepo.UpdateAsync(contest);
+
+            return StatusCode(200);
         }
 
         [HttpGet("{id}/results")]

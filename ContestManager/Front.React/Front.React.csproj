@@ -30,14 +30,16 @@
         <Content Include="ClientApp\src\components\Contest\News\index.css" />
         <Content Include="ClientApp\src\components\Contest\News\index.jsx" />
         <Content Include="ClientApp\src\components\Contest\News\NewsArticle.jsx" />
+        <Content Include="ClientApp\src\components\Contest\Options\index.jsx" />
         <Content Include="ClientApp\src\components\CreateContest\index.jsx" />
         <Content Include="ClientApp\src\components\Login\ChangePasswordModal.jsx" />
         <Content Include="ClientApp\src\components\Register\index.jsx" />
         <Content Include="ClientApp\src\components\UserPage\index.css" />
         <Content Include="ClientApp\src\components\UserPage\index.jsx" />
-        <Content Include="ClientApp\src\Enums\ContestsState.js" />
+        <Content Include="ClientApp\src\Enums\ContestOptions.js" />
         <Content Include="ClientApp\src\Enums\UserRole.js" />
         <Content Include="ClientApp\src\UserFieldsMap.js" />
+        <Content Include="ClientApp\src\utils.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <None Include="ClientApp\src\components\ContestList\Home.js" />

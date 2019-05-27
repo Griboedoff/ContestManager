@@ -11,14 +11,16 @@ import {
     NavItem,
     NavLink
 } from 'reactstrap';
-import { ContestState } from '../../Enums/ContestsState';
+import { ContestOptions } from '../../Enums/ContestOptions';
 import { UserRole } from '../../Enums/UserRole';
 import { post } from '../../Proxy';
+import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithUser from '../HOC/WithUser';
 import News from './News';
 import AddNews from './News/AddNews';
+import Options from './Options';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -63,8 +65,9 @@ class Contest extends React.Component {
 
         return <>
             <h2 className="mb-3">{this.props.contest.title}</h2>
-            {/*{this.props.user && this.props.user.role === UserRole.Participant &&*/}
-            <Button className="mb-3" onClick={this.participate}>Принять участие</Button>
+            {hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
+            this.props.user && this.props.user.role === UserRole.Participant &&
+            <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
             {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
             {this.state.participateSuccess &&
             <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
@@ -75,7 +78,7 @@ class Contest extends React.Component {
                              active={this.state.activeTab === Tab.News}
                              onClick={this.handleTabChange(Tab.News)}>Информация</NavLink>
                 </NavItem>
-                {this.props.contest.state === ContestState.Finished && <NavItem>
+                {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <NavItem>
                     <NavLink href="#"
                              active={this.state.activeTab === Tab.Results}
                              onClick={this.handleTabChange(Tab.Results)}>Результаты</NavLink>
@@ -87,7 +90,7 @@ class Contest extends React.Component {
                     </DropdownToggle>
                     <DropdownMenu>
                         <DropdownItem onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</DropdownItem>
-                        <DropdownItem onClick={this.handleTabChange(Tab.Settings)}>Настройки</DropdownItem>
+                        <DropdownItem onClick={this.handleTabChange(Tab.Options)}>Настройки</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>}
             </Nav>
@@ -99,6 +102,8 @@ class Contest extends React.Component {
         switch (this.state.activeTab) {
             case Tab.AddNews:
                 return <AddNews contestId={this.contestId} />;
+            case Tab.Options:
+                return <Options />;
             case Tab.News:
             default:
                 return <News contestId={this.contestId} />;
@@ -121,7 +126,7 @@ const Tab = {
     News: 1,
     Results: 2,
     AddNews: 3,
-    Settings: 4,
+    Options: 4,
 };
 
 export default WithUser(WithContest(Contest));

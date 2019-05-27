@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Spinner } from 'reactstrap';
-import { ContestState } from '../../Enums/ContestsState';
+import { ContestOptions } from '../../Enums/ContestOptions';
 import WithContests from '../HOC/WithContests';
 
 class ContestList extends React.Component {
     renderContestsList() {
-        const ongoing = this.props.contests.filter(c => c.state !== ContestState.Finished);
-        const finished = this.props.contests.filter(c => c.state === ContestState.Finished);
+        const ongoing = this.props.contests.filter(c => c.options !== ContestOptions.Finished);
+        const finished = this.props.contests.filter(c => c.options === ContestOptions.Finished);
 
         return <>
             {ongoing.length !== 0 && <>
