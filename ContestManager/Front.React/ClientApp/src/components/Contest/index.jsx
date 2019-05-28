@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { Alert, Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
 import { UserRole } from '../../Enums/UserRole';
-import { post } from '../../Proxy';
+import { get, post } from '../../Proxy';
 import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
+import WithParticipants from '../HOC/WithParticipants';
 import WithUser from '../HOC/WithUser';
 import News from './News';
 import AddNews from './News/AddNews';
@@ -34,12 +35,9 @@ class Contest extends React.Component {
         });
     }
 
-    componentDidMount() {
-        if (this.props.contest && this.props.contest.id === this.contestId) {
-            return;
-        }
-
-        this.props.getContest(this.contestId);
+    async componentDidMount() {
+        await this.fetchContest();
+        await this.fetchParticipants();
     }
 
     handleTabChange = n => _ => {
@@ -47,7 +45,7 @@ class Contest extends React.Component {
     };
 
     fetching() {
-        return this.props.fetchingContests || this.props.fetchingUser;
+        return this.props.fetchingContests || this.props.fetchingUser || this.props.fetchingParticipants;
     }
 
     render() {
@@ -58,8 +56,7 @@ class Contest extends React.Component {
             <Row><h1 className="mb-3">{this.props.contest.title}</h1></Row>
             <Row>
                 <Col sm={9}>
-                    {hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
-                    this.props.user && this.props.user.role === UserRole.Participant &&
+                    {this.showParticipateButton() &&
                     <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
                     {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
                     {this.state.participateSuccess &&
@@ -92,6 +89,13 @@ class Contest extends React.Component {
         </Container>;
     }
 
+    showParticipateButton() {
+        return hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
+            this.props.user && 
+            this.props.user.role === UserRole.Participant && 
+            !this.props.participants.some(p => p.userId === this.props.user.id);
+    }
+
     renderTab() {
         switch (this.state.activeTab) {
             case Tab.AddNews:
@@ -100,7 +104,7 @@ class Contest extends React.Component {
                 return <Options />;
             case Tab.News:
             default:
-                return <ParticipantsList contestId={this.contestId}/>;
+                return <ParticipantsList participants={this.props.participants} />;
                 return <News contestId={this.contestId} />;
         }
     }
@@ -115,15 +119,35 @@ class Contest extends React.Component {
                 throw await resp.json();
             }).catch(err => this.setState({ participateError: err }));
     }
+
+    async fetchParticipants() {
+        this.props.startFetchingParticipants();
+        await get(`contests/${this.contestId}/participants`)
+            .then(resp => {
+                if (resp.ok)
+                    return resp.json();
+
+                throw Error();
+            }).then(participants => this.props.storeParticipants(participants))
+            .catch(_ => this.props.fetchingError());
+    }
+
+    async fetchContest() {
+        if (this.props.contest && this.props.contest.id === this.contestId) {
+            return;
+        }
+
+        this.props.getContest(this.contestId);
+    }
 }
 
 const Tab = {
     News: 1,
     Participants: 2,
     Results: 3,
-    
+
     AddNews: 4,
     Options: 5,
 };
 
-export default WithUser(WithContest(Contest));
+export default WithParticipants(WithUser(WithContest(Contest)));
