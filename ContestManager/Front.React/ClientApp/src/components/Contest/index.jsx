@@ -1,16 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-    Alert,
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    Nav,
-    NavItem,
-    NavLink
-} from 'reactstrap';
+import { Alert, Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
 import { UserRole } from '../../Enums/UserRole';
 import { post } from '../../Proxy';
@@ -63,39 +53,39 @@ class Contest extends React.Component {
         if (!this.props.contest || this.fetching())
             return <CenterSpinner />;
 
-        return <>
-            <h2 className="mb-3">{this.props.contest.title}</h2>
-            {hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
-            this.props.user && this.props.user.role === UserRole.Participant &&
-            <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
-            {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
-            {this.state.participateSuccess &&
-            <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
-                себе</Link></Alert>}
-            <Nav tabs>
-                <NavItem>
-                    <NavLink href="#"
-                             active={this.state.activeTab === Tab.News}
-                             onClick={this.handleTabChange(Tab.News)}>Информация</NavLink>
-                </NavItem>
-                {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <NavItem>
-                    <NavLink href="#"
-                             active={this.state.activeTab === Tab.Results}
-                             onClick={this.handleTabChange(Tab.Results)}>Результаты</NavLink>
-                </NavItem>}
-                {this.props.user && this.props.user.role === UserRole.Admin &&
-                <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} className="ml-auto">
-                    <DropdownToggle nav caret>
-                        Админка
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        <DropdownItem onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</DropdownItem>
-                        <DropdownItem onClick={this.handleTabChange(Tab.Options)}>Настройки</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>}
-            </Nav>
-            {this.renderTab()}
-        </>;
+        return <Container>
+            <Row><h2 className="mb-3">{this.props.contest.title}</h2></Row>
+            <Row>
+                <Col sm={9}>
+                    {hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
+                    this.props.user && this.props.user.role === UserRole.Participant &&
+                    <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
+                    {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
+                    {this.state.participateSuccess &&
+                    <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
+                        себе</Link></Alert>}
+                    {this.renderTab()}
+                </Col>
+                <Col sm={3}>
+                    <ListGroup>
+                        <ListGroupItem>
+                            <a className="link" onClick={this.handleTabChange(Tab.News)}>Информация</a>
+                        </ListGroupItem>
+                        {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
+                            <a className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</a>
+                        </ListGroupItem>}
+                        {this.props.user && this.props.user.role === UserRole.Admin && <>
+                            <ListGroupItem>
+                                <a className="link" onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</a>
+                            </ListGroupItem>
+                            <ListGroupItem>
+                                <a className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</a>
+                            </ListGroupItem>
+                        </>}
+                    </ListGroup>
+                </Col>
+            </Row>
+        </Container>;
     }
 
     renderTab() {

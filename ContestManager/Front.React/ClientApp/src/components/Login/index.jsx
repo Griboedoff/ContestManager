@@ -115,7 +115,7 @@ class Login extends React.Component {
                     <Label sm={3}>Пароль</Label>
                     <Col sm={9}>
                         <Input type="password" placeholder="Пароль" name="password" onChange={this.handleChange} />
-                        <FormText onClick={this.restorePassword} className="link">Я забыл пароль</FormText>
+                        <FormText onClick={this.restorePassword} className="pseudo-link">Я забыл пароль</FormText>
                     </Col>
                 </FormGroup>
 

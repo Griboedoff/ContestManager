@@ -88,7 +88,7 @@ export default class AddNews extends React.Component {
                         <FormGroup>
                             <Button onClick={this.createNews}>
                                 {this.props.fetching && <Spinner color="secondary" />}
-                                Создать</Button>
+                                Добавить</Button>
                         </FormGroup>
                     </Form>
                 </Col>

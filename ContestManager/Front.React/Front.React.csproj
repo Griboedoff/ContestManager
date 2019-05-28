@@ -42,11 +42,6 @@
         <Content Include="ClientApp\src\utils.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-        <None Include="ClientApp\src\components\ContestList\Home.js" />
-        <None Include="ClientApp\src\components\HOC\WithContest.jsx" />
-        <None Include="ClientApp\src\components\HOC\WithNews.jsx" />
-        <None Include="ClientApp\src\store\Contest.js" />
-        <None Include="ClientApp\src\store\News.js" />
     </ItemGroup>
 
     <ItemGroup>

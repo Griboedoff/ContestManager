@@ -5,3 +5,15 @@
 .vk-button {
     background-color: #4680C2;
 }
+
+.link {
+    text-decoration: none !important;
+    color: #007bff !important;
+    background-color: transparent !important;
+    cursor: pointer;
+}
+
+.link:hover {
+    color: #0056b3 !important;
+    text-decoration: underline !important;
+}

@@ -33,7 +33,7 @@ class News extends React.Component {
         if (!this.props.news || !this.props.news[this.props.contestId])
             return <Alert color="info">Скоро здесь появятся новости</Alert>;
 
-        return <ListGroup>
+        return <ListGroup flush>
             {this.props.news[this.props.contestId].map(n => <ListGroupItem key={n.id} className="news-item">
                 <NewsArticle article={n} />
             </ListGroupItem>)}

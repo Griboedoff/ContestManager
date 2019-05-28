@@ -69,7 +69,7 @@ export default class ChangePasswordModal extends React.Component {
                     Мы отправим одноразовую ссылку для входа
                     {!this.state.inputMail && this.props.email && <>
                         на почту {this.props.email}<br />
-                        <span onClick={this.clearMail} className="small text-muted link">Указать другую почту</span>
+                        <span onClick={this.clearMail} className="small text-muted pseudo-link">Указать другую почту</span>
                     </>}
                     {this.state.inputMail && <>
                         <InputGroup className="mt-3">
