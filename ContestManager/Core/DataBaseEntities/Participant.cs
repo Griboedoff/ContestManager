@@ -33,6 +33,14 @@ namespace Core.DataBaseEntities
             get => JsonConvert.DeserializeObject<User>(SerializedUserSnapshot);
             set => SerializedUserSnapshot = JsonConvert.SerializeObject(value);
         }
+
+        public Participant WithUser(User user) => new Participant
+        {
+            ContestId = ContestId,
+            UserId = UserId,
+            SerializedResults = SerializedResults,
+            SerializedUserSnapshot = JsonConvert.SerializeObject(user),
+        };
     }
 
     public class ResultDescription

@@ -84,8 +84,32 @@ namespace Core.Contests
             return await participantsRepo.AddAsync(participant);
         }
 
-        public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId)
-            => await participantsRepo.WhereAsync(p => p.ContestId == contestId);
+        public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId) =>
+            (await GetParticipantsInternal(contestId))
+            .OrderBy(p => p.UserSnapshot.Class)
+            .ThenBy(p => p.UserSnapshot.Name)
+            .ToList();
+
+        private async Task<IReadOnlyList<Participant>> GetParticipantsInternal(Guid contestId)
+        {
+            var contest = await contestsRepo.GetByIdAsync(contestId);
+            if (contest.Options.HasFlag(ContestOptions.RegistrationOpen))
+                return GetParticipantsFromUsers(contest);
+
+            return await participantsRepo.WhereAsync(p => p.ContestId == contestId);
+        }
+
+        private IReadOnlyList<Participant> GetParticipantsFromUsers(Contest contest) =>
+            context.Set<Participant>()
+                .Join(
+                    context.Set<User>(),
+                    participant => participant.UserId,
+                    user => user.Id,
+                    (participant, user) => new { user, participant })
+                .Where(t => t.participant.ContestId == contest.Id)
+                .AsEnumerable()
+                .Select(t => t.participant.WithUser(t.user))
+                .ToList();
 
         public async Task UpdateOptions(Guid contestId, ContestOptions newOptions)
         {

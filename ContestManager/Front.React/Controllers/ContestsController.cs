@@ -94,6 +94,14 @@ namespace Front.React.Controllers
             return StatusCode(200);
         }
 
+        [HttpGet("{id}/participants")]
+        public async Task<ActionResult> GetParticipants(Guid id)
+        {
+            var participants = await contestManager.GetParticipants(id);
+
+            return Json(participants);
+        }
+
         [HttpGet("{id}/results")]
         public string Results(Guid id)
         {

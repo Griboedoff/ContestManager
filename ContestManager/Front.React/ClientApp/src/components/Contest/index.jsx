@@ -11,6 +11,7 @@ import WithUser from '../HOC/WithUser';
 import News from './News';
 import AddNews from './News/AddNews';
 import Options from './Options';
+import ParticipantsList from './ParticipantsList';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -54,7 +55,7 @@ class Contest extends React.Component {
             return <CenterSpinner />;
 
         return <Container>
-            <Row><h2 className="mb-3">{this.props.contest.title}</h2></Row>
+            <Row><h1 className="mb-3">{this.props.contest.title}</h1></Row>
             <Row>
                 <Col sm={9}>
                     {hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
@@ -70,6 +71,9 @@ class Contest extends React.Component {
                     <ListGroup>
                         <ListGroupItem>
                             <a className="link" onClick={this.handleTabChange(Tab.News)}>Информация</a>
+                        </ListGroupItem>
+                        <ListGroupItem>
+                            <a className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</a>
                         </ListGroupItem>
                         {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
                             <a className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</a>
@@ -96,6 +100,7 @@ class Contest extends React.Component {
                 return <Options />;
             case Tab.News:
             default:
+                return <ParticipantsList contestId={this.contestId}/>;
                 return <News contestId={this.contestId} />;
         }
     }
@@ -114,9 +119,11 @@ class Contest extends React.Component {
 
 const Tab = {
     News: 1,
-    Results: 2,
-    AddNews: 3,
-    Options: 4,
+    Participants: 2,
+    Results: 3,
+    
+    AddNews: 4,
+    Options: 5,
 };
 
 export default WithUser(WithContest(Contest));
