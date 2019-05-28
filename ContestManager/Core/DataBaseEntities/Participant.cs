@@ -6,14 +6,11 @@ namespace Core.DataBaseEntities
 {
     public class Participant : DataBaseEntity
     {
-        [Column]
         public Guid ContestId { get; set; }
 
-        [Column]
         public Guid UserId { get; set; }
 
         [JsonIgnore]
-        [Column]
         public string SerializedResults { get; set; }
 
         [NotMapped]
@@ -25,6 +22,16 @@ namespace Core.DataBaseEntities
             set => SerializedResults = value == null
                 ? null
                 : JsonConvert.SerializeObject(value);
+        }
+
+        [JsonIgnore]
+        public string SerializedUserSnapshot { get; set; }
+
+        [NotMapped]
+        public User UserSnapshot
+        {
+            get => JsonConvert.DeserializeObject<User>(SerializedUserSnapshot);
+            set => SerializedUserSnapshot = JsonConvert.SerializeObject(value);
         }
     }
 

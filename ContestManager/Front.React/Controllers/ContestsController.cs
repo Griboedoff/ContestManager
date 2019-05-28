@@ -89,10 +89,7 @@ namespace Front.React.Controllers
             if (user.Role != UserRole.Admin)
                 return StatusCode(403);
 
-            var contest = await contestsRepo.GetByIdAsync(id);
-            contest.Options = options;
-
-            await contestsRepo.UpdateAsync(contest);
+            await contestManager.UpdateOptions(id, options);
 
             return StatusCode(200);
         }

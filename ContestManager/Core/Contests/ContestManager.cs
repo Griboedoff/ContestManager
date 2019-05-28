@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
@@ -10,11 +11,12 @@ namespace Core.Contests
     public interface IContestManager
     {
         Task<Contest> Create(CreateContestModel title, Guid ownerId);
-       Task<IReadOnlyList<News>> GetNews(Guid contestId);
+        Task<IReadOnlyList<News>> GetNews(Guid contestId);
         Task<News> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
         Task<Participant> AddParticipant(Guid contestId, Guid userId);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
+        Task UpdateOptions(Guid contestId, ContestOptions newOptions);
     }
 
     public class ContestManager : IContestManager
@@ -22,15 +24,18 @@ namespace Core.Contests
         private readonly IAsyncRepository<Contest> contestsRepo;
         private readonly IAsyncRepository<News> newsRepo;
         private readonly IAsyncRepository<Participant> participantsRepo;
+        private readonly Context context;
 
         public ContestManager(
             IAsyncRepository<Contest> contestsRepo,
             IAsyncRepository<News> newsRepo,
-            IAsyncRepository<Participant> participantsRepo)
+            IAsyncRepository<Participant> participantsRepo,
+            Context context)
         {
             this.contestsRepo = contestsRepo;
             this.newsRepo = newsRepo;
             this.participantsRepo = participantsRepo;
+            this.context = context;
         }
 
         public async Task<Contest> Create(CreateContestModel contestModel, Guid ownerId)
@@ -81,5 +86,28 @@ namespace Core.Contests
 
         public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId)
             => await participantsRepo.WhereAsync(p => p.ContestId == contestId);
+
+        public async Task UpdateOptions(Guid contestId, ContestOptions newOptions)
+        {
+            var contest = await contestsRepo.GetByIdAsync(contestId);
+            if (contest.Options.HasFlag(ContestOptions.RegistrationOpen) &&
+                !newOptions.HasFlag(ContestOptions.RegistrationOpen))
+                await SealParticipants(contest);
+
+            contest.Options = newOptions;
+
+            await contestsRepo.UpdateAsync(contest);
+        }
+
+        private async Task SealParticipants(Contest contest)
+        {
+            foreach (var t in from participant in context.Set<Participant>()
+                              join user in context.Set<User>() on participant.UserId equals user.Id
+                              where participant.ContestId == contest.Id
+                              select new { user, participant })
+                t.participant.UserSnapshot = t.user;
+
+            await context.SaveChangesAsync();
+        }
     }
 }
