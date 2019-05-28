@@ -43,21 +43,20 @@ export default class ChangePasswordModal extends React.Component {
             isError: false
         });
 
-        await post('users/restore', {
-            email: this.state.email
-        }).then(resp => {
-            if (resp.ok)
-                return resp;
+        await post('users/restore', this.state.email)
+            .then(resp => {
+                if (resp.ok)
+                    return resp;
 
-            throw Error();
-        }).then(_ => this.setState({
-            message: `Письмо со ссылкой для входа отправлено на ${this.state.email}`
-        })).catch(_ => this.setState({
-            message: 'Произошла ошибка. Попробуйте позже',
-            error: true
-        })).finally(() => this.setState({
-            fetching: false
-        }));
+                throw Error();
+            }).then(_ => this.setState({
+                message: `Письмо со ссылкой для входа отправлено на ${this.state.email}`
+            })).catch(_ => this.setState({
+                message: 'Произошла ошибка. Попробуйте позже',
+                error: true
+            })).finally(() => this.setState({
+                fetching: false
+            }));
     };
 
     render() {
@@ -69,7 +68,8 @@ export default class ChangePasswordModal extends React.Component {
                     Мы отправим одноразовую ссылку для входа
                     {!this.state.inputMail && this.props.email && <>
                         на почту {this.props.email}<br />
-                        <span onClick={this.clearMail} className="small text-muted pseudo-link">Указать другую почту</span>
+                        <span onClick={this.clearMail}
+                              className="small text-muted pseudo-link">Указать другую почту</span>
                     </>}
                     {this.state.inputMail && <>
                         <InputGroup className="mt-3">

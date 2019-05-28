@@ -150,7 +150,11 @@ namespace Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("City");
+
                     b.Property<int?>("Class");
+
+                    b.Property<string>("Coach");
 
                     b.Property<string>("Name")
                         .HasMaxLength(100);

@@ -5,7 +5,6 @@ import Container from 'reactstrap/es/Container';
 import { CenterSpinner } from '../../CenterSpinner';
 import { get } from '../../../Proxy';
 import WithParticipants from '../../HOC/WithParticipants';
-import moment from '../News/NewsArticle';
 
 class ParticipantsList extends React.Component {
     constructor(props) {
@@ -42,20 +41,14 @@ class ParticipantsList extends React.Component {
 
 function Participant({ participant }) {
     const data = participant.userSnapshot;
-    console.log(data);
 
     return <>
-        <div className="d-flex align-items-baseline justify-content-between mb-4">
-            <h4 className="mb-0">{data.name}</h4>
-            <small className="mb-2">{data.class} класс</small>
-        </div>
         <Container>
-            <Row>
-                <Col sm={2}>Школа</Col><Col sm={2}>{data.school}</Col>
+            <Row className="d-flex align-items-baseline justify-content-between mb-2">
+                <h4>{data.name}</h4>
+                <small>{data.class} класс</small>
             </Row>
-            <Row>
-                <Col sm={2}>Тренер</Col><Col sm={2}>{data.coach}</Col>
-            </Row>
+            <Row> <Col sm={6}>{data.city}, {data.school}</Col> <Col sm={6}>Тренер: {data.coach}</Col> </Row>
         </Container>
     </>;
 }

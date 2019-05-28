@@ -116,6 +116,8 @@ namespace Front.React.Controllers
                 userFromDb.School = user.School;
                 userFromDb.Name = user.Name;
                 userFromDb.Role = user.Role;
+                userFromDb.City = user.City;
+                userFromDb.Coach = user.Coach;
                 await usersRepo.UpdateAsync(userFromDb);
                 return Json(user);
             }

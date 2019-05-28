@@ -13,6 +13,8 @@ namespace Core.DataBaseEntities
         public Sex Sex { get; set; }
         public Class? Class { get; set; }
         public string School { get; set; }
+        public string Coach { get; set; }
+        public string City { get; set; }
     }
 
     public enum Class

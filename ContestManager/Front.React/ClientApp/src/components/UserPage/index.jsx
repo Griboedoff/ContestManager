@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, Button, Col, Container, Form, FormGroup, FormText, Input, Label, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { UserRole } from '../../Enums/UserRole';
 import { patch } from '../../Proxy';
 import { roleToString, sexToString } from '../../UserFieldsMap';
 import withUser from '../HOC/WithUser';
@@ -51,11 +52,16 @@ class UserPage extends React.Component {
         return <React.Fragment>
             <UserInfoRow label="Имя" value={this.state.user.name} />
             <UserInfoRow label="Роль" value={this.state.user.role} showValue={r => roleToString[r]} />
-            {this.props.user.role === 1 &&
+            {this.props.user.role === UserRole.Participant &&
             <UserInfoRow label="Пол" value={this.state.user.sex} showValue={r => sexToString[r]} />}
-            {this.props.user.role === 1 && <UserInfoRow label="Класс" value={this.state.user.class} />}
-            {(this.props.user.role === 1 || this.props.user.role === 2) &&
+            {this.props.user.role === UserRole.Participant &&
+            <UserInfoRow label="Класс" value={this.state.user.class} />}
+            {(this.props.user.role === UserRole.Participant || this.props.user.role === UserRole.Coach) &&
+            <UserInfoRow label="Город" value={this.state.user.city} />}
+            {(this.props.user.role === UserRole.Participant || this.props.user.role === UserRole.Coach) &&
             <UserInfoRow label="Школа" value={this.state.user.school} />}
+            {this.props.user.role === UserRole.Participant &&
+            <UserInfoRow label="Тренер" value={this.state.user.coach} />}
             <Col sm={{ offset: 1 }}>
                 <Button onClick={this.onEdit}>Редактировать</Button>
             </Col>
@@ -84,7 +90,7 @@ class UserPage extends React.Component {
                     </FormText>
                 </Col>
             </FormGroup>
-            {this.props.user.role === 1 && <FormGroup row>
+            {this.props.user.role === UserRole.Participant && <FormGroup row>
                 <Label sm={1}>Пол</Label>
                 <Col sm={4}>
                     <Input type="select" name="sex" onChange={this.handleChange} value={this.state.user.sex}>
@@ -93,7 +99,7 @@ class UserPage extends React.Component {
                     </Input>
                 </Col>
             </FormGroup>}
-            {this.props.user.role === 1 && <FormGroup row>
+            {this.props.user.role === UserRole.Participant && <FormGroup row>
                 <Label sm={1}>Класс</Label>
                 <Col sm={4}>
                     <Input type="select" name="class" onChange={this.handleChange} value={this.state.user.class}>
@@ -107,14 +113,33 @@ class UserPage extends React.Component {
                     </Input>
                 </Col>
             </FormGroup>}
-            {(this.props.user.role === 1 || this.props.user.role === 2) && <FormGroup row>
+            {(this.props.user.role === UserRole.Participant || this.props.user.role === UserRole.Coach) &&
+            <FormGroup row>
+                <Label sm={1}>Город</Label>
+                <Col sm={4}>
+                    <Input type="text"
+                           name="city"
+                           onChange={this.handleChange}
+                           value={this.state.user.city} />
+                </Col>
+            </FormGroup>}
+            {(this.props.user.role === UserRole.Participant || this.props.user.role === UserRole.Coach) &&
+            <FormGroup row>
                 <Label sm={1}>Школа</Label>
                 <Col sm={4}>
                     <Input type="text"
-                           placeholder=""
                            name="school"
                            onChange={this.handleChange}
                            value={this.state.user.school} />
+                </Col>
+            </FormGroup>}
+            {this.props.user.role === UserRole.Participant && <FormGroup row>
+                <Label sm={1}>Тренер</Label>
+                <Col sm={4}>
+                    <Input type="text"
+                           name="coach"
+                           onChange={this.handleChange}
+                           value={this.state.user.coach} />
                 </Col>
             </FormGroup>}
             <FormGroup row>
@@ -133,7 +158,7 @@ class UserInfoRow extends React.Component {
             isEditable: false,
         };
     }
-    
+
     render() {
         return (
             <Row className="info-row">

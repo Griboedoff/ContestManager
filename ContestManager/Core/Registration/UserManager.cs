@@ -72,9 +72,6 @@ namespace Core.Registration
 
         public async Task<bool> CreatePasswordRestoreRequest(string email)
         {
-            if (!await IsServiceIdAlreadyUsed(email))
-                return false;
-
             var account = await authenticationAccountRepo.FirstOrDefaultAsync(a => a.ServiceId == email);
             if (account == null)
                 return false;
