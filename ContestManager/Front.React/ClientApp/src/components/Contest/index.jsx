@@ -102,9 +102,10 @@ class Contest extends React.Component {
                 return <AddNews contestId={this.contestId} />;
             case Tab.Options:
                 return <Options />;
+            case Tab.Participants:
+                return <ParticipantsList participants={this.props.participants} />;
             case Tab.News:
             default:
-                return <ParticipantsList participants={this.props.participants} />;
                 return <News contestId={this.contestId} />;
         }
     }
