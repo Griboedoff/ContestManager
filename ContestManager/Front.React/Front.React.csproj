@@ -31,6 +31,7 @@
         <Content Include="ClientApp\src\components\Contest\News\NewsArticle.jsx" />
         <Content Include="ClientApp\src\components\Contest\Options\index.jsx" />
         <Content Include="ClientApp\src\components\Contest\ParticipantsList\index.jsx" />
+        <Content Include="ClientApp\src\components\Contest\Seating\index.jsx" />
         <Content Include="ClientApp\src\components\CreateContest\index.jsx" />
         <Content Include="ClientApp\src\components\Login\ChangePasswordModal.jsx" />
         <Content Include="ClientApp\src\components\Register\index.jsx" />

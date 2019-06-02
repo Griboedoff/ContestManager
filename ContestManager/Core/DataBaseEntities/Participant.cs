@@ -30,9 +30,13 @@ namespace Core.DataBaseEntities
         [NotMapped]
         public User UserSnapshot
         {
-            get => JsonConvert.DeserializeObject<User>(SerializedUserSnapshot);
+            get => SerializedUserSnapshot == null ? null : JsonConvert.DeserializeObject<User>(SerializedUserSnapshot);
             set => SerializedUserSnapshot = JsonConvert.SerializeObject(value);
         }
+
+        public string Login { get; set; }
+
+        public string Pass { get; set; }
 
         public Participant WithUser(User user) => new Participant
         {
@@ -40,6 +44,14 @@ namespace Core.DataBaseEntities
             UserId = UserId,
             SerializedResults = SerializedResults,
             SerializedUserSnapshot = JsonConvert.SerializeObject(user),
+        };
+
+        public Participant WithoutLogin() => new Participant
+        {
+            ContestId = ContestId,
+            UserId = UserId,
+            SerializedResults = SerializedResults,
+            SerializedUserSnapshot = SerializedUserSnapshot,
         };
     }
 

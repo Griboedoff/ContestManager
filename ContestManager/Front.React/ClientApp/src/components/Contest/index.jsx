@@ -13,6 +13,7 @@ import News from './News';
 import AddNews from './News/AddNews';
 import Options from './Options';
 import ParticipantsList from './ParticipantsList';
+import Seating from './Seating';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -82,6 +83,9 @@ class Contest extends React.Component {
                             <ListGroupItem>
                                 <a className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</a>
                             </ListGroupItem>
+                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                                <a className="link" onClick={this.handleTabChange(Tab.Seating)}>Генерация рассадки</a>
+                            </ListGroupItem>}
                         </>}
                     </ListGroup>
                 </Col>
@@ -91,8 +95,8 @@ class Contest extends React.Component {
 
     showParticipateButton() {
         return hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
-            this.props.user && 
-            this.props.user.role === UserRole.Participant && 
+            this.props.user &&
+            this.props.user.role === UserRole.Participant &&
             !this.props.participants.some(p => p.userId === this.props.user.id);
     }
 
@@ -106,6 +110,7 @@ class Contest extends React.Component {
                 return <ParticipantsList participants={this.props.participants} />;
             case Tab.News:
             default:
+                return <Seating contestId={this.contestId} />;
                 return <News contestId={this.contestId} />;
         }
     }
@@ -149,6 +154,7 @@ const Tab = {
 
     AddNews: 4,
     Options: 5,
+    Seating: 6,
 };
 
 export default WithParticipants(WithUser(WithContest(Contest)));

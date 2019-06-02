@@ -109,5 +109,11 @@ namespace Front.React.Controllers
 
             return JsonConvert.SerializeObject(participants);
         }
+
+        [HttpGet("{id}/generateSeating")]
+        public async Task GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
+        {
+            await contestManager.GenerateSeating(id, auditoriums);
+        }
     }
 }

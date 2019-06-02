@@ -17,6 +17,7 @@ namespace Core.Contests
         Task<Participant> AddParticipant(Guid contestId, Guid userId);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
+        Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
     }
 
     public class ContestManager : IContestManager
@@ -25,17 +26,20 @@ namespace Core.Contests
         private readonly IAsyncRepository<News> newsRepo;
         private readonly IAsyncRepository<Participant> participantsRepo;
         private readonly Context context;
+        private readonly ISeatingGenerator seatingGenerator;
 
         public ContestManager(
             IAsyncRepository<Contest> contestsRepo,
             IAsyncRepository<News> newsRepo,
             IAsyncRepository<Participant> participantsRepo,
-            Context context)
+            Context context,
+            ISeatingGenerator seatingGenerator)
         {
             this.contestsRepo = contestsRepo;
             this.newsRepo = newsRepo;
             this.participantsRepo = participantsRepo;
             this.context = context;
+            this.seatingGenerator = seatingGenerator;
         }
 
         public async Task<Contest> Create(CreateContestModel contestModel, Guid ownerId)
@@ -86,6 +90,7 @@ namespace Core.Contests
 
         public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId) =>
             (await GetParticipantsInternal(contestId))
+            .Select(p => p.WithoutLogin())
             .OrderBy(p => p.UserSnapshot.Class)
             .ThenBy(p => p.UserSnapshot.Name)
             .ToList();
@@ -121,6 +126,15 @@ namespace Core.Contests
             contest.Options = newOptions;
 
             await contestsRepo.UpdateAsync(contest);
+        }
+
+        public async Task GenerateSeating(Guid contestId, Auditorium[] auditoriums)
+        {
+            var participants = await GetParticipants(contestId);
+            var readOnlyList = seatingGenerator.Generate(participants, auditoriums);
+
+            foreach (var participant in readOnlyList)
+                await participantsRepo.UpdateAsync(participant);
         }
 
         private async Task SealParticipants(Contest contest)

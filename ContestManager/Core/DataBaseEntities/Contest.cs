@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Core.Enums;
+using Newtonsoft.Json;
 
 namespace Core.DataBaseEntities
 {
@@ -14,5 +16,22 @@ namespace Core.DataBaseEntities
         public ContestOptions Options { get; set; }
 
         public DateTime CreationDate { get; set; }
+
+        [NotMapped]
+        public Auditorium[] Auditoriums
+        {
+            get => AuditoriumsJson == null ? null : JsonConvert.DeserializeObject<Auditorium[]>(AuditoriumsJson);
+            set => AuditoriumsJson = JsonConvert.SerializeObject(value);
+        }
+
+        [JsonIgnore]
+        public string AuditoriumsJson { get; set; }
+    }
+
+    public class Auditorium
+    {
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public int Capacity { get; set; }
     }
 }

@@ -1,9 +1,5 @@
 import React from 'react';
-import { ListGroup, ListGroupItem, Row } from 'reactstrap';
-import Col from 'reactstrap/es/Col';
-import Container from 'reactstrap/es/Container';
-import { CenterSpinner } from '../../CenterSpinner';
-import { get } from '../../../Proxy';
+import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import WithParticipants from '../../HOC/WithParticipants';
 
 class ParticipantsList extends React.Component {
