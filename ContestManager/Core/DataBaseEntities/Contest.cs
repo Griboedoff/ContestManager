@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Core.Enums;
 using Newtonsoft.Json;
@@ -24,8 +25,20 @@ namespace Core.DataBaseEntities
             set => AuditoriumsJson = JsonConvert.SerializeObject(value);
         }
 
+        [NotMapped]
+        public Dictionary<Class, List<string>> TasksDescription
+        {
+            get => TasksDescriptionJson == null
+                ? null
+                : JsonConvert.DeserializeObject<Dictionary<Class, List<string>>>(TasksDescriptionJson);
+            set => TasksDescriptionJson = JsonConvert.SerializeObject(value);
+        }
+
         [JsonIgnore]
         public string AuditoriumsJson { get; set; }
+
+        [JsonIgnore]
+        public string TasksDescriptionJson { get; set; }
     }
 
     public class Auditorium

@@ -22,29 +22,9 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
-        <Content Include="ClientApp\src\common.css" />
-        <Content Include="ClientApp\src\components\CenterSpinner.jsx" />
-        <Content Include="ClientApp\src\components\Contest\index.jsx" />
-        <Content Include="ClientApp\src\components\Contest\News\AddNews.jsx" />
-        <Content Include="ClientApp\src\components\Contest\News\index.css" />
-        <Content Include="ClientApp\src\components\Contest\News\index.jsx" />
-        <Content Include="ClientApp\src\components\Contest\News\NewsArticle.jsx" />
-        <Content Include="ClientApp\src\components\Contest\Options\index.jsx" />
-        <Content Include="ClientApp\src\components\Contest\ParticipantsList\index.jsx" />
-        <Content Include="ClientApp\src\components\Contest\Seating\index.jsx" />
-        <Content Include="ClientApp\src\components\CreateContest\index.jsx" />
-        <Content Include="ClientApp\src\components\Login\ChangePasswordModal.jsx" />
-        <Content Include="ClientApp\src\components\Register\index.jsx" />
-        <Content Include="ClientApp\src\components\UserPage\index.css" />
-        <Content Include="ClientApp\src\components\UserPage\index.jsx" />
-        <Content Include="ClientApp\src\Enums\ContestOptions.js" />
-        <Content Include="ClientApp\src\Enums\UserRole.js" />
-        <Content Include="ClientApp\src\UserFieldsMap.js" />
-        <Content Include="ClientApp\src\utils.js" />
+        <Content Include="ClientApp\src\components\Contest\AddResults\index.jsx" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-        <None Include="ClientApp\src\components\HOC\WithParticipants.jsx" />
-        <None Include="ClientApp\src\store\Participants.js" />
     </ItemGroup>
 
     <ItemGroup>

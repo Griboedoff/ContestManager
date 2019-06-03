@@ -51,7 +51,8 @@ export default class Seating extends React.Component {
                 <h4 className="mt-3">Сгенерировать рассадку</h4>
 
                 <Alert color="secondary">Запиши данные про аудитории.<br />
-                    По одной в строке, название, число мест и код из трех символов.
+                    По одной в строке, название, число мест и код из трех символов через <code>|</code>. <br />
+                    Например <code>Демидовский зал|200|dmz</code> <br />
                     Если не указать код, туда подставится название.</Alert>
 
                 {this.state.message &&
@@ -66,7 +67,7 @@ export default class Seating extends React.Component {
                     {!isEmpty(this.state.auditoriumsData) && <Table>
                         <thead>
                         <tr>
-                            <th>Номер</th>
+                            <th>Название</th>
                             <th>Код</th>
                             <th>Число мест</th>
                         </tr>
@@ -88,7 +89,7 @@ export default class Seating extends React.Component {
         return text.split('\n')
             .filter(s => !!s)
             .map(s => {
-                const v = s.split(' ');
+                const v = s.split('|');
 
                 return { name: v[0], capacity: v[1], code: (v[2] ? v[2] : v[0]).substr(0, 3) };
             });

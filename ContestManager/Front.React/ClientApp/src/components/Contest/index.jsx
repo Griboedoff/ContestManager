@@ -9,6 +9,7 @@ import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
 import WithUser from '../HOC/WithUser';
+import AddResult from './AddResults';
 import News from './News';
 import AddNews from './News/AddNews';
 import Options from './Options';
@@ -76,18 +77,26 @@ class Contest extends React.Component {
                         {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
                             <a className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</a>
                         </ListGroupItem>}
-                        {this.props.user && this.props.user.role === UserRole.Admin && <>
+                    </ListGroup>
+
+                    {this.props.user && this.props.user.role === UserRole.Admin && <>
+                        <h5 className="mt-3">Админка</h5>
+                        <ListGroup>
                             <ListGroupItem>
                                 <a className="link" onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</a>
                             </ListGroupItem>
+                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                                <a className="link" onClick={this.handleTabChange(Tab.Seating)}>Сгенерировать
+                                    рассадку</a>
+                            </ListGroupItem>}
+                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                                <a className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить результаты</a>
+                            </ListGroupItem>}
                             <ListGroupItem>
                                 <a className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</a>
                             </ListGroupItem>
-                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.Seating)}>Генерация рассадки</a>
-                            </ListGroupItem>}
-                        </>}
-                    </ListGroup>
+                        </ListGroup>
+                    </>}
                 </Col>
             </Row>
         </Container>;
@@ -108,9 +117,11 @@ class Contest extends React.Component {
                 return <Options />;
             case Tab.Participants:
                 return <ParticipantsList participants={this.props.participants} />;
+            case Tab.Seating:
+                return <Seating contestId={this.contestId} />;
             case Tab.News:
             default:
-                return <Seating contestId={this.contestId} />;
+                return <AddResult contestId={this.contestId} />;
                 return <News contestId={this.contestId} />;
         }
     }
@@ -155,6 +166,7 @@ const Tab = {
     AddNews: 4,
     Options: 5,
     Seating: 6,
+    AddResults: 7,
 };
 
 export default WithParticipants(WithUser(WithContest(Contest)));
