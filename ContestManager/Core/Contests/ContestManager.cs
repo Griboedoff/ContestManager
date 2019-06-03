@@ -18,6 +18,7 @@ namespace Core.Contests
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
+        Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription);
     }
 
     public class ContestManager : IContestManager
@@ -135,6 +136,16 @@ namespace Core.Contests
 
             foreach (var participant in readOnlyList)
                 await participantsRepo.UpdateAsync(participant);
+        }
+
+        public async Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription)
+        {
+            var contest = await contestsRepo.GetByIdAsync(contestId);
+            contest.TasksDescription = tasksDescription.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList());
+
+            await contestsRepo.UpdateAsync(contest);
         }
 
         private async Task SealParticipants(Contest contest)

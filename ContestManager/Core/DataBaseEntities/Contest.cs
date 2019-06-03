@@ -34,6 +34,8 @@ namespace Core.DataBaseEntities
             set => TasksDescriptionJson = JsonConvert.SerializeObject(value);
         }
 
+        public string ResultsTableLink { get; set; }
+
         [JsonIgnore]
         public string AuditoriumsJson { get; set; }
 

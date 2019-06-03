@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Contests;
@@ -6,6 +7,7 @@ using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Enums.DataBaseEnums;
+using Core.GDocApi;
 using Core.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,15 +19,18 @@ namespace Front.React.Controllers
         private readonly IUserCookieManager cookieManager;
         private readonly IContestManager contestManager;
         private readonly IAsyncRepository<Contest> contestsRepo;
+        private readonly ISheetsApiClient sheetsApiClient;
 
         public ContestsController(
             IUserCookieManager cookieManager,
             IContestManager contestManager,
-            IAsyncRepository<Contest> contestsRepo)
+            IAsyncRepository<Contest> contestsRepo,
+            ISheetsApiClient sheetsApiClient)
         {
             this.cookieManager = cookieManager;
             this.contestManager = contestManager;
             this.contestsRepo = contestsRepo;
+            this.sheetsApiClient = sheetsApiClient;
         }
 
         [HttpPost]
@@ -111,9 +116,30 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/generateSeating")]
-        public async Task GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
+        public async Task<StatusCodeResult> GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
         {
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
+
             await contestManager.GenerateSeating(id, auditoriums);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/resultsTable")]
+        public async Task<ActionResult> CreateResultsTable(
+            Guid id,
+            [FromBody] Dictionary<Class, string> tasksDescriptions)
+        {
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
+
+            await contestManager.AddResultsDescription(id, tasksDescriptions);
+
+            var tableLink = await sheetsApiClient.CreateTable();
+            return Json(tableLink);
         }
     }
 }

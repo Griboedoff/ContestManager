@@ -9,7 +9,7 @@ export default class AddResult extends React.Component {
 
         this.state = {
             auditoriums: '',
-            auditoriumsData: {},
+            tasksData: {},
 
             tableLink: '',
             message: '',
@@ -31,7 +31,7 @@ export default class AddResult extends React.Component {
         const { name } = target;
         this.setState({
             [name]: target.value,
-            auditoriumsData: this.parseClasses(target.value),
+            tasksData: this.parseClasses(target.value),
         });
     };
 
@@ -41,13 +41,13 @@ export default class AddResult extends React.Component {
             isError: false
         });
 
-        post(`contests/${this.props.contestId}/generateSeating`, this.state.auditoriumsData).then(resp => {
+        post(`contests/${this.props.contestId}/resultsTable`, this.state.tasksData).then(resp => {
             if (resp.ok)
-                return resp;
+                return resp.json();
 
             throw Error();
-        }).then(_ => this.setState({
-            message: 'Готово'
+        }).then(tableLink => this.setState({
+            tableLink
         })).catch(_ => this.setState({
             message: 'Произошла ошибка',
             error: true
