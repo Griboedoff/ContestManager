@@ -7,8 +7,8 @@ using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Enums.DataBaseEnums;
-using Core.GDocApi;
 using Core.Sessions;
+using Core.SheetsApi;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -138,8 +138,17 @@ namespace Front.React.Controllers
 
             await contestManager.AddResultsDescription(id, tasksDescriptions);
 
-            var tableLink = await sheetsApiClient.CreateTable();
-            return Json(tableLink);
+            var contest = await contestsRepo.GetByIdAsync(id);
+
+            var tableId = await sheetsApiClient.CreateTable(contest.Title);
+            contest.ResultsTableLink = tableId;
+            await contestsRepo.UpdateAsync(contest);
+
+            var participants = await contestManager.GetParticipants(id);
+
+            await sheetsApiClient.FillParticipantsData(tableId, participants, contest.TasksDescription);
+
+            return Json(tableId);
         }
     }
 }

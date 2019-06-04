@@ -13,6 +13,9 @@ using Core.Models.Configs;
 using Core.News_;
 using Core.Registration;
 using Core.Sessions;
+using Core.SheetsApi;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Sheets.v4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -52,11 +55,11 @@ namespace Front.React
 
             services.Configure<ConfigOptions>(Configuration);
 
-            ConfigureDI(services);
+            ConfigureDi(services);
             RegisterStoredConfigs(services).Wait();
         }
 
-        private void ConfigureDI(IServiceCollection services)
+        private static void ConfigureDi(IServiceCollection services)
         {
             services.AddScoped<IUserCookieManager, UserCookieManager>();
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
@@ -69,11 +72,17 @@ namespace Front.React
             services.AddSingleton<IEmailManager, EmailManager>();
             services.AddScoped<INewsManager, NewsManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
+            services.AddScoped<ISheetsApiClient, SheetsApiClient>();
+            services.AddScoped<ISeatingGenerator, SeatingGenerator>();
+
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
         }
 
         private static async Task RegisterStoredConfigs(IServiceCollection services)
         {
+            var clientSecrets = GoogleCredential.FromFile("cred.json").CreateScoped(SheetsService.Scope.Drive);
+            services.AddSingleton(clientSecrets);
+
             var sp = services.BuildServiceProvider();
             using (var scope = sp.CreateScope())
             {

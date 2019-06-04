@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Front.React
 {
@@ -12,6 +13,8 @@ namespace Front.React
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(
+                    (hostingContext, config) => config.AddJsonFile("credentials.json", false, false))
                 .UseStartup<Startup>();
     }
 }
