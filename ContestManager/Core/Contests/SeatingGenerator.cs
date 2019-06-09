@@ -63,6 +63,9 @@ namespace Core.Contests
 
                 for (var j = 0; j < partCountNeeded; j++)
                 {
+                    if (free.Any())
+                        break;
+
                     var participant = free.Pop();
                     var (login, pass) = GenerateLogin(participant, auditorium.Code);
                     participant.Login = login;

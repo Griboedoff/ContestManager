@@ -68,7 +68,7 @@ class Register extends React.Component {
             return;
         }
         this.setState({ isProcessing: true, error: false, errorMessage: '' });
-        window.VK.Auth.login(this.registerVKInternal);
+            window.VK.Auth.login(this.registerVKInternal);
     };
 
     registerEmail = () => {
