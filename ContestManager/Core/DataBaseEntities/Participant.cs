@@ -14,11 +14,11 @@ namespace Core.DataBaseEntities
         public string SerializedResults { get; set; }
 
         [NotMapped]
-        public ResultDescription[] Results
+        public string[] Results
         {
             get => SerializedResults == null
-                ? new ResultDescription[0]
-                : JsonConvert.DeserializeObject<ResultDescription[]>(SerializedResults);
+                ? new string[0]
+                : JsonConvert.DeserializeObject<string[]>(SerializedResults);
             set => SerializedResults = value == null
                 ? null
                 : JsonConvert.SerializeObject(value);
@@ -53,12 +53,5 @@ namespace Core.DataBaseEntities
             SerializedResults = SerializedResults,
             SerializedUserSnapshot = SerializedUserSnapshot,
         };
-    }
-
-    public class ResultDescription
-    {
-        public int TaskNumber { get; set; }
-
-        public int Value { get; set; }
     }
 }

@@ -150,5 +150,19 @@ namespace Front.React.Controllers
 
             return Json(tableId);
         }
+
+        [HttpPost("{id}/fetchResults")]
+        public async Task<ActionResult> CreateResultsTable(Guid id)
+        {
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
+
+            var contest = await contestsRepo.GetByIdAsync(id);
+            var results = await sheetsApiClient.GetResults(contest.ResultsTableLink);
+
+            await contestManager.AddResults(id, results);
+            return Json(200);
+        }
     }
 }

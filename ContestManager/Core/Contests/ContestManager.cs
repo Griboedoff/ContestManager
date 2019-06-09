@@ -19,6 +19,7 @@ namespace Core.Contests
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
         Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription);
+        Task AddResults(Guid contestId, Dictionary<string, List<string>> results);
     }
 
     public class ContestManager : IContestManager
@@ -146,6 +147,21 @@ namespace Core.Contests
                 kv => kv.Value.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList());
 
             await contestsRepo.UpdateAsync(contest);
+        }
+
+        public async Task AddResults(Guid contestId, Dictionary<string, List<string>> results)
+        {
+            foreach (var (pass, result) in results)
+            {
+                var participant =
+                    await participantsRepo.FirstOrDefaultAsync(p => p.ContestId == contestId && p.Pass == pass);
+                if (participant==null )
+                    throw new ArgumentException($"Wrong participant pass {pass}");
+
+                participant.Results = result.ToArray();
+
+                await participantsRepo.UpdateAsync(participant);
+            }
         }
 
         private async Task SealParticipants(Contest contest)

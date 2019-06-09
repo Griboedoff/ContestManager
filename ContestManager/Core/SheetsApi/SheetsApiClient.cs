@@ -19,6 +19,8 @@ namespace Core.SheetsApi
             string tableId,
             IReadOnlyList<Participant> participants,
             Dictionary<Class, List<string>> tasksDescription);
+
+        Task<Dictionary<string, List<string>>> GetResults(string tableId);
     }
 
     public class SheetsApiClient : ISheetsApiClient
@@ -86,10 +88,39 @@ namespace Core.SheetsApi
                 new BatchUpdateSpreadsheetRequest
                 {
                     Requests = CreateAddSheetsRequest(res)
+                        .Concat(
+                            new[]
+                            {
+                                new Request
+                                {
+                                    AddSheet = new AddSheetRequest
+                                    {
+                                        Properties = new SheetProperties
+                                        {
+                                            Title = "Апелляция",
+                                        }
+                                    }
+                                }
+                            })
+                        .ToList()
                 },
                 tableId);
 
             await batchUpdateRequest.ExecuteAsync();
+        }
+
+        public async Task<Dictionary<string, List<string>>> GetResults(string tableId)
+        {
+            var getRequest = sheetsService.Spreadsheets.Get(tableId);
+            var data = await getRequest.ExecuteAsync();
+
+            var results = new Dictionary<string, List<string>>();
+            foreach (var sheet in data.Sheets)
+                foreach (var row in sheet.Data[0].RowData.Select(r => r.Values).Skip(1))
+                    results[row[0].UserEnteredValue.StringValue] =
+                        row.Skip(1).Select(c => c.UserEnteredValue?.StringValue ?? "0").ToList();
+
+            return results;
         }
 
         private static IList<Request> CreateAddSheetsRequest(
