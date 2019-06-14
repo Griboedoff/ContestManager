@@ -13,8 +13,10 @@ namespace Core.DataBase
 
     public class Context : DbContext, IContext
     {
-        public Context(DbContextOptions<Context> options) : base(options)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseNpgsql(
+                "User ID=contest_manager;Password=ya_admin;Host=localhost;Port=5432;Database=GreatOlympicTries;Pooling=true;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,5 +37,6 @@ namespace Core.DataBase
         public virtual DbSet<Invite> EmailConfirmationRequests { get; set; }
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<Participant> Participants { get; set; }
+        public virtual DbSet<QualificationTask> QualificationTasks { get; set; }
     }
 }
