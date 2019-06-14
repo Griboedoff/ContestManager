@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.News_
+namespace Core.Contests.News
 {
     public class CreateNewsModel
     {

@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
+using NewsModel = Core.DataBaseEntities.News;
 
 namespace Core.Contests
 {
     public interface IContestManager
     {
         Task<Contest> Create(CreateContestModel title, Guid ownerId);
-        Task<IReadOnlyList<News>> GetNews(Guid contestId);
-        Task<News> AddNews(Guid contestId, string content);
+        Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId);
+        Task<NewsModel> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
         Task<Participant> AddParticipant(Guid contestId, Guid userId);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
@@ -25,14 +26,14 @@ namespace Core.Contests
     public class ContestManager : IContestManager
     {
         private readonly IAsyncRepository<Contest> contestsRepo;
-        private readonly IAsyncRepository<News> newsRepo;
+        private readonly IAsyncRepository<NewsModel> newsRepo;
         private readonly IAsyncRepository<Participant> participantsRepo;
         private readonly Context context;
         private readonly ISeatingGenerator seatingGenerator;
 
         public ContestManager(
             IAsyncRepository<Contest> contestsRepo,
-            IAsyncRepository<News> newsRepo,
+            IAsyncRepository<NewsModel> newsRepo,
             IAsyncRepository<Participant> participantsRepo,
             Context context,
             ISeatingGenerator seatingGenerator)
@@ -59,12 +60,12 @@ namespace Core.Contests
             return await contestsRepo.AddAsync(contest);
         }
 
-        public async Task<IReadOnlyList<News>> GetNews(Guid contestId)
+        public async Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId)
             => await newsRepo.WhereAsync(n => n.ContestId == contestId);
 
-        public async Task<News> AddNews(Guid contestId, string content)
+        public async Task<NewsModel> AddNews(Guid contestId, string content)
         {
-            var news = new News
+            var news = new NewsModel
             {
                 ContestId = contestId,
                 CreationDate = DateTime.Now,

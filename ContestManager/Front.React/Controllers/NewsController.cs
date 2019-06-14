@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Core.Contests;
+using Core.Contests.News;
 using Core.Enums.DataBaseEnums;
-using Core.News_;
 using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 
