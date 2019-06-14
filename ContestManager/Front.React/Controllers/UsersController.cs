@@ -2,14 +2,15 @@ using System;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
-using Core.Managers;
-using Core.Registration;
-using Core.Sessions;
+using Core.Users;
+using Core.Users.Login;
+using Core.Users.Registration;
+using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Front.React.Controllers
 {
-    public class UsersController : BaseController
+    public class UsersController : ControllerBase
     {
         private readonly IUserCookieManager userCookieManager;
         private readonly IAuthenticationManager authenticationManager;

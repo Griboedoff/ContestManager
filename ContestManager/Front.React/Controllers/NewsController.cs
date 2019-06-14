@@ -2,12 +2,12 @@ using System.Threading.Tasks;
 using Core.Contests;
 using Core.Enums.DataBaseEnums;
 using Core.News_;
-using Core.Sessions;
+using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Front.React.Controllers
 {
-    public class NewsController : BaseController
+    public class NewsController : ControllerBase
     {
         private readonly IContestManager contestManager;
         private readonly INewsManager newsManager;

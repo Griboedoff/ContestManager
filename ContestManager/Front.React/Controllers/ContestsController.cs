@@ -7,14 +7,14 @@ using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Enums.DataBaseEnums;
-using Core.Sessions;
 using Core.SheetsApi;
+using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Front.React.Controllers
 {
-    public class ContestsController : BaseController
+    public class ContestsController : ControllerBase
     {
         private readonly IUserCookieManager cookieManager;
         private readonly IContestManager contestManager;

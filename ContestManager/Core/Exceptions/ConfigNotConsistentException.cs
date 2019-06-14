@@ -1,5 +1,5 @@
 ﻿using System;
-using Core.Models.Configs;
+using Core.Configs;
 
 namespace Core.Exceptions
 {

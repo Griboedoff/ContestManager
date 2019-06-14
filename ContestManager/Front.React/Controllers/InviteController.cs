@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Core.Configs;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
-using Core.Factories;
-using Core.Models;
-using Core.Sessions;
+using Core.Users.Registration;
+using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
