@@ -14,6 +14,7 @@ import News from './News';
 import AddNews from './News/AddNews';
 import Options from './Options';
 import ParticipantsList from './ParticipantsList';
+import Results from './Results';
 import Seating from './Seating';
 
 class Contest extends React.Component {
@@ -71,10 +72,10 @@ class Contest extends React.Component {
                         <ListGroupItem>
                             <a className="link" onClick={this.handleTabChange(Tab.News)}>Информация</a>
                         </ListGroupItem>
-                        <ListGroupItem>
-                            <a className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</a>
-                        </ListGroupItem>
-                        {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
+                        {/*<ListGroupItem>*/}
+                            {/*<a className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</a>*/}
+                        {/*</ListGroupItem>*/}
+                        {/*{hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) &&*/ <ListGroupItem>
                             <a className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</a>
                         </ListGroupItem>}
                     </ListGroup>
@@ -119,9 +120,11 @@ class Contest extends React.Component {
                 return <ParticipantsList participants={this.props.participants} />;
             case Tab.Seating:
                 return <Seating contestId={this.contestId} />;
+            case Tab.AddResults:
+                return <AddResult contestId={this.contestId} />;
             case Tab.News:
             default:
-                return <AddResult contestId={this.contestId} />;
+                return <Results contestId={this.contestId} />;
                 return <News contestId={this.contestId} />;
         }
     }

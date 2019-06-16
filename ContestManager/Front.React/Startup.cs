@@ -87,7 +87,7 @@ namespace Front.React
             using (var scope = sp.CreateScope())
             {
                 var configRepo = scope.ServiceProvider.GetService<IAsyncRepository<StoredConfig>>();
-
+                
                 var configs = await configRepo.ListAllAsync();
                 RegisterStoredConfig<EmailConfig>(services, configs);
                 RegisterStoredConfig<VkAppConfig>(services, configs);
