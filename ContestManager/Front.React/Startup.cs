@@ -80,7 +80,7 @@ namespace Front.React
 
         private static async Task RegisterStoredConfigs(IServiceCollection services)
         {
-            var clientSecrets = GoogleCredential.FromFile("cred.json").CreateScoped(SheetsService.Scope.Drive);
+            var clientSecrets = GoogleCredential.FromFile("credentials.json").CreateScoped(SheetsService.Scope.Drive);
             services.AddSingleton(clientSecrets);
 
             var sp = services.BuildServiceProvider();
