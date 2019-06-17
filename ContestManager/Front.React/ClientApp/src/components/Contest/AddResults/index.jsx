@@ -22,7 +22,7 @@ export default class AddResult extends React.Component {
             if (resp.ok)
                 return resp.json();
         }).then(link => this.setState({
-            tableLink: link
+            tableLink: 'link'
         }));
     }
 
@@ -77,7 +77,13 @@ export default class AddResult extends React.Component {
                     <Button onClick={this.generate}>Создать табличку</Button>
                 </Row>
             </>}
-            {this.state.tableLink && <Row><a href={this.state.tableLink}>Таблица с разультатами</a></Row>}
+            {this.state.tableLink && <><Row className="mb-3">
+                <a href={this.state.tableLink}>Таблица с разультатами</a>
+            </Row>
+                <Row>
+                    <Button onClick={this.generate}>Синхронизировать данные</Button>
+                </Row>
+            </>}
         </Container>;
         ;
     }
