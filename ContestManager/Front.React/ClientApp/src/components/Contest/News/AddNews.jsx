@@ -4,7 +4,7 @@ import Textarea from 'react-textarea-autosize';
 import { post } from '../../../Proxy';
 import NewsArticle from './NewsArticle';
 
-export default class AddNews extends React.Component {
+export class AddNews extends React.Component {
     constructor(props) {
         super(props);
 

@@ -15,7 +15,7 @@ function parseRegisterStatus(s) {
     }
 }
 
-class Register extends React.Component {
+export class Register extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -119,8 +119,8 @@ class Register extends React.Component {
                     </div>
                 }
             </Alert>}
-            <Button 
-                className="mb-5 align-self-center row vk-button" 
+            <Button
+                className="mb-5 align-self-center row vk-button"
                 onClick={this.registerVK}>Зарегистрироваться через ВКонтакте</Button>
 
             <AvForm>
@@ -200,5 +200,3 @@ class Register extends React.Component {
         </div>;
     }
 }
-
-export default Register;

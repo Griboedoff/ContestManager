@@ -21,12 +21,17 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
+        <Content Include="ClientApp\src\components\Login\index.js" />
+        <Content Include="ClientApp\src\components\NavMenu\index.js" />
+        <Content Include="ClientApp\src\components\Register\index.js" />
+        <Content Include="ClientApp\src\components\UserPage\index.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <Content Update="credentials.json">
           <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <None Include="ClientApp\src\components\CreateContest\index.js" />
     </ItemGroup>
 
     <ItemGroup>

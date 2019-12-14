@@ -4,7 +4,7 @@ import Textarea from 'react-textarea-autosize';
 import { Alert, Button, Col, Container, Row, Table } from 'reactstrap';
 import { post } from '../../../Proxy';
 
-export default class Seating extends React.Component {
+export class Seating extends React.Component {
     constructor(props) {
         super(props);
 

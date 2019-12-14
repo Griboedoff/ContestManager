@@ -9,12 +9,11 @@ import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
 import WithUser from '../HOC/WithUser';
-import AddResult from './AddResults';
-import News from './News';
-import AddNews from './News/AddNews';
-import Options from './Options';
-import ParticipantsList from './ParticipantsList';
-import Seating from './Seating';
+import { AddResult } from './AddResult';
+import { News, AddNews } from './News';
+import { Options } from './Options';
+import { ParticipantsList } from './ParticipantsList';
+import { Seating } from './Seating';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -90,7 +89,8 @@ class Contest extends React.Component {
                                     рассадку</a>
                             </ListGroupItem>}
                             {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить результаты</a>
+                                <a className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить
+                                    результаты</a>
                             </ListGroupItem>}
                             <ListGroupItem>
                                 <a className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</a>
@@ -120,9 +120,9 @@ class Contest extends React.Component {
             case Tab.Seating:
                 return <Seating contestId={this.contestId} />;
             case Tab.News:
+                return <News contestId={this.contestId} />;
             default:
                 return <AddResult contestId={this.contestId} />;
-                return <News contestId={this.contestId} />;
         }
     }
 

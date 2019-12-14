@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from 'reactstrap';
 import { CenterSpinner } from './CenterSpinner';
 import WithUser from './HOC/WithUser';
-import NavMenu from './NavMenu';
+import { NavMenu } from './NavMenu';
 
 class Layout extends React.Component {
     async componentDidMount() {

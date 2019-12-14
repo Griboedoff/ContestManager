@@ -3,7 +3,7 @@ import Textarea from 'react-textarea-autosize';
 import { Alert, Button, Container, Row } from 'reactstrap';
 import { get, post } from '../../../Proxy';
 
-export default class AddResult extends React.Component {
+export class AddResult extends React.Component {
     constructor(props) {
         super(props);
 
