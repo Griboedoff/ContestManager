@@ -3,10 +3,6 @@ import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import WithParticipants from '../../HOC/WithParticipants';
 
 class ParticipantsList extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return <ListGroup>
             {this.props.participants.map(p => <ListGroupItem key={p.id}>

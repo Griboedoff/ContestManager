@@ -1,18 +1,18 @@
 import React from 'react';
 import {
+    Alert,
     Button,
+    Input,
+    InputGroup,
+    InputGroupAddon,
     Modal,
-    ModalHeader,
     ModalBody,
     ModalFooter,
-    Input,
-    InputGroupAddon,
-    InputGroup,
-    Spinner,
-    Alert
+    ModalHeader,
+    Spinner
 } from 'reactstrap';
-import './index.css';
 import { post } from '../../Proxy';
+import './index.css';
 
 export default class ChangePasswordModal extends React.Component {
     constructor(props) {
@@ -60,18 +60,20 @@ export default class ChangePasswordModal extends React.Component {
     };
 
     render() {
+        const { error, inputMail, message } = this.state;
+        const { fetching, toggle, email, isOpen } = this.props;
         return (
-            <Modal isOpen={this.props.isOpen} toggle={this.props.toggle}>
+            <Modal isOpen={isOpen} toggle={toggle}>
                 <ModalHeader>Восстановление пароля</ModalHeader>
                 <ModalBody>
                     Пароль можно сменить на странице редактирования данных.<br />
-                    Мы отправим одноразовую ссылку для входа
-                    {!this.state.inputMail && this.props.email && <>
-                        на почту {this.props.email}<br />
+                    Мы отправим одноразовую ссылку для входа {' '}
+                    {!inputMail && email && <>
+                        на почту {email}<br />
                         <span onClick={this.clearMail}
                               className="small text-muted pseudo-link">Указать другую почту</span>
                     </>}
-                    {this.state.inputMail && <>
+                    {inputMail && <>
                         <InputGroup className="mt-3">
                             <InputGroupAddon addonType="prepend">email</InputGroupAddon>
                             <Input type="email" name="email" onChange={this.handleChange} />
@@ -79,10 +81,10 @@ export default class ChangePasswordModal extends React.Component {
                     </>}
                 </ModalBody>
                 <ModalFooter>
-                    {this.state.error && <Alert color="danger">{this.state.message}</Alert>}
-                    {!this.state.error && this.state.message && <Alert color="success">{this.state.message}</Alert>}
+                    {error && <Alert color="danger">{message}</Alert>}
+                    {!error && message && <Alert color="success">{message}</Alert>}
                     <Button onClick={this.restore}>
-                        {this.props.fetching && <Spinner color="secondary" />}
+                        {fetching && <Spinner color="secondary" />}
                         Восстановить</Button>
                 </ModalFooter>
             </Modal>
