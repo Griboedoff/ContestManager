@@ -23,9 +23,10 @@ namespace Core.Mail
                 Host = config.SmtpHost,
                 Port = config.SmtpPort,
 
+                UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(config.SmtpUser, config.SmtpPwd),
                 DeliveryMethod = SmtpDeliveryMethod.Network,
-                EnableSsl = true
+                EnableSsl = true,
             };
         }
 
