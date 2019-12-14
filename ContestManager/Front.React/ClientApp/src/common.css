@@ -1,6 +1,9 @@
 .form-container {
     margin: 0 25%;
 }
+.form-container-modal {
+    margin: 0 10%;
+}
 
 .vk-button {
     background-color: #4680C2;

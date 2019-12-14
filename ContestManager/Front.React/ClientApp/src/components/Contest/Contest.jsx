@@ -13,6 +13,7 @@ import { AddResult } from './AddResult';
 import { AddNews, News } from './News';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
+import { ParticipateModal } from './ParticipateModal/ParticipateModal';
 import { Seating } from './Seating';
 
 class Contest extends React.Component {
@@ -21,18 +22,26 @@ class Contest extends React.Component {
         this.contestId = this.props.match.params.id;
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
-        this.participate = this.participate.bind(this);
+        this.toggleParticipate = this.toggleParticipate.bind(this);
         this.state = {
             activeTab: 1,
             dropdownOpen: false,
-            participateError: '',
-            participateSuccess: false,
+            participateOpen: false
         };
     }
 
     toggleDropdown() {
         this.setState({
             dropdownOpen: !this.state.dropdownOpen
+        });
+    }
+
+    async toggleParticipate() {
+        if (this.state.participateOpen)
+            await this.fetchParticipants();
+
+        await this.setState({
+            participateOpen: !this.state.participateOpen
         });
     }
 
@@ -54,17 +63,16 @@ class Contest extends React.Component {
             return <CenterSpinner />;
 
         const { title, options } = this.props.contest;
-        const { participateSuccess, participateError } = this.state;
         return <Container>
-            <Row><h1 className="mb-3">{title}</h1></Row>
+            <Row className="mb-3 justify-content-between">
+                <h1>{title}</h1>
+                {this.showParticipateButton() &&
+                <Button color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
+                {this.state.participateOpen &&
+                <ParticipateModal contestId={this.contestId} close={this.toggleParticipate} />}
+            </Row>
             <Row>
                 <Col sm={9}>
-                    {this.showParticipateButton() &&
-                    <Button color="success" className="mb-3" onClick={this.participate}>Принять участие</Button>}
-                    {participateError && <Alert color="danger">{participateError}</Alert>}
-                    {participateSuccess &&
-                    <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
-                        себе</Link></Alert>}
                     {this.renderTab()}
                 </Col>
                 <Col sm={3}>
@@ -127,17 +135,6 @@ class Contest extends React.Component {
             default:
                 return <AddResult contestId={this.contestId} />;
         }
-    }
-
-    participate() {
-        this.setState({ participateError: null, participateSuccess: false });
-        post(`contests/${this.contestId}/participate`)
-            .then(async resp => {
-                if (resp.ok)
-                    this.setState({ participateSuccess: true });
-
-                throw await resp.json();
-            }).catch(err => this.setState({ participateError: err }));
     }
 
     async fetchParticipants() {

@@ -14,11 +14,11 @@ class EditableUserData extends React.Component {
     }
 
     async save() {
+        await patch('users', this.state.user);
+        this.props.setUser(this.state.user);
         if (this.props.onSave) {
             this.props.onSave();
         }
-        await patch('users', this.state.user);
-        this.props.setUser(this.state.user);
     }
 
     handleChange = async (event) => {
@@ -35,16 +35,18 @@ class EditableUserData extends React.Component {
 
     render() {
         const { class: stateClass, school, role, coach, name, sex, city } = this.state.user;
+        const smLabel = this.props.small ? 2 : 1;
+        const smInput = this.props.small ? 8 : 4;
         return (<Form>
             <FormGroup row>
-                <Label sm={1}>Имя</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Имя</Label>
+                <Col sm={smInput}>
                     <Input type="text" name="name" onChange={this.handleChange} value={name} />
                 </Col>
             </FormGroup>
             {role === UserRole.Participant && <FormGroup row>
-                <Label sm={1}>Пол</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Пол</Label>
+                <Col sm={smInput}>
                     <Input type="select" name="sex" onChange={this.handleChange} value={sex}>
                         <option value={0}>М</option>
                         <option value={1}>Ж</option>
@@ -52,8 +54,8 @@ class EditableUserData extends React.Component {
                 </Col>
             </FormGroup>}
             {role === UserRole.Participant && <FormGroup row>
-                <Label sm={1}>Класс</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Класс</Label>
+                <Col sm={smInput}>
                     <Input type="select" name="class" onChange={this.handleChange} value={stateClass}>
                         <option value={5}>5</option>
                         <option value={6}>6</option>
@@ -67,15 +69,15 @@ class EditableUserData extends React.Component {
             </FormGroup>}
             {(role === UserRole.Participant || role === UserRole.Coach) &&
             <FormGroup row>
-                <Label sm={1}>Город</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Город</Label>
+                <Col sm={smInput}>
                     <Input type="text" name="city" onChange={this.handleChange} value={city} />
                 </Col>
             </FormGroup>}
             {(role === UserRole.Participant || role === UserRole.Coach) &&
             <FormGroup row>
-                <Label sm={1}>Школа</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Школа</Label>
+                <Col sm={smInput}>
                     <Input type="text"
                            name="school"
                            onChange={this.handleChange}
@@ -83,8 +85,8 @@ class EditableUserData extends React.Component {
                 </Col>
             </FormGroup>}
             {role === UserRole.Participant && <FormGroup row>
-                <Label sm={1}>Тренер</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Тренер</Label>
+                <Col sm={smInput}>
                     <Input type="text"
                            name="coach"
                            onChange={this.handleChange}
@@ -92,8 +94,8 @@ class EditableUserData extends React.Component {
                 </Col>
             </FormGroup>}
             <FormGroup row>
-                <Label sm={1}>Роль</Label>
-                <Col sm={4}>
+                <Label sm={smLabel}>Роль</Label>
+                <Col sm={smInput}>
                     <Input type="select" name="role" onChange={this.handleChange} value={role}>
                         <option value={1}>Участник</option>
                         <option value={2}>Тренер</option>
@@ -102,7 +104,7 @@ class EditableUserData extends React.Component {
             </FormGroup>
             <FormGroup row>
                 <Col sm={{ offset: 2 }}>
-                    <Button onClick={this.save}>Сохранить</Button>
+                    <Button onClick={this.save}>{this.props.saveTitle || 'Сохранить'}</Button>
                 </Col>
             </FormGroup>
         </Form>);
