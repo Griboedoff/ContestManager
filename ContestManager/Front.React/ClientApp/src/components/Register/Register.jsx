@@ -35,7 +35,7 @@ export class Register extends React.Component {
         this.toggle = this.toggle.bind(this);
     }
 
-    russianLetters = "^[' а-яё-]*$";
+    russianLetters = "^[' А-ЯЁа-яё-]*$";
 
     registerVKInternal = response => {
         if (this.props.user)
