@@ -1,7 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
     Collapse,
-    Container, DropdownItem, DropdownMenu, DropdownToggle,
+    Container,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     Navbar,
     NavbarBrand,
     NavbarToggler,
@@ -9,74 +13,55 @@ import {
     NavLink,
     UncontrolledDropdown
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import './index.css';
 import { UserRole } from '../../Enums/UserRole';
 import withUser from '../HOC/WithUser';
+import './index.css';
 
-class NavMenu extends React.Component {
-    constructor(props) {
-        super(props);
+const NavMenu = ({ user, logout }) => {
+    let [isOpen, setIsOpen] = React.useState(false);
 
-        this.toggle = this.toggle.bind(this);
-        this.state = {
-            isOpen: false
-        };
-    }
+    return (
+        <header>
+            <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
+                <Container>
+                    <NavbarBrand tag={Link} to="/">Вузак</NavbarBrand>
+                    <NavbarToggler onClick={() => setIsOpen(!isOpen)} className="mr-2" />
+                    <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={isOpen} navbar>
+                        <ul className="navbar-nav flex-grow">
+                            {user ? <ActionsBlock name={user.name} role={user.role} logout={logout} /> : <LoginBlock />}
+                        </ul>
+                    </Collapse>
+                </Container>
+            </Navbar>
+        </header>
+    );
+};
 
-    toggle() {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
-    }
+const LoginBlock = () => <React.Fragment>
+    <NavItem>
+        <NavLink tag={Link} className="text-dark" to="/register">Зарегистрироваться</NavLink>
+    </NavItem>
+    <NavItem>
+        <NavLink tag={Link} className="text-dark" to="/login">Войти</NavLink>
+    </NavItem>
+</React.Fragment>;
 
-    render() {
-        const LoginBlock = <React.Fragment>
-            <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/register">Зарегистрироваться</NavLink>
-            </NavItem>
-            <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/login">Войти</NavLink>
-            </NavItem>
-        </React.Fragment>;
-
-
-        return (
-            <header>
-                <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
-                    <Container>
-                        <NavbarBrand tag={Link} to="/">Вузак</NavbarBrand>
-                        <NavbarToggler onClick={this.toggle} className="mr-2" />
-                        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
-                            <ul className="navbar-nav flex-grow">
-                                {this.props.user ? this.ActionsBlock() : LoginBlock}
-                            </ul>
-                        </Collapse>
-                    </Container>
-                </Navbar>
-            </header>
-        );
-    }
-
-    ActionsBlock() {
-        return <React.Fragment>
-            <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                    {this.props.user.name}
-                </DropdownToggle>
-                <DropdownMenu right>
-                    <DropdownItem> <Link className="text-dark" to="/user">Мои данные</Link> </DropdownItem>
-                    {this.props.user.role === UserRole.Admin && <DropdownItem>
-                        <Link className="text-dark" to="/createContest">Новое соревнование</Link>
-                    </DropdownItem>}
-                    <DropdownItem divider />
-                    <DropdownItem>
-                        <Link className="text-dark" to="/" onClick={this.props.logout}>Выйти</Link>
-                    </DropdownItem>
-                </DropdownMenu>
-            </UncontrolledDropdown>
-        </React.Fragment>;
-    }
-}
+const ActionsBlock = ({ name, role, logout }) => <React.Fragment>
+    <UncontrolledDropdown nav inNavbar>
+        <DropdownToggle nav caret>
+            {name}
+        </DropdownToggle>
+        <DropdownMenu right>
+            <DropdownItem> <Link className="text-dark" to="/user">Мои данные</Link> </DropdownItem>
+            {role === UserRole.Admin && <DropdownItem>
+                <Link className="text-dark" to="/createContest">Новое соревнование</Link>
+            </DropdownItem>}
+            <DropdownItem divider />
+            <DropdownItem>
+                <Link className="text-dark" to="/" onClick={logout}>Выйти</Link>
+            </DropdownItem>
+        </DropdownMenu>
+    </UncontrolledDropdown>
+</React.Fragment>;
 
 export default withUser(NavMenu);
