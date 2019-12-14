@@ -25,6 +25,7 @@
         <Content Include="ClientApp\src\components\NavMenu\index.js" />
         <Content Include="ClientApp\src\components\Register\index.js" />
         <Content Include="ClientApp\src\components\UserPage\index.js" />
+        <Content Include="ClientApp\src\store\rootReducer.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <Content Update="credentials.json">

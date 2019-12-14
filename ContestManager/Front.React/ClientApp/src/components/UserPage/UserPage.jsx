@@ -155,29 +155,12 @@ class UserPage extends React.Component {
     }
 }
 
-class UserInfoRow extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            isEditable: false,
-        };
-    }
-
-    render() {
-        const { input, label, showValue, value } = this.props;
-        return (
-            <Row className="info-row">
-                <Col sm="1">{label}</Col>
-                <Col sm="3">{!this.state.isEditable
-                    ? showValue
-                        ? showValue(value)
-                        : value
-                    : input}
-                </Col>
-            </Row>
-        );
-    }
-}
-
+const UserInfoRow = ({ label, showValue, value }) => (
+    <Row className="info-row">
+        <Col sm="1">{label}</Col>
+        <Col sm="3">{showValue ? showValue(value) : value}
+        </Col>
+    </Row>
+);
 
 export default withUser(UserPage);

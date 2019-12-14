@@ -10,7 +10,7 @@ import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
 import WithUser from '../HOC/WithUser';
 import { AddResult } from './AddResult';
-import { News, AddNews } from './News';
+import { AddNews, News } from './News';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
 import { Seating } from './Seating';
@@ -53,14 +53,16 @@ class Contest extends React.Component {
         if (!this.props.contest || this.fetching())
             return <CenterSpinner />;
 
+        const { title, options } = this.props.contest;
+        const { participateSuccess, participateError } = this.state;
         return <Container>
-            <Row><h1 className="mb-3">{this.props.contest.title}</h1></Row>
+            <Row><h1 className="mb-3">{title}</h1></Row>
             <Row>
                 <Col sm={9}>
                     {this.showParticipateButton() &&
                     <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
-                    {this.state.participateError && <Alert color="danger">{this.state.participateError}</Alert>}
-                    {this.state.participateSuccess &&
+                    {participateError && <Alert color="danger">{participateError}</Alert>}
+                    {participateSuccess &&
                     <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
                         себе</Link></Alert>}
                     {this.renderTab()}
@@ -68,13 +70,13 @@ class Contest extends React.Component {
                 <Col sm={3}>
                     <ListGroup>
                         <ListGroupItem>
-                            <a className="link" onClick={this.handleTabChange(Tab.News)}>Информация</a>
+                            <span className="link" onClick={this.handleTabChange(Tab.News)}>Информация</span>
                         </ListGroupItem>
                         <ListGroupItem>
-                            <a className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</a>
+                            <span className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</span>
                         </ListGroupItem>
-                        {hasFlag(this.props.contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
-                            <a className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</a>
+                        {hasFlag(options, ContestOptions.ResultsOpen) && <ListGroupItem>
+                            <span className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</span>
                         </ListGroupItem>}
                     </ListGroup>
 
@@ -82,18 +84,19 @@ class Contest extends React.Component {
                         <h5 className="mt-3">Админка</h5>
                         <ListGroup>
                             <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</a>
+                                <span className="link"
+                                      onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</span>
                             </ListGroupItem>
-                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.Seating)}>Сгенерировать
-                                    рассадку</a>
+                            {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                                <span className="link" onClick={this.handleTabChange(Tab.Seating)}>Сгенерировать
+                                    рассадку</span>
                             </ListGroupItem>}
-                            {!hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить
-                                    результаты</a>
+                            {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                                <span className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить
+                                    результаты</span>
                             </ListGroupItem>}
                             <ListGroupItem>
-                                <a className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</a>
+                                <span className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</span>
                             </ListGroupItem>
                         </ListGroup>
                     </>}
