@@ -9,22 +9,18 @@ class ContestList extends React.Component {
         const ongoing = this.props.contests.filter(c => c.options !== ContestOptions.Finished);
         const finished = this.props.contests.filter(c => c.options === ContestOptions.Finished);
 
+        const toListItem = c => (
+            <ListGroupItem tag={Link} to={`contests/${c.id}`} id={c.id} key={c.id}>
+                {c.title}
+            </ListGroupItem>);
         return <>
             {ongoing.length !== 0 && <>
                 <h3>Текущие</h3>
-                <ListGroup className="mb-3">
-                    {ongoing.map(c => <ListGroupItem tag={Link}
-                                                     to={`contests/${c.id}`}
-                                                     id={c.id}>{c.title}</ListGroupItem>)}
-                </ListGroup>
+                <ListGroup className="mb-3">{ongoing.map(toListItem)}</ListGroup>
             </>}
             {finished.length !== 0 && <>
                 <h3>Прошедшие</h3>
-                <ListGroup>
-                    {finished.map(c => <ListGroupItem tag={Link}
-                                                      to={`contests/${c.id}`}
-                                                      id={c.id}>{c.title}</ListGroupItem>)}
-                </ListGroup>
+                <ListGroup>{finished.map(toListItem)}</ListGroup>
             </>}
         </>;
     }

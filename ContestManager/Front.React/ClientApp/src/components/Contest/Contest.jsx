@@ -60,7 +60,7 @@ class Contest extends React.Component {
             <Row>
                 <Col sm={9}>
                     {this.showParticipateButton() &&
-                    <Button className="mb-3" onClick={this.participate}>Принять участие</Button>}
+                    <Button color="success" className="mb-3" onClick={this.participate}>Принять участие</Button>}
                     {participateError && <Alert color="danger">{participateError}</Alert>}
                     {participateSuccess &&
                     <Alert color="success">Вы зарегистрированы. Не забудте <Link to="/user">обновить данные о
