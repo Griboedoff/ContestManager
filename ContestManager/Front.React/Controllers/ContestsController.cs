@@ -83,7 +83,7 @@ namespace Front.React.Controllers
             if (!user.Class.HasValue)
                 return StatusCode(400, "Не указан класс");
 
-            await contestManager.AddParticipant(id, user.Id);
+            await contestManager.AddParticipant(id, user);
             return StatusCode(200, "Успешно");
         }
 

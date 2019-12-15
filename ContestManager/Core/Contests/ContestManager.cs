@@ -15,7 +15,7 @@ namespace Core.Contests
         Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId);
         Task<NewsModel> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
-        Task<Participant> AddParticipant(Guid contestId, Guid userId);
+        Task<Participant> AddParticipant(Guid contestId, User user);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
@@ -80,12 +80,13 @@ namespace Core.Contests
             return await contestsRepo.GetByIdAsync(contestId) != null;
         }
 
-        public async Task<Participant> AddParticipant(Guid contestId, Guid userId)
+        public async Task<Participant> AddParticipant(Guid contestId, User user)
         {
             var participant = new Participant
             {
                 ContestId = contestId,
-                UserId = userId,
+                UserId = user.Id,
+                UserSnapshot = user,
             };
 
             return await participantsRepo.AddAsync(participant);
@@ -109,14 +110,7 @@ namespace Core.Contests
 
         private IReadOnlyList<Participant> GetParticipantsFromUsers(Contest contest) =>
             context.Set<Participant>()
-                .Join(
-                    context.Set<User>(),
-                    participant => participant.UserId,
-                    user => user.Id,
-                    (participant, user) => new { user, participant })
-                .Where(t => t.participant.ContestId == contest.Id)
-                .AsEnumerable()
-                .Select(t => t.participant.WithUser(t.user))
+                .Where(p => p.ContestId == contest.Id)
                 .ToList();
 
         public async Task UpdateOptions(Guid contestId, ContestOptions newOptions)

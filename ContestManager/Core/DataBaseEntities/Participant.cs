@@ -38,14 +38,6 @@ namespace Core.DataBaseEntities
 
         public string Pass { get; set; }
 
-        public Participant WithUser(User user) => new Participant
-        {
-            ContestId = ContestId,
-            UserId = UserId,
-            SerializedResults = SerializedResults,
-            SerializedUserSnapshot = JsonConvert.SerializeObject(user),
-        };
-
         public Participant WithoutLogin() => new Participant
         {
             ContestId = ContestId,
