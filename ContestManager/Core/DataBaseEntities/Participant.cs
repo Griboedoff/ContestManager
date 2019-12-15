@@ -38,6 +38,9 @@ namespace Core.DataBaseEntities
 
         public string Pass { get; set; }
 
+        public string Verification { get; set; }
+
+        public bool Verified { get; set; }
         public Participant WithoutLogin() => new Participant
         {
             ContestId = ContestId,

@@ -68,7 +68,7 @@ class Contest extends React.Component {
                 {this.showParticipateButton() &&
                 <Button color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
                 {this.state.participateOpen &&
-                <ParticipateModal contestId={this.contestId} close={this.toggleParticipate} />}
+                <ParticipateModal contest={this.props.contest} close={this.toggleParticipate} />}
             </Row>
             <Row>
                 <Col sm={9}>

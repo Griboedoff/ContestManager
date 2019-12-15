@@ -15,7 +15,7 @@ namespace Core.Contests
         Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId);
         Task<NewsModel> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
-        Task<Participant> AddParticipant(Guid contestId, User user);
+        Task<Participant> AddParticipant(Guid contestId, User user, string verification);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
@@ -80,13 +80,14 @@ namespace Core.Contests
             return await contestsRepo.GetByIdAsync(contestId) != null;
         }
 
-        public async Task<Participant> AddParticipant(Guid contestId, User user)
+        public async Task<Participant> AddParticipant(Guid contestId, User user, string verification)
         {
             var participant = new Participant
             {
                 ContestId = contestId,
                 UserId = user.Id,
                 UserSnapshot = user,
+                Verification = verification,
             };
 
             return await participantsRepo.AddAsync(participant);

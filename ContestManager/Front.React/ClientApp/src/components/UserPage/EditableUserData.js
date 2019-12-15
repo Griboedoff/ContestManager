@@ -35,8 +35,10 @@ class EditableUserData extends React.Component {
 
     render() {
         const { class: stateClass, school, role, coach, name, sex, city } = this.state.user;
-        const smLabel = this.props.small ? 2 : 1;
-        const smInput = this.props.small ? 8 : 4;
+        const { small } = this.props;
+        const smLabel = small ? 4 : 1;
+        const smOffset = small ? 4 : 2;
+        const smInput = small ? 8 : 4;
         return (<Form>
             <FormGroup row>
                 <Label sm={smLabel}>Имя</Label>
@@ -93,7 +95,7 @@ class EditableUserData extends React.Component {
                            value={coach} />
                 </Col>
             </FormGroup>}
-            <FormGroup row>
+            {!small && <FormGroup row>
                 <Label sm={smLabel}>Роль</Label>
                 <Col sm={smInput}>
                     <Input type="select" name="role" onChange={this.handleChange} value={role}>
@@ -101,9 +103,10 @@ class EditableUserData extends React.Component {
                         <option value={2}>Тренер</option>
                     </Input>
                 </Col>
-            </FormGroup>
+            </FormGroup>}
+            {this.props.children}
             <FormGroup row>
-                <Col sm={{ offset: 2 }}>
+                <Col sm={{ offset: smOffset }}>
                     <Button onClick={this.save}>{this.props.saveTitle || 'Сохранить'}</Button>
                 </Col>
             </FormGroup>

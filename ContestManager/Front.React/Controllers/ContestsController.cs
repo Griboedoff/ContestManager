@@ -73,7 +73,7 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("{id}/participate")]
-        public async Task<ObjectResult> Participate(Guid id)
+        public async Task<ObjectResult> Participate(Guid id, [FromBody] string verification = null)
         {
             var user = await cookieManager.GetUser(Request);
             if (user.Role != UserRole.Participant)
@@ -83,7 +83,11 @@ namespace Front.React.Controllers
             if (!user.Class.HasValue)
                 return StatusCode(400, "Не указан класс");
 
-            await contestManager.AddParticipant(id, user);
+            var contest = await contestsRepo.GetByIdAsync(id);
+            if (contest.Type == ContestType.Common && string.IsNullOrWhiteSpace(verification))
+                return StatusCode(400, "Не заполнено подтверждение");
+
+            await contestManager.AddParticipant(id, user, verification);
             return StatusCode(200, "Успешно");
         }
 

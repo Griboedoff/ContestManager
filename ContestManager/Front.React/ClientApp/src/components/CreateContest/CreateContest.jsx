@@ -11,7 +11,7 @@ class CreateContest extends React.Component {
 
         this.state = {
             title: '',
-            type: 0,
+            type: null,
             error: false,
         };
     }
@@ -67,8 +67,8 @@ class CreateContest extends React.Component {
                     <Label sm={3}>Тип</Label>
                     <Col sm={9}>
                         <Input type="select" name="type" onChange={this.handleChange}>
-                            <option value={0}>Основной тур</option>
-                            <option value={1}>Отборочный тур</option>
+                            <option value={0}>С подтверждением</option>
+                            <option value={1}>Без подтверждения</option>
                         </Input>
                     </Col>
                 </FormGroup>
