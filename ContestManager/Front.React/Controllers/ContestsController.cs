@@ -87,7 +87,8 @@ namespace Front.React.Controllers
             if (contest.Type == ContestType.Common && string.IsNullOrWhiteSpace(verification))
                 return StatusCode(400, "Не заполнено подтверждение");
 
-            await contestManager.AddParticipant(id, user, verification);
+            await contestManager.AddOrUpdateParticipant(id, user, verification);
+
             return StatusCode(200, "Успешно");
         }
 

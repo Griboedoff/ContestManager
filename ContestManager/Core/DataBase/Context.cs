@@ -13,10 +13,8 @@ namespace Core.DataBase
 
     public class Context : DbContext, IContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public Context(DbContextOptions options) : base(options)
         {
-            optionsBuilder.UseNpgsql(
-                "User ID=contest_manager;Password=ya_admin;Host=localhost;Port=5432;Database=GreatOlympicTries;Pooling=true;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

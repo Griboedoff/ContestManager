@@ -1,29 +1,34 @@
 import React from 'react';
 import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import WithParticipants from '../../HOC/WithParticipants';
+import WithUser from '../../HOC/WithUser';
 
-class ParticipantsList extends React.Component {
-    render() {
-        return <ListGroup>
-            {this.props.participants.map(p => <ListGroupItem key={p.id}>
-                <Participant participant={p} />
-            </ListGroupItem>)}
-        </ListGroup>;
-    }
-}
-
-function Participant({ participant }) {
-    const data = participant.userSnapshot;
-
+export const ParticipantsList = ({ contest, user, participants }) => {
     return <>
-        <Container>
-            <Row className="d-flex align-items-baseline justify-content-between mb-2">
-                <h4>{data.name}</h4>
-                <small>{data.class} класс</small>
-            </Row>
-            <Row> <Col sm={6}>{data.city}, {data.school}</Col> <Col sm={6}>Тренер: {data.coach}</Col> </Row>
-        </Container>
+        <ListGroup>
+            {participants.map(p => (
+                <ListGroupItem key={p.id}>
+                    <Participant participant={p} />
+                </ListGroupItem>
+            ))}
+        </ListGroup>
+        {/*<ParticipateModal user={user} contest={contest} saveTitle="Обновить данные" />*/}
     </>;
-}
+};
 
-export default WithParticipants(ParticipantsList);
+const Participant = ({ participant }) => {
+    const user = participant.userSnapshot;
+
+    return <Container>
+        <Row className="d-flex align-items-baseline justify-content-between mb-2">
+            <h4>{user.name}</h4>
+            <small>{user.class} класс</small>
+        </Row>
+        <Row>
+            <Col sm={6}>{user.city}, {user.school}</Col>
+            <Col sm={6}>Тренер: {user.coach}</Col>
+        </Row>
+    </Container>;
+};
+
+export default WithUser(WithParticipants(ParticipantsList));

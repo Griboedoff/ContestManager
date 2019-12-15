@@ -15,7 +15,7 @@ namespace Core.Contests
         Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId);
         Task<NewsModel> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
-        Task<Participant> AddParticipant(Guid contestId, User user, string verification);
+        Task<Participant> AddOrUpdateParticipant(Guid contestId, User user, string verification);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
         Task UpdateOptions(Guid contestId, ContestOptions newOptions);
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
@@ -80,7 +80,7 @@ namespace Core.Contests
             return await contestsRepo.GetByIdAsync(contestId) != null;
         }
 
-        public async Task<Participant> AddParticipant(Guid contestId, User user, string verification)
+        public async Task<Participant> AddOrUpdateParticipant(Guid contestId, User user, string verification)
         {
             var participant = new Participant
             {
@@ -89,6 +89,9 @@ namespace Core.Contests
                 UserSnapshot = user,
                 Verification = verification,
             };
+
+            if (await participantsRepo.AnyAsync(p => p.ContestId == contestId && p.UserId == user.Id))
+                return await participantsRepo.UpdateAsync(participant);
 
             return await participantsRepo.AddAsync(participant);
         }
@@ -151,7 +154,7 @@ namespace Core.Contests
             {
                 var participant =
                     await participantsRepo.FirstOrDefaultAsync(p => p.ContestId == contestId && p.Pass == pass);
-                if (participant==null )
+                if (participant == null)
                     throw new ArgumentException($"Wrong participant pass {pass}");
 
                 participant.Results = result.ToArray();

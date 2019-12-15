@@ -16,7 +16,7 @@ namespace Core.DataBase
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> selector);
         Task<bool> AnyAsync(Expression<Func<T, bool>> selector);
         Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
         Task DeleteAsync(T entity);
     }
 
@@ -46,10 +46,12 @@ namespace Core.DataBase
             return entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             dbContext.Entry(entity).State = EntityState.Modified;
             await dbContext.SaveChangesAsync();
+
+            return entity;
         }
 
         public async Task DeleteAsync(T entity)

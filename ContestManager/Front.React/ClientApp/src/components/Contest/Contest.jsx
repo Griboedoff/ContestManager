@@ -40,7 +40,8 @@ class Contest extends React.Component {
             await this.fetchParticipants();
 
         await this.setState({
-            participateOpen: !this.state.participateOpen
+            participateOpen: !this.state.participateOpen,
+            activeTab: Tab.Participants
         });
     }
 
@@ -68,7 +69,7 @@ class Contest extends React.Component {
                 {this.showParticipateButton() &&
                 <Button color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
                 {this.state.participateOpen &&
-                <ParticipateModal contest={this.props.contest} close={this.toggleParticipate} />}
+                <ParticipateModal user={this.props.user} contest={this.props.contest} close={this.toggleParticipate} />}
             </Row>
             <Row>
                 <Col sm={9}>
@@ -126,7 +127,7 @@ class Contest extends React.Component {
             case Tab.Options:
                 return <Options />;
             case Tab.Participants:
-                return <ParticipantsList participants={this.props.participants} />;
+                return <ParticipantsList contest={this.props.contest} participants={this.props.participants} />;
             case Tab.Seating:
                 return <Seating contestId={this.contestId} />;
             case Tab.News:

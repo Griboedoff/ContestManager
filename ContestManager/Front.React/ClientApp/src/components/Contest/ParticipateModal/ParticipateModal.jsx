@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Alert, Col, Container, FormGroup, FormText, Input, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { post } from '../../../Proxy';
-import EditableUserData from '../../UserPage/EditableUserData';
+import { EditableUserData } from '../../UserPage';
 
-export const ParticipateModal = ({ contest, close }) => {
+export const ParticipateModal = ({ user, contest, close, saveTitle = 'Участвовать' }) => {
     const [participateError, setParticipateError] = useState(null);
     const [verification, setVerification] = useState(null);
     const participate = () => {
@@ -12,7 +12,7 @@ export const ParticipateModal = ({ contest, close }) => {
             .then(async resp => {
                 if (!resp.ok) {
                     if (resp.status === 500)
-                        throw "Авторизируйтесь";
+                        throw new Error("Авторизируйтесь");
                     throw await resp.json();
                 }
 
@@ -29,7 +29,7 @@ export const ParticipateModal = ({ contest, close }) => {
             </p>
             {participateError && <Alert color="danger">{participateError}</Alert>}
             <Container>
-                <EditableUserData saveTitle='Участвовать' onSave={participate} small>
+                <EditableUserData user={user} saveTitle={saveTitle} onSave={participate} small>
                     {contest.type === 0 && <FormGroup row>
                         <Label sm={4}>Подтверждение</Label>
                         <Col sm={8}>
