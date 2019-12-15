@@ -5,6 +5,14 @@
     margin: 0 3%;
 }
 
+body, .sticky-footer-wrapper {
+    min-height:100vh;
+}
+
+.flex-fill {
+    flex:1 1 auto;
+}
+
 .vk-button {
     background-color: #4680C2;
 }

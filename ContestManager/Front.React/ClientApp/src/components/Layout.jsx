@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container } from 'reactstrap';
 import { CenterSpinner } from './CenterSpinner';
+import { Footer } from './Footer';
 import WithUser from './HOC/WithUser';
 import { NavMenu } from './NavMenu';
 
@@ -13,11 +14,12 @@ class Layout extends React.Component {
     render() {
         return this.props.fetching
             ? <CenterSpinner />
-            : <div>
+            : <div className="d-flex flex-column sticky-footer-wrapper">
                 <NavMenu />
-                <Container>
+                <Container className="flex-fill">
                     {this.props.children}
                 </Container>
+                <Footer />
             </div>;
     }
 }
