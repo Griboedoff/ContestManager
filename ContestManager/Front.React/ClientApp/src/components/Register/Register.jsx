@@ -11,7 +11,7 @@ function parseRegisterStatus(s) {
         case 3:
             return "Пользователь с таким VK уже зарегистрирован";
         default:
-           return "";
+            return "";
     }
 }
 
@@ -68,7 +68,7 @@ export class Register extends React.Component {
             return;
         }
         this.setState({ isProcessing: true, error: false, errorMessage: '' });
-            window.VK.Auth.login(this.registerVKInternal);
+        window.VK.Auth.login(this.registerVKInternal);
     };
 
     registerEmail = () => {
@@ -195,7 +195,8 @@ export class Register extends React.Component {
                         <Button className="align-self-right" onClick={this.registerEmail}> Зарегистрироваться </Button>
                     </Col>
                 </FormGroup>
-                {this.state.confirmSend && <Alert>На адрес {this.state.email} отправлено письмо с подтверждением</Alert>}
+                {this.state.confirmSend &&
+                <Alert>На адрес {this.state.email} отправлено письмо с подтверждением</Alert>}
             </AvForm>
         </div>;
     }

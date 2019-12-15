@@ -15,6 +15,7 @@ namespace Front.React
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(
                     (hostingContext, config) => config.AddJsonFile("credentials.json", false, false))
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseIISIntegration();
     }
 }
