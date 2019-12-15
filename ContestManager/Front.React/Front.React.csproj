@@ -27,7 +27,6 @@
           <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <None Include="ClientApp\src\components\CreateContest\index.js" />
     </ItemGroup>
 
     <ItemGroup>

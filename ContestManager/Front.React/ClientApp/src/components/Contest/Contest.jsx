@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Alert, Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
+import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
 import { UserRole } from '../../Enums/UserRole';
-import { get, post } from '../../Proxy';
+import { get } from '../../Proxy';
 import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';

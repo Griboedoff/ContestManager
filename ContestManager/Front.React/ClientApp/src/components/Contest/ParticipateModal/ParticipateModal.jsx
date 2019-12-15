@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Container, Alert } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Container, Alert } from 'reactstrap';
 import { post } from '../../../Proxy';
 import EditableUserData from '../../UserPage/EditableUserData';
 
@@ -22,6 +22,7 @@ export const ParticipateModal = ({ contestId, close }) => {
             <p>
                 Проверьте ваши данные и исправьте если необходимо
             </p>
+            {participateError && <Alert color="danger">{participateError}</Alert>}
             <Container className="form-container-modal">
                 <EditableUserData saveTitle='Участвовать' onSave={participate} small />
             </Container>
