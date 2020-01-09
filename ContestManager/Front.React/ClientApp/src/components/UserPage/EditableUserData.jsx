@@ -11,6 +11,7 @@ class EditableUserData extends React.Component {
         this.state = {
             user: props.user,
             hasErrors: false,
+            saved: false
         };
 
         this.save = this.save.bind(this);
@@ -18,7 +19,7 @@ class EditableUserData extends React.Component {
 
     async save(event, errors) {
         if (errors.length) {
-            this.setState({ hasErrors: true });
+            await this.setState({ hasErrors: true });
             return false;
         }
         await patch('users', this.state.user);
@@ -26,6 +27,7 @@ class EditableUserData extends React.Component {
         if (this.props.onSave) {
             this.props.onSave();
         }
+        this.setState({ saved: true });
     }
 
     handleChange = async (event) => {
@@ -146,6 +148,7 @@ class EditableUserData extends React.Component {
                     <Button>{this.props.saveTitle || 'Сохранить'}</Button>
                 </Col>
             </AvGroup>
+            {this.state.saved && this.props.redirect}
         </AvForm>);
     }
 }
