@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Core.Contests;
 using Core.Contests.News;
@@ -33,9 +34,20 @@ namespace Front.React.Controllers
             if (!await contestManager.Exists(createNewsModel.ContestId))
                 return NotFound();
 
-            var news = await newsManager.Create(createNewsModel);
+            return Json(await newsManager.Create(createNewsModel));
+        }
 
-            return Json(news);
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Add(Guid id, [FromBody] CreateNewsModel createNewsModel)
+        {
+            var user = await cookieManager.GetUser(Request);
+            if (user.Role != UserRole.Admin)
+                return StatusCode(403);
+
+            if (!await newsManager.Exists(id))
+                return NotFound();
+
+            return Json(await newsManager.Update(id, createNewsModel));
         }
     }
 }

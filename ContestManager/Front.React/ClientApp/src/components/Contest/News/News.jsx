@@ -35,7 +35,7 @@ class News extends React.Component {
 
         return <ListGroup flush>
             {this.props.news[this.props.contestId].map(n => <ListGroupItem key={n.id} className="news-item">
-                <NewsArticle article={n} />
+                <NewsArticle article={n} editable />
             </ListGroupItem>)}
         </ListGroup>;
     }

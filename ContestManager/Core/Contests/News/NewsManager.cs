@@ -9,6 +9,8 @@ namespace Core.Contests.News
     public interface INewsManager
     {
         Task<NewsModel> Create(CreateNewsModel createNewsModel);
+        Task<NewsModel> Update(Guid id, CreateNewsModel createNewsModel);
+        Task<bool> Exists(Guid id);
         Task<NewsModel> Get(Guid newsId);
         Task<NewsModel[]> GetByContest(Guid contestId);
     }
@@ -34,6 +36,22 @@ namespace Core.Contests.News
             };
 
             return await newsRepo.AddAsync(news);
+        }
+
+        public async Task<NewsModel> Update(Guid id, CreateNewsModel createNewsModel)
+        {
+            var news = await newsRepo.GetByIdAsync(id);
+
+            news.CreationDate = DateTime.Now;
+            news.Content = createNewsModel.Content;
+            news.Title = createNewsModel.Title;
+
+            return await newsRepo.UpdateAsync(news);
+        }
+
+        public async Task<bool> Exists(Guid id)
+        {
+            return await newsRepo.GetByIdAsync(id) != null;
         }
 
         public async Task<NewsModel> Get(Guid newsId) => await newsRepo.GetByIdAsync(newsId);

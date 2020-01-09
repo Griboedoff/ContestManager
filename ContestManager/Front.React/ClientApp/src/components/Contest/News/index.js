@@ -1,2 +1,2 @@
 export { default as News } from './News';
-export { AddNews } from './AddNews';
+export { default as EditNews } from './EditNews';

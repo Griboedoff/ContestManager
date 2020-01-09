@@ -10,7 +10,7 @@ import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
 import WithUser from '../HOC/WithUser';
 import { AddResult } from './AddResult';
-import { AddNews, News } from './News';
+import { EditNews, News } from './News';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
 import { ParticipateModal } from './ParticipateModal/ParticipateModal';
@@ -86,7 +86,7 @@ class Contest extends React.Component {
                         </Route>
 
                         <Route exact path={`${this.CONTEST}/addNews`}>
-                            <AddNews contestId={this.contestId} />
+                            <EditNews contestId={this.contestId} />
                         </Route>
                         <Route exact path={`${this.CONTEST}/options`}>
                             <Options />
