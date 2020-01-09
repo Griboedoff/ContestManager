@@ -43,6 +43,7 @@ namespace Core.DataBaseEntities
         public bool Verified { get; set; }
         public Participant WithoutLogin() => new Participant
         {
+            Id = Id,
             ContestId = ContestId,
             UserId = UserId,
             SerializedResults = SerializedResults,

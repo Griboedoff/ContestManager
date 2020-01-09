@@ -82,16 +82,26 @@ namespace Core.Contests
 
         public async Task<Participant> AddOrUpdateParticipant(Guid contestId, User user, string verification)
         {
-            var participant = new Participant
+            var participant =
+                await participantsRepo.FirstOrDefaultAsync(p => p.ContestId == contestId && p.UserId == user.Id);
+
+            if (participant != null)
+            {
+                participant.ContestId = contestId;
+                participant.UserId = user.Id;
+                participant.UserSnapshot = user;
+                participant.Verification = verification;
+
+                return await participantsRepo.UpdateAsync(participant);
+            }
+
+            participant = new Participant
             {
                 ContestId = contestId,
                 UserId = user.Id,
                 UserSnapshot = user,
                 Verification = verification,
             };
-
-            if (await participantsRepo.AnyAsync(p => p.ContestId == contestId && p.UserId == user.Id))
-                return await participantsRepo.UpdateAsync(participant);
 
             return await participantsRepo.AddAsync(participant);
         }

@@ -9,6 +9,7 @@ using Core.Enums;
 using Core.Enums.DataBaseEnums;
 using Core.SheetsApi;
 using Core.Users.Sessions;
+using Front.React.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -88,6 +89,29 @@ namespace Front.React.Controllers
                 return StatusCode(400, "Не заполнено подтверждение");
 
             await contestManager.AddOrUpdateParticipant(id, user, verification);
+
+            return StatusCode(200, "Успешно");
+        }
+
+        [HttpPatch("{id}/updateParticipant")]
+        public async Task<ObjectResult> Update(Guid id, [FromBody] ParticipantData participantData)
+        {
+            var user = await cookieManager.GetUser(Request);
+
+            if (user.Role != UserRole.Participant && user.Role != UserRole.Admin)
+                return StatusCode(400, "Неверная роль");
+            if (user.Role == UserRole.Participant && user.Id != participantData.User.Id)
+                return StatusCode(400, "Нет прав");
+            if (string.IsNullOrEmpty(participantData.User.School))
+                return StatusCode(400, "Не заполнена школа");
+            if (!participantData.User.Class.HasValue)
+                return StatusCode(400, "Не указан класс");
+
+            var contest = await contestsRepo.GetByIdAsync(id);
+            if (contest.Type == ContestType.Common && string.IsNullOrWhiteSpace(participantData.Verification))
+                return StatusCode(400, "Не заполнено подтверждение");
+
+            await contestManager.AddOrUpdateParticipant(id, participantData.User, participantData.Verification);
 
             return StatusCode(200, "Успешно");
         }

@@ -2,10 +2,9 @@ import React from 'react';
 import { Alert, Button, Col, Label } from 'reactstrap';
 import { UserRole } from '../../Enums/UserRole';
 import { patch } from '../../Proxy';
-import withUser from '../HOC/WithUser';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-class EditableUserData extends React.Component {
+export default class EditableUserData extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -22,10 +21,14 @@ class EditableUserData extends React.Component {
             await this.setState({ hasErrors: true });
             return false;
         }
-        await patch('users', this.state.user);
-        this.props.setUser(this.state.user);
-        if (this.props.onSave) {
-            this.props.onSave();
+        if (this.props.onSaveEverything) {
+            this.props.onSaveEverything(this.state.user);
+        } else {
+            await patch('users', this.state.user);
+            this.props.setUser(this.state.user);
+            if (this.props.onSave) {
+                this.props.onSave();
+            }
         }
         this.setState({ saved: true });
     }
@@ -152,5 +155,3 @@ class EditableUserData extends React.Component {
         </AvForm>);
     }
 }
-
-export default withUser(EditableUserData);

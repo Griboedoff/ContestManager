@@ -1,46 +1,43 @@
 import React, { useState } from 'react';
 import { Alert, Col, Container, FormText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { post } from '../../../Proxy';
+import { patch } from '../../../Proxy';
+import WithParticipants from '../../HOC/WithParticipants';
 import { EditableUserData } from '../../UserPage';
 import { AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-export const ParticipateModal = ({ user, contest, close }) => {
+const EditParticipantModal = ({ isOpen, participant, contest, close, updateParticipant }) => {
     const [participateError, setParticipateError] = useState(null);
-    const [verification, setVerification] = useState(null);
+    const [verification, setVerification] = useState(participant.verification);
 
-    const participate = () => {
+    const participate = (user) => {
         setParticipateError(null);
-        post(`contests/${contest.id}/participate`, verification)
+        patch(`contests/${participant.contestId}/updateParticipant`, { user, verification })
             .then(async resp => {
                 if (!resp.ok) {
                     if (resp.status === 500)
                         throw new Error("Авторизируйтесь");
                     throw await resp.json();
                 }
-
+                updateParticipant({ ...participant, userSnapshot: user, verification });
                 close();
             }).catch(err => setParticipateError(err));
     };
     const handleChange = async (event) => await setVerification(event.target.value);
 
-    return <Modal isOpen={true} toggle={close}>
-        <ModalHeader toggle={close}>Принять участие</ModalHeader>
+    return <Modal isOpen={isOpen} toggle={close}>
+        <ModalHeader toggle={close}>Обновите данные</ModalHeader>
         <ModalBody>
-            <p>
-                Проверьте ваши данные и исправьте если необходимо
-            </p>
+            <p>Исправьте ваши данные</p>
             {participateError && <Alert color="danger">{participateError}</Alert>}
             <Container>
-                <EditableUserData user={user} saveTitle={'Участвовать'} onSave={participate} small>
+                <EditableUserData user={participant.userSnapshot}
+                                  saveTitle="Обновить данные"
+                                  onSaveEverything={participate}
+                                  small>
                     {contest.type === 0 && <AvGroup row>
                         <Label sm={4}>Подтверждение</Label>
                         <Col sm={8}>
                             <AvInput type="text" name="class" onChange={handleChange} value={verification} required />
-                        </Col>
-                        <Col>
-                            <FormText>
-                                Для участия в этой олимпиаде нужно подтверждение — ссылка на результаты или диплом.
-                            </FormText>
                         </Col>
                     </AvGroup>}
                 </EditableUserData>
@@ -48,3 +45,5 @@ export const ParticipateModal = ({ user, contest, close }) => {
         </ModalBody>
     </Modal>;
 };
+
+export default WithParticipants(EditParticipantModal);

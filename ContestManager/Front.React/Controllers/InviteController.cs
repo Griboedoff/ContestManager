@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 namespace Front.React.Controllers
 {
     [Route("[controller]")]
+    [ResponseCache(NoStore = true, Duration = 0)]
     public class InviteController : Controller
     {
         private readonly IAsyncRepository<Invite> invitesRepo;

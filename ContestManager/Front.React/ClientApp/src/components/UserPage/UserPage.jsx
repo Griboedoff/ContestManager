@@ -7,6 +7,8 @@ import withUser from '../HOC/WithUser';
 import './index.css';
 import { default as EditableUserData } from './EditableUserData';
 
+const USER = "/user";
+
 class UserPage extends React.Component {
     constructor(props) {
         super(props);
@@ -22,11 +24,11 @@ class UserPage extends React.Component {
 
         return <Container className="form-container">
             <Switch>
-                <Route exact path="/user">
+                <Route exact path={USER}>
                     <ReadonlyView {...this.props.user} />
                 </Route>
-                <Route exact path="/user/edit">
-                    <EditableUserData redirect={<Redirect to="/user" />} />
+                <Route exact path={`${USER}/edit`}>
+                    <EditableUserData redirect={<Redirect to={USER} />} user={this.props.user}/>
                 </Route>
             </Switch>
         </Container>;
@@ -48,7 +50,7 @@ const ReadonlyView = ({ class: propsClass, school, role, coach, name, sex, city 
         {role === UserRole.Participant &&
         <UserInfoRow label="Тренер" value={coach} />}
         <Col sm={{ offset: 1 }}>
-            <Button tag={Link} to="/user/edit">Редактировать</Button>
+            <Button tag={Link} to={`${USER}/edit`}>Редактировать</Button>
         </Col>
     </React.Fragment>;
 };
