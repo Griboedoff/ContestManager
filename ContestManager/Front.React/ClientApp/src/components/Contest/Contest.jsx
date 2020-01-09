@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
 import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
 import { UserRole } from '../../Enums/UserRole';
@@ -15,10 +16,13 @@ import { ParticipantsList } from './ParticipantsList';
 import { ParticipateModal } from './ParticipateModal/ParticipateModal';
 import { Seating } from './Seating';
 
+
 class Contest extends React.Component {
+
     constructor(props) {
         super(props);
         this.contestId = this.props.match.params.id;
+        this.CONTEST = `/contests/${this.contestId}`;
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
         this.toggleParticipate = this.toggleParticipate.bind(this);
@@ -40,8 +44,7 @@ class Contest extends React.Component {
             await this.fetchParticipants();
 
         await this.setState({
-            participateOpen: !this.state.participateOpen,
-            activeTab: Tab.Participants
+            participateOpen: !this.state.participateOpen
         });
     }
 
@@ -49,10 +52,6 @@ class Contest extends React.Component {
         await this.fetchContest();
         await this.fetchParticipants();
     }
-
-    handleTabChange = n => _ => {
-        this.setState({ activeTab: n });
-    };
 
     fetching() {
         return this.props.fetchingContests || this.props.fetchingUser || this.props.fetchingParticipants;
@@ -78,18 +77,38 @@ class Contest extends React.Component {
             </Row>
             <Row>
                 <Col sm={9}>
-                    {this.renderTab()}
+                    <Switch>
+                        <Route exact path={this.CONTEST}>
+                            <News contestId={this.contestId} />
+                        </Route>
+                        <Route exact path={`${this.CONTEST}/participants`}>
+                            <ParticipantsList contest={this.props.contest} participants={this.props.participants} />
+                        </Route>
+
+                        <Route exact path={`${this.CONTEST}/addNews`}>
+                            <AddNews contestId={this.contestId} />
+                        </Route>
+                        <Route exact path={`${this.CONTEST}/options`}>
+                            <Options />
+                        </Route>
+                        <Route exact path={`${this.CONTEST}/seating`}>
+                            <Seating contestId={this.contestId} />
+                        </Route>
+                        <Route exact path={`${this.CONTEST}/addResult`}>
+                            <AddResult contestId={this.contestId} />
+                        </Route>
+                    </Switch>
                 </Col>
                 <Col sm={3}>
                     <ListGroup>
                         <ListGroupItem>
-                            <span className="link" onClick={this.handleTabChange(Tab.News)}>Информация</span>
+                            <Link to={this.CONTEST}>Информация</Link>
                         </ListGroupItem>
                         <ListGroupItem>
-                            <span className="link" onClick={this.handleTabChange(Tab.Participants)}>Участники</span>
+                            <Link to={`${this.CONTEST}/participants`}>Участники</Link>
                         </ListGroupItem>
                         {hasFlag(options, ContestOptions.ResultsOpen) && <ListGroupItem>
-                            <span className="link" onClick={this.handleTabChange(Tab.Results)}>Результаты</span>
+                            <Link to={`${this.CONTEST}/results`}>Результаты</Link>
                         </ListGroupItem>}
                     </ListGroup>
 
@@ -97,19 +116,16 @@ class Contest extends React.Component {
                         <h5 className="mt-3">Админка</h5>
                         <ListGroup>
                             <ListGroupItem>
-                                <span className="link"
-                                      onClick={this.handleTabChange(Tab.AddNews)}>Добавить новость</span>
+                                <Link to={`${this.CONTEST}/addNews`}>Добавить новость</Link>
                             </ListGroupItem>
                             {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <span className="link" onClick={this.handleTabChange(Tab.Seating)}>Сгенерировать
-                                    рассадку</span>
+                                <Link to={`${this.CONTEST}/seating`}>Сгенерировать рассадку</Link>
                             </ListGroupItem>}
                             {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <span className="link" onClick={this.handleTabChange(Tab.AddResults)}>Добавить
-                                    результаты</span>
+                                <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
                             </ListGroupItem>}
                             <ListGroupItem>
-                                <span className="link" onClick={this.handleTabChange(Tab.Options)}>Настройки</span>
+                                <Link to={`${this.CONTEST}/options`}>Настройки</Link>
                             </ListGroupItem>
                         </ListGroup>
                     </>}
@@ -123,23 +139,6 @@ class Contest extends React.Component {
             this.props.user &&
             this.props.user.role === UserRole.Participant &&
             !this.props.participants.some(p => p.userId === this.props.user.id);
-    }
-
-    renderTab() {
-        switch (this.state.activeTab) {
-            case Tab.AddNews:
-                return <AddNews contestId={this.contestId} />;
-            case Tab.Options:
-                return <Options />;
-            case Tab.Participants:
-                return <ParticipantsList contest={this.props.contest} participants={this.props.participants} />;
-            case Tab.Seating:
-                return <Seating contestId={this.contestId} />;
-            case Tab.News:
-                return <News contestId={this.contestId} />;
-            default:
-                return <AddResult contestId={this.contestId} />;
-        }
     }
 
     async fetchParticipants() {
@@ -162,16 +161,5 @@ class Contest extends React.Component {
         this.props.getContest(this.contestId);
     }
 }
-
-const Tab = {
-    News: 1,
-    Participants: 2,
-    Results: 3,
-
-    AddNews: 4,
-    Options: 5,
-    Seating: 6,
-    AddResults: 7,
-};
 
 export default WithParticipants(WithUser(WithContest(Contest)));

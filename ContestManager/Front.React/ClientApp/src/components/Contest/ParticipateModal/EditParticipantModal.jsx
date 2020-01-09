@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Col, Container, FormText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Alert, Col, Container, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { patch } from '../../../Proxy';
 import WithParticipants from '../../HOC/WithParticipants';
 import { EditableUserData } from '../../UserPage';
