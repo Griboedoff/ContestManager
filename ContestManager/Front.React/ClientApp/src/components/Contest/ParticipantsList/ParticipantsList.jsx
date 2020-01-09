@@ -11,7 +11,7 @@ export const ParticipantsList = ({ contest, user, participants }) => {
             {participants.map(p => (
                 <ListGroupItem key={p.id}>
                     <Participant participant={p}
-                                 withEdit={user.role === UserRole.Admin || user.id === p.userId}
+                                 withEdit={user && (user.role === UserRole.Admin || user.id === p.userId)}
                                  contest={contest} />
                 </ListGroupItem>
             ))}

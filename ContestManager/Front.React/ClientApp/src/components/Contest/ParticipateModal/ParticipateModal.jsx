@@ -4,7 +4,7 @@ import { post } from '../../../Proxy';
 import { EditableUserData } from '../../UserPage';
 import { AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-export const ParticipateModal = ({ user, contest, close }) => {
+export const ParticipateModal = ({ user, contest, close, setUser }) => {
     const [participateError, setParticipateError] = useState(null);
     const [verification, setVerification] = useState(null);
 
@@ -31,7 +31,7 @@ export const ParticipateModal = ({ user, contest, close }) => {
             </p>
             {participateError && <Alert color="danger">{participateError}</Alert>}
             <Container>
-                <EditableUserData user={user} saveTitle={'Участвовать'} onSave={participate} small>
+                <EditableUserData user={user} saveTitle={'Участвовать'} onSave={participate} small setUser={setUser}>
                     {contest.type === 0 && <AvGroup row>
                         <Label sm={4}>Подтверждение</Label>
                         <Col sm={8}>

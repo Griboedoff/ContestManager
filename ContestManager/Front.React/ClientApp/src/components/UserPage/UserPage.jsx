@@ -3,6 +3,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { Alert, Button, Col, Container, Row } from 'reactstrap';
 import { UserRole } from '../../Enums/UserRole';
 import { roleToString, sexToString } from '../../UserFieldsMap';
+import { ParticipateModal } from '../Contest/ParticipateModal/ParticipateModal';
 import withUser from '../HOC/WithUser';
 import './index.css';
 import { default as EditableUserData } from './EditableUserData';
@@ -28,7 +29,10 @@ class UserPage extends React.Component {
                     <ReadonlyView {...this.props.user} />
                 </Route>
                 <Route exact path={`${USER}/edit`}>
-                    <EditableUserData redirect={<Redirect to={USER} />} user={this.props.user}/>
+                    <EditableUserData redirect={<Redirect to={USER} />}
+                                      user={this.props.user}
+                                      setUser={this.props.setUser}
+                    />
                 </Route>
             </Switch>
         </Container>;

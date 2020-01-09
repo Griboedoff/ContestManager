@@ -43,6 +43,23 @@ export default function register() {
     }
 }
 
+const WORKBOX_CACHE_KEY = `workbox-precache-https://${window.location.hostname}/`;
+
+const clearFromCache = async (requests) => {
+    if ('caches' in window.self) {
+        const cache = await caches.open(WORKBOX_CACHE_KEY);
+        if (cache) {
+            await Promise.all(requests.map(r =>
+                cache.delete(r)
+            ));
+
+            requests.forEach(r => {
+                console.log(`Cache => delete[${r}]`);
+            });
+        }
+    }
+};
+
 function registerValidSW(swUrl) {
     navigator.serviceWorker
         .register(swUrl)
@@ -57,6 +74,7 @@ function registerValidSW(swUrl) {
                             // It's the perfect time to display a "New content is
                             // available; please refresh." message in your web app.
                             console.log('New content is available; please refresh.');
+                            clearFromCache(['/index.html']);
                         } else {
                             // At this point, everything has been precached.
                             // It's the perfect time to display a

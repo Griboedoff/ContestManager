@@ -73,6 +73,7 @@ class Contest extends React.Component {
                                   close={this.toggleParticipate}
                                   title="Принять участие"
                                   saveButtonTitle="Участвовать"
+                                  setUser={this.props.setUser}
                 />}
             </Row>
             <Row>
