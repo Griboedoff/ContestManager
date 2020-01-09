@@ -1,5 +1,6 @@
 import React from 'react';
 import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
+import { UserRole } from '../../../Enums/UserRole';
 import WithParticipants from '../../HOC/WithParticipants';
 import WithUser from '../../HOC/WithUser';
 
@@ -8,7 +9,7 @@ export const ParticipantsList = ({ contest, user, participants }) => {
         <ListGroup>
             {participants.map(p => (
                 <ListGroupItem key={p.id}>
-                    <Participant participant={p} />
+                    <Participant participant={p} withEdit={user.role === UserRole.Admin || user.id === p.userId}/>
                 </ListGroupItem>
             ))}
         </ListGroup>
@@ -16,13 +17,16 @@ export const ParticipantsList = ({ contest, user, participants }) => {
     </>;
 };
 
-const Participant = ({ participant }) => {
+const Participant = ({ participant, withEdit }) => {
     const user = participant.userSnapshot;
 
     return <Container>
         <Row className="d-flex align-items-baseline justify-content-between mb-2">
             <h4>{user.name}</h4>
-            <small>{user.class} класс</small>
+            <div>
+                {withEdit && <span className="d-block link">редактировать</span>}
+                <small>{user.class} класс</small>
+            </div>
         </Row>
         <Row>
             <Col sm={6}>{user.city}, {user.school}</Col>
