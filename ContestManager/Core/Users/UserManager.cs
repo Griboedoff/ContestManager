@@ -76,7 +76,7 @@ namespace Core.Users
             if (account == null)
                 return false;
 
-            var request = inviteEmailFactory.CreateInvite(account, ConfirmationType.Registration);
+            var request = inviteEmailFactory.CreateRestorePassword(account, ConfirmationType.Registration);
             SendEmail(request);
 
             await invitesRepo.AddAsync(request);

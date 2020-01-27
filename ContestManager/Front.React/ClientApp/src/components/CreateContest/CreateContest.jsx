@@ -11,7 +11,7 @@ class CreateContest extends React.Component {
 
         this.state = {
             title: '',
-            type: null,
+            type: 0,
             error: false,
         };
     }
