@@ -5,12 +5,19 @@ import { getDisplayName } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import React from 'react';
 
+const getCookie = (name) => {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+};
+
 export default function WithUser(WrappedComponent) {
     class EnhancedComponent extends React.Component {
         displayName = `WithUser(${getDisplayName(WrappedComponent)})`;
 
         async componentDidMount() {
-            if (!this.props.user)
+            if (!this.props.user && getCookie('sid') && getCookie('User'))
                 await this.props.setUserFromCookie();
         }
 
