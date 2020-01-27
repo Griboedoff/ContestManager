@@ -4,7 +4,6 @@ using Core.Configs;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums.DataBaseEnums;
-using Core.Users.Registration;
 using Core.Users.Sessions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -26,7 +25,6 @@ namespace Front.React.Controllers
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
             IAsyncRepository<User> userRepo,
             IOptions<ConfigOptions> options,
-            IAuthenticationAccountFactory authenticationAccountFactory,
             IUserCookieManager userCookieManager
         )
         {
