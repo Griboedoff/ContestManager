@@ -16,17 +16,24 @@ namespace Front.React.Controllers
         private readonly IAuthenticationManager authenticationManager;
         private readonly IUserManager userManager;
         private readonly IAsyncRepository<User> usersRepo;
+        private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
+        private readonly IAsyncRepository<Invite> invitesRepo;
 
         public UsersController(
             IUserCookieManager userCookieManager,
             IAuthenticationManager authenticationManager,
             IUserManager userManager,
-            IAsyncRepository<User> usersRepo)
+            IAsyncRepository<User> usersRepo,
+            IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
+            IAsyncRepository<Invite> invitesRepo
+            )
         {
             this.userCookieManager = userCookieManager;
             this.authenticationManager = authenticationManager;
             this.userManager = userManager;
             this.usersRepo = usersRepo;
+            this.authenticationAccountRepo = authenticationAccountRepo;
+            this.invitesRepo = invitesRepo;
         }
 
         [HttpPost("login/email")]
@@ -128,18 +135,25 @@ namespace Front.React.Controllers
             }
         }
 
-        [HttpPost("changePass")]
-        public async Task<ActionResult> ChangePass(string password)
+        [HttpPost("changePass/{code}")]
+        public async Task<ActionResult> ChangePass(string password, string code)
         {
-            var user = await userCookieManager.GetUser(Request);
+            var invite = await invitesRepo.FirstOrDefaultAsync(r => r.ConfirmationCode == code);
 
+            if (invite == null || invite.IsUsed || !invite.PasswordRestore)
+                return StatusCode(400);
+
+            var account = await authenticationAccountRepo.GetByIdAsync(invite.AccountId);
+
+            invite.IsUsed = true;
+            await invitesRepo.UpdateAsync(invite);
+
+            var user = await usersRepo.GetByIdAsync(account.UserId);
             var isChanged = await userManager.ChangePassword(user, password);
-            if (isChanged)
-                return Redirect("/");
+            userCookieManager.SetLoginCookie(Response, user);
 
-            return StatusCode(400);
+            return isChanged ? Ok() : StatusCode(400);
         }
-
 
         [HttpPost("logout")]
         public void LogOut() => userCookieManager.Clear(Response);

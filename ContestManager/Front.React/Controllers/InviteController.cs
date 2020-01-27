@@ -10,9 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Front.React.Controllers
 {
-    [Route("[controller]")]
-    [ResponseCache(NoStore = true, Duration = 0)]
-    public class InviteController : Controller
+    public class InviteController : ControllerBase
     {
         private readonly IAsyncRepository<Invite> invitesRepo;
         private readonly IAsyncRepository<AuthenticationAccount> authenticationAccountRepo;
@@ -43,18 +41,29 @@ namespace Front.React.Controllers
 
             var (inviteLinkStatus, authenticationAccount) = await CheckInvite(invite);
 
-            if (inviteLinkStatus == InviteLinkStatus.Ok || inviteLinkStatus == InviteLinkStatus.RestorePassword)
-            {
-                var user = await userRepo.GetByIdAsync(authenticationAccount.UserId);
-                userCookieManager.SetLoginCookie(Response, user);
-            }
-
-            return View(
-                new InviteModel
+            if (inviteLinkStatus == InviteLinkStatus.Ok)
+                try
                 {
-                    Status = inviteLinkStatus,
-                    Url = options.Value.SiteAddress,
-                });
+                    await ActivateAccount(invite, authenticationAccount);
+                }
+                catch (Exception)
+                {
+                    return Json(InviteLinkStatus.Error);
+                }
+
+            return Json(inviteLinkStatus);
+        }
+
+        private async Task ActivateAccount(Invite invite, AuthenticationAccount account)
+        {
+            account.IsActive = true;
+            await authenticationAccountRepo.UpdateAsync(account);
+
+            invite.IsUsed = true;
+            await invitesRepo.UpdateAsync(invite);
+
+            var user = await userRepo.GetByIdAsync(account.UserId);
+            userCookieManager.SetLoginCookie(Response, user);
         }
 
         private async Task<(InviteLinkStatus, AuthenticationAccount)> CheckInvite(Invite invite)
@@ -64,21 +73,8 @@ namespace Front.React.Controllers
             if (invite.IsUsed)
                 return (InviteLinkStatus.AlreadyUsed, null);
 
-            try
-            {
-                var account = await authenticationAccountRepo.GetByIdAsync(invite.AccountId);
-                account.IsActive = true;
-                await authenticationAccountRepo.UpdateAsync(account);
-
-                invite.IsUsed = true;
-                await invitesRepo.UpdateAsync(invite);
-
-                return (invite.PasswordRestore ? InviteLinkStatus.RestorePassword : InviteLinkStatus.Ok, account);
-            }
-            catch (Exception)
-            {
-                return (InviteLinkStatus.Error, null);
-            }
+            var account = await authenticationAccountRepo.GetByIdAsync(invite.AccountId);
+            return (invite.PasswordRestore ? InviteLinkStatus.RestorePassword : InviteLinkStatus.Ok, account);
         }
     }
 
@@ -90,10 +86,10 @@ namespace Front.React.Controllers
 
     public enum InviteLinkStatus
     {
-        WrongLink,
-        AlreadyUsed,
-        Ok,
-        Error,
-        RestorePassword,
+        WrongLink = 0,
+        AlreadyUsed = 1,
+        Ok = 2,
+        Error = 3,
+        RestorePassword = 4,
     }
 }

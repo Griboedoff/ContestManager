@@ -4,6 +4,7 @@ import { Button, Container, Jumbotron, ListGroup, ListGroupItem, Spinner } from 
 import { ContestOptions } from '../../Enums/ContestOptions';
 import { getFromStorage, setToStorage } from '../../utils';
 import WithContests from '../HOC/WithContests';
+import WithUser from '../HOC/WithUser';
 
 const jumboClosedKey = 'JumboClosed';
 
@@ -55,4 +56,4 @@ const ContestList = ({ fetching, contests }) => {
     </>;
 };
 
-export default WithContests(ContestList);
+export default WithUser(WithContests(ContestList));

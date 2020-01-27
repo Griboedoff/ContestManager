@@ -19,6 +19,7 @@ export default () => (
             <Route path='/user' component={UserPage} />
             <Route path='/createContest' component={CreateContest} />
             <Route path='/contests/:id' component={Contest} />
+            <Route path='/invite/:id' component={AcceptInvite} />
         </Switch>
     </Layout>
 );
