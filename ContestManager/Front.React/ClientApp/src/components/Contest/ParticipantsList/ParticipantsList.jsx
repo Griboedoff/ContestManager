@@ -18,6 +18,7 @@ export const ParticipantsList = ({ contest, user, participants }) => {
         </ListGroup>
     </>;
 };
+ParticipantsList.displayName = 'ParticipantsList';
 
 const Participant = ({ participant, contest, withEdit }) => {
     const user = participant.userSnapshot;
@@ -45,5 +46,6 @@ const Participant = ({ participant, contest, withEdit }) => {
             }} />}
     </Container>;
 };
+Participant.displayName = 'Participant';
 
 export default WithUser(WithParticipants(ParticipantsList));

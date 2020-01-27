@@ -21,3 +21,7 @@ export function getFromStorage(key) {
 export function setToStorage(key, data) {
     window.localStorage.setItem(key, JSON.stringify(data));
 }
+
+export function getDisplayName(WrappedComponent) {
+    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}

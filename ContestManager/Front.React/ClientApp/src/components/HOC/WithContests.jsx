@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../store/Contest';
+import { getDisplayName } from '../../utils';
 
 export default function WithContests(WrappedComponent) {
     class EnhancedComponent extends React.Component {
@@ -17,6 +18,7 @@ export default function WithContests(WrappedComponent) {
             return <WrappedComponent {...this.props} />;
         }
     }
+    EnhancedComponent.displayName = `WithContests(${getDisplayName(WrappedComponent)})`;
 
     return connect(
         state => state.contests,

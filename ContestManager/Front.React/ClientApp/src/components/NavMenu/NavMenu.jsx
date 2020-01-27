@@ -36,6 +36,7 @@ const NavMenu = ({ user, logout }) => {
         </header>
     );
 };
+NavMenu.displayName = 'NavMenu';
 
 const LoginBlock = () => <React.Fragment>
     <NavItem>

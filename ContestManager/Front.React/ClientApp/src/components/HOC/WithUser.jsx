@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../store/User';
+import { getDisplayName } from '../../utils';
 
 export default function WithUser(wrappedComponent) {
     return connect(

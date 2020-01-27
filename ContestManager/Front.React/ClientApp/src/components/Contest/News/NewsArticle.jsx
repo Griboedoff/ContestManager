@@ -24,5 +24,6 @@ const NewsArticle = ({ article, user, editable }) => {
             </>
         );
 };
+NewsArticle.displayName = 'NewsArticle';
 
 export default WithUser(NewsArticle);

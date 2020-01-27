@@ -3,7 +3,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { Alert, Button, Col, Container, Row } from 'reactstrap';
 import { UserRole } from '../../Enums/UserRole';
 import { roleToString, sexToString } from '../../UserFieldsMap';
-import { ParticipateModal } from '../Contest/ParticipateModal/ParticipateModal';
 import withUser from '../HOC/WithUser';
 import './index.css';
 import { default as EditableUserData } from './EditableUserData';
