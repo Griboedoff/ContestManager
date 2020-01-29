@@ -15,6 +15,7 @@ class Login extends React.Component {
             isProcessing: false,
             error: false,
             isOpen: false,
+            errorText: ''
         };
 
         this.toggle = this.toggle.bind(this);
@@ -54,21 +55,24 @@ class Login extends React.Component {
         window.VK.Auth.login(this.checkLoginState);
     };
 
-    loginPassword = () => {
-        this.setState({ error: false });
-        post('users/login/email', {
+    loginPassword = async () => {
+        this.setState({ error: false, errorText: '' });
+        const resp = await post('users/login/email', {
             email: this.state.email,
             password: this.state.password,
-        }).then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            }
+        });
 
-            throw Error();
-        }).then(u => {
-            this.props.setUser(u);
+        if (resp.ok) {
+            const user = resp.json();
+            this.props.setUser(user);
             this.props.history.push(`/`);
-        }).catch(() => this.setState({ error: true }));
+            return
+        }
+
+        if (resp.status === 401)
+            this.setState({ errorText: 'Неверный логин или пароль' });
+
+        this.setState({ error: true });
     };
 
     handleChange = async (event) => {
@@ -89,15 +93,16 @@ class Login extends React.Component {
         this.toggle();
     };
 
-    getEmail = () => this.state.email;
-
     render() {
         return <div className="form-container row flex-column">
             {
-                this.state.error && <Alert color="danger">
-                    Ой! Что-то пошло не так
-                    <br />
-                    Попробуйте позже
+                this.state.error &&
+                <Alert color="danger">
+                    {this.state.errorText ? this.state.errorText : <>
+                        Ой! Что-то пошло не так
+                        <br />
+                        Попробуйте позже
+                    </>}
                 </Alert>
             }
             <Button
@@ -125,7 +130,8 @@ class Login extends React.Component {
                     </Col>
                 </FormGroup>
             </Form>
-            {this.state.isOpen && <ChangePasswordModal email={this.state.email} isOpen={this.state.isOpen} toggle={this.toggle}/>}
+            {this.state.isOpen &&
+            <ChangePasswordModal email={this.state.email} isOpen={this.state.isOpen} toggle={this.toggle} />}
         </div>;
     }
 }
