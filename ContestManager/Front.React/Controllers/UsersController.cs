@@ -96,6 +96,7 @@ namespace Front.React.Controllers
             }
             catch (UnauthorizedAccessException)
             {
+                userCookieManager.Clear(Response);
                 return StatusCode(403);
             }
         }
