@@ -148,7 +148,7 @@ export default class EditableUserData extends React.Component {
             )}
             <AvGroup row>
                 <Col sm={{ offset: smOffset }}>
-                    <Button>{this.props.saveTitle || 'Сохранить'}</Button>
+                    <Button color="success">{this.props.saveTitle || 'Сохранить'}</Button>
                 </Col>
             </AvGroup>
             {this.state.saved && this.props.redirect}
