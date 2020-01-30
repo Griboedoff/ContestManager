@@ -28,7 +28,6 @@
           <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <None Include="ClientApp\src\components\Contest\ParticipateModal\EditParticipantModal.jsx" />
     </ItemGroup>
 
     <ItemGroup>
