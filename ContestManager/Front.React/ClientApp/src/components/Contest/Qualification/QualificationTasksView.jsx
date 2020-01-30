@@ -7,7 +7,7 @@ import update from 'immutability-helper';
 import { CenterSpinner } from '../../CenterSpinner';
 import { Countdown } from './Countdown';
 
-export class TasksView extends React.Component {
+export class QualificationTasksView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -24,7 +24,7 @@ export class TasksView extends React.Component {
 
     async componentDidMount() {
         this.setState({ fetching: true, error: false });
-        const resp = await get(`tasks?contestId=${this.props.contestId}`);
+        const resp = await get(`qualification?contestId=${this.props.contestId}`);
         if (resp.ok) {
             const data = await resp.json();
             this.setState({ ...data });
@@ -48,7 +48,7 @@ export class TasksView extends React.Component {
         if (!this.state.saved) {
             this.setState({ error: false });
 
-            const resp = await post(`tasks/save?contestId=${this.props.contestId}`, { answers: this.state.answers });
+            const resp = await post(`qualification/save?contestId=${this.props.contestId}`, { answers: this.state.answers });
             if (resp.ok) {
                 this.setState({ saved: true });
             } else {

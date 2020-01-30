@@ -14,7 +14,7 @@ namespace Core.DataBaseEntities
         public string SerializedAnswers { get; set; }
 
         [NotMapped]
-        public string[] Results
+        public string[] Answers
         {
             get => SerializedAnswers == null
                 ? new string[0]
