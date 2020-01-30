@@ -137,7 +137,7 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("changePass/{code}")]
-        public async Task<ActionResult> ChangePass(string password, string code)
+        public async Task<ActionResult> ChangePass([FromBody]string password, string code)
         {
             var invite = await invitesRepo.FirstOrDefaultAsync(r => r.ConfirmationCode == code);
 

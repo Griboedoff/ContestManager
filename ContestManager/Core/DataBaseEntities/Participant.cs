@@ -48,6 +48,7 @@ namespace Core.DataBaseEntities
             UserId = UserId,
             SerializedResults = SerializedResults,
             SerializedUserSnapshot = SerializedUserSnapshot,
+            Verification = Verification,
         };
     }
 }

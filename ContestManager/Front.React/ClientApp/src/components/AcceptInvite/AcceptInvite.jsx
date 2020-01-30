@@ -7,7 +7,7 @@ import { CenterSpinner } from '../CenterSpinner';
 import { InviteLinkStatus } from './InviteLinkStatus';
 
 const changePass = async (code, password) => {
-    await post(`users/changePass/${code}`, { password });
+    await post(`users/changePass/${code}`, password);
 };
 
 export const AcceptInvite = (props) => {

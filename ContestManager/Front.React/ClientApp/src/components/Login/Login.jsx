@@ -65,7 +65,7 @@ class Login extends React.Component {
         if (resp.ok) {
             const user = resp.json();
             this.props.setUser(user);
-            this.props.history.push(`/`);
+            document.location = "/";
             return
         }
 
