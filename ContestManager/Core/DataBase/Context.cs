@@ -36,5 +36,6 @@ namespace Core.DataBase
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<Participant> Participants { get; set; }
         public virtual DbSet<QualificationTask> QualificationTasks { get; set; }
+        public virtual DbSet<QualificationParticipation> QualificationParticipations { get; set; }
     }
 }

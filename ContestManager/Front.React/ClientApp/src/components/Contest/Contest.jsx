@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
+import { ContestType } from '../../Enums/ContestType';
 import { UserRole } from '../../Enums/UserRole';
 import { get } from '../../Proxy';
 import { hasFlag } from '../../utils';
@@ -98,6 +99,9 @@ class Contest extends React.Component {
                         <Route exact path={`${this.CONTEST}/addResult`}>
                             <AddResult contestId={this.contestId} />
                         </Route>
+                        <Route exact path={`${this.CONTEST}/addTasks`}>
+                            <AddResult contestId={this.contestId} />
+                        </Route>
                     </Switch>
                 </Col>
                 <Col sm={3}>
@@ -113,26 +117,39 @@ class Contest extends React.Component {
                         </ListGroupItem>}
                     </ListGroup>
 
-                    {this.props.user && this.props.user.role === UserRole.Admin && <>
-                        <h5 className="mt-3">Админка</h5>
-                        <ListGroup>
-                            <ListGroupItem>
-                                <Link to={`${this.CONTEST}/addNews`}>Добавить новость</Link>
-                            </ListGroupItem>
-                            {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <Link to={`${this.CONTEST}/seating`}>Сгенерировать рассадку</Link>
-                            </ListGroupItem>}
-                            {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                                <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
-                            </ListGroupItem>}
-                            <ListGroupItem>
-                                <Link to={`${this.CONTEST}/options`}>Настройки</Link>
-                            </ListGroupItem>
-                        </ListGroup>
-                    </>}
+                    {this.props.user && this.props.user.role === UserRole.Admin && this.renderAdminPanel(options)}
                 </Col>
             </Row>
         </Container>;
+    }
+
+    renderAdminPanel() {
+        const { options, type } = this.props.contest;
+                          console.log(this.props.contest);
+
+        return <>
+            <h5 className="mt-3">Админка</h5>
+            <ListGroup>
+                {type === ContestType.Qualification && <ListGroupItem>
+                    <Link to={`${this.CONTEST}/addTasks`}>Добавить задания</Link>
+                </ListGroupItem>}
+                <ListGroupItem>
+                    <Link to={`${this.CONTEST}/addNews`}>Добавить новость</Link>
+                </ListGroupItem>
+                {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                    <Link to={`${this.CONTEST}/seating`}>Сгенерировать рассадку</Link>
+                </ListGroupItem>}
+                {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                    <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
+                </ListGroupItem>}
+                {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
+                    <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
+                </ListGroupItem>}
+                <ListGroupItem>
+                    <Link to={`${this.CONTEST}/options`}>Настройки</Link>
+                </ListGroupItem>
+            </ListGroup>
+        </>;
     }
 
     showParticipateButton() {
