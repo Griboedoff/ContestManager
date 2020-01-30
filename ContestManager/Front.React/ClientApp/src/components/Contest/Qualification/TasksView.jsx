@@ -4,6 +4,8 @@ import { Button, Col, Container, Form, FormGroup, Label, ListGroup, ListGroupIte
 import Input from 'reactstrap/lib/Input';
 import { get, post } from '../../../Proxy';
 import update from 'immutability-helper';
+import { CenterSpinner } from '../../CenterSpinner';
+import { Countdown } from './Countdown';
 
 export class TasksView extends React.Component {
     constructor(props) {
@@ -15,7 +17,8 @@ export class TasksView extends React.Component {
             answers: [],
             currentTask: 1,
             error: false,
-            saved: true
+            saved: true,
+            timeLeft: 0,
         };
     }
 
@@ -57,6 +60,9 @@ export class TasksView extends React.Component {
     changeTab = (i) => this.setState({ currentTask: i });
 
     render() {
+        if (this.state.fetching)
+            return <CenterSpinner />;
+
         return <Container>
             <Row>
                 <Col sm={9}>
@@ -70,7 +76,7 @@ export class TasksView extends React.Component {
                     </Form>
                 </Col>
                 <Col sm={3}>
-                    {/*time left*/}
+                    <Countdown seconds={this.state.timeLeft} />
                     <ListGroup>
                         {this.state.tasks.map((t, i) => {
                             return <ListGroupItem {this.calcColor(i)}>
