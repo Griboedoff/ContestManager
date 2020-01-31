@@ -1,4 +1,7 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Core.DataBaseEntities
 {
@@ -8,7 +11,17 @@ namespace Core.DataBaseEntities
         public byte[] Image { get; set; }
         public string Text { get; set; }
         public string Answer { get; set; }
-        public Class[] ForClasses { get; set; }
+
+        [JsonIgnore]
+        public int[] ForClasses { get; set; }
+
+        [NotMapped]
+        public Class[] Classes
+        {
+            get => ForClasses?.Select(c => (Class) c).ToArray();
+            set => ForClasses = value?.Select(c => (int)c).ToArray();
+        }
+
         public Guid ContestId { get; set; }
     }
 }

@@ -1,1 +1,1 @@
-export { QualificationTasksView } from './QualificationTasksView';
+export { QualificationTasksViewWrapper } from './QualificationTasksView';

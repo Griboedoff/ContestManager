@@ -104,9 +104,9 @@ class Contest extends React.Component {
         <Route exact path={this.contestUrl('addResult')}>
             <AddResult contestId={this.contestId} />
         </Route>
-        <Route exact path={this.contestUrl('addTasks')}>
-            <AddResult contestId={this.contestId} />
-        </Route>
+        {/*<Route exact path={this.contestUrl('addTasks')}>*/}
+        {/*    <AddResult contestId={this.contestId} />*/}
+        {/*</Route>*/}
     </Switch>);
 
     renderMenu = () => {
@@ -114,6 +114,12 @@ class Contest extends React.Component {
         return <>
             {this.showParticipateButton() &&
             <Button className="mb-4" color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
+
+            {this.showQualificationButton() &&
+            <Button className="mb-4" color="success" tag={Link} to={`/contest/${this.contestId}/qualification`}>
+                Отборочный тур
+            </Button>}
+
             <ListGroup>
                 <ListGroupItem>
                     <Link to={this.contestUrl()}>Информация</Link>
@@ -129,6 +135,20 @@ class Contest extends React.Component {
             {user?.role === UserRole.Admin && this.renderAdminPanel(contest.options)}
         </>;
     };
+
+    showParticipateButton() {
+        const { user, contest, participants } = this.props;
+        return hasFlag(contest.options, ContestOptions.RegistrationOpen) &&
+            user?.role === UserRole.Participant &&
+            !participants.some(p => p.userId === user.id);
+    }
+
+    showQualificationButton() {
+        const { user, contest, participants } = this.props;
+        return hasFlag(contest.options, ContestOptions.QualificationOpen) &&
+            user?.role === UserRole.Participant &&
+            participants.some(p => p.userId === user.id);
+    }
 
     renderAdminPanel = () => {
         const { options, type } = this.props.contest;
@@ -148,22 +168,15 @@ class Contest extends React.Component {
                 {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
                     <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>
                 </ListGroupItem>}
-                {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                    <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>
-                </ListGroupItem>}
+                {/*{!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>*/}
+                {/*    <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>*/}
+                {/*</ListGroupItem>}*/}
                 <ListGroupItem>
                     <Link to={this.contestUrl('options')}>Настройки</Link>
                 </ListGroupItem>
             </ListGroup>
         </>;
     };
-
-    showParticipateButton() {
-        const { user, contest, participants } = this.props;
-        return hasFlag(contest.options, ContestOptions.RegistrationOpen) &&
-            user?.role === UserRole.Participant &&
-            !participants.some(p => p.userId === user.id);
-    }
 
     async fetchParticipants() {
         this.props.startFetchingParticipants();

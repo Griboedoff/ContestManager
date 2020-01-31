@@ -1,13 +1,13 @@
+import update from 'immutability-helper';
 import React from 'react';
 import Markdown from 'react-markdown';
-import { Button, Col, Container, Form, FormGroup, Label, ListGroup, ListGroupItem, Row } from 'reactstrap';
-import Input from 'reactstrap/lib/Input';
+import { Alert, Button, Col, Container, ListGroup, ListGroupItem, Row, Spinner } from 'reactstrap';
+import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation';
 import { get, post } from '../../../Proxy';
-import update from 'immutability-helper';
 import { CenterSpinner } from '../../CenterSpinner';
 import { CountdownWrapper } from './Countdown';
 
-export class QualificationTasksView extends React.Component {
+export class QualificationTasksViewWrapper extends React.Component {
     constructor(props) {
         super(props);
 
@@ -15,7 +15,7 @@ export class QualificationTasksView extends React.Component {
             fetching: false,
             tasks: [],
             answers: [],
-            currentTask: 1,
+            currentTask: 0,
             error: false,
             saved: true,
             timeLeft: 0,
@@ -29,71 +29,119 @@ export class QualificationTasksView extends React.Component {
             const data = await resp.json();
             this.setState({ ...data });
         } else {
-            this.setState({ error: 'Не удалось загрузить задания' });
+            this.setState({ error: true });
         }
         this.setState({ fetching: false });
     }
 
-    setAnswer = (answer) => {
-        this.setState(state => {
-            return {
-                ...state,
-                answers: update(state.answers, { [state.currentTask]: { $set: answer } }),
-                saved: false
-            };
-        });
-    };
+    render() {
+        const { fetching, timeLeft, tasks, answers, title, error } = this.state;
+        if (fetching)
+            return <CenterSpinner />;
+
+        if (error)
+            return <Alert color="danger">Не удалось загрузить задания</Alert>;
+
+        return <Container>
+            <Row className="mb-2">
+                <Col sm={9}><h1>{title}</h1></Col>
+                <Col sm={3}>
+                    <div className="mb-4">
+                        <CountdownWrapper seconds={timeLeft} />
+                    </div>
+                </Col>
+            </Row>
+            <QualificationTasksView tasks={tasks} answers={answers} contestId={this.props.contestId} />
+        </Container>;
+    }
+}
+
+class QualificationTasksView extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tasks: this.props.tasks,
+            answers: this.props.answers,
+            currentTask: 0,
+            error: false,
+            saved: true,
+        };
+    }
+
+    setAnswer = answer => this.setState(state => {
+        return {
+            ...state,
+            answers: update(state.answers, { [state.currentTask]: { $set: answer } }),
+            saved: false
+        };
+    });
 
     saveAnswers = async () => {
         if (!this.state.saved) {
-            this.setState({ error: false });
+            this.setState({ error: false, saving: true });
 
-            const resp = await post(`qualification/save?contestId=${this.props.contestId}`, { answers: this.state.answers });
+            const [resp] = await Promise.all([
+                post(`qualification/save?contestId=${this.props.contestId}`, this.state.answers),
+                new Promise(resolve => setTimeout(resolve, 500))]);
             if (resp.ok) {
                 this.setState({ saved: true });
             } else {
                 this.setState({ error: 'Не удалось сохранить ответы' });
             }
+            this.setState({ saving: false });
         }
     };
 
-    changeTab = (i) => this.setState({ currentTask: i });
+    changeTab = i => this.setState({ currentTask: i });
 
     render() {
-        if (this.state.fetching)
-            return <CenterSpinner />;
+        const { tasks, currentTask, answers, saved, saving, error } = this.state;
 
-        return <Container>
+        return <>
+            {error && <Alert color='danger'>{error}</Alert>}
             <Row>
                 <Col sm={9}>
-                    <Markdown source={this.state.tasks[this.state.currentTask]} />
-                    <Form inline>
-                        <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                            <Label for="ans" className="mr-sm-2">Ответ</Label>
-                            <Input id="ans" onChange={e => this.setAnswer(e.target.value)} />
-                        </FormGroup>
-                        <Button onClick={async () => await this.saveAnswers()}>Сохранить ответ</Button>
-                    </Form>
+                    <Markdown className="mb-5" source={tasks[currentTask]} />
+                    <AvForm className="align-items-start" inline onSubmit={
+                        async (event, errors) => {
+                            if (!errors.length)
+                                await this.saveAnswers();
+                        }}>
+                        <AvGroup className="mb-2 mr-sm-4 mb-sm-0">
+                            <AvInput id="ans"
+                                     name="ans"
+                                     autoComplete="off"
+                                     onChange={e => this.setAnswer(e.target.value)}
+                                     value={answers[currentTask]}
+                                     pattern={"^[\\d\\.]+$"} />
+                            <AvFeedback>Ответ — это число</AvFeedback>
+                        </AvGroup>
+                        <Button disabled={saved}>
+                            {saving && <Spinner size="sm" color="light" />}{' '}
+                            Сохранить ответ
+                        </Button>
+                    </AvForm>
                 </Col>
                 <Col sm={3}>
-                    <CountdownWrapper seconds={this.state.timeLeft} />
                     <ListGroup>
-                        {this.state.tasks.map((t, i) => {
-                            return <ListGroupItem {...this.calcColor(i)}>
-                                <span className="pseudo-link" onClick={() => this.changeTab(i)}>
-                                    Задание {i}
-                                </span>
-                            </ListGroupItem>;
-                        })}
+                        {tasks.map((t, i) => (
+                            <ListGroupItem style={{ cursor: 'pointer' }} {...this.calcColor(i)}
+                                           key={i}
+                                           onClick={() => this.changeTab(i)}>
+                            <span className="pseudo-link">
+                                Задание {i + 1}
+                            </span>
+                            </ListGroupItem>))}
                     </ListGroup>
                 </Col>
             </Row>
-        </Container>;
+        </>;
     }
 
     calcColor = (i) => {
         if (i === this.state.currentTask)
-            return { color: "warning" };
+            return { color: "info" };
         if (!!this.state.answers[i])
             return { color: "success" };
         return null;

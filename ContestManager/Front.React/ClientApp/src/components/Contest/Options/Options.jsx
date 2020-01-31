@@ -48,18 +48,23 @@ class Options extends React.Component {
                             optType={ContestOptions.Finished}
                             onChange={this.onChange}
                     />
+                    <Switch id="qualification"
+                            value={this.state.options}
+                            label="Открыт отбор"
+                            optType={ContestOptions.QualificationOpen}
+                            onChange={this.onChange}
+                    />
                 </FormGroup>
             </Form>
         </>;
     }
 }
 
-function Switch({ id, optType, value, label, onChange }) {
-    return <CustomInput type="switch"
-                        name="customSwitch"
-                        checked={hasFlag(value, optType)}
-                        label={label} id={id}
-                        onChange={() => onChange(value, optType)} />;
-}
+const Switch = ({ id, optType, value, label, onChange }) => (
+    <CustomInput type="switch"
+                 name="customSwitch"
+                 checked={hasFlag(value, optType)}
+                 label={label} id={id}
+                 onChange={() => onChange(value, optType)} />);
 
 export default WithContest(Options);

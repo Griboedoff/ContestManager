@@ -6,17 +6,21 @@ export const QualificationGreet = ({ contestId, setError, onStart }) => {
     return (
         <div>
             <Jumbotron>
-                <h4>Отборочный тур</h4>
+                <h3>Отборочный тур</h3>
                 <p>
                     Вам будет предложено 8 задачек на 3 часа.
                     <br />
-                    Ответом на каждую задачу является число, как разделитель для десятичных дробей используйте точку.
+                    Ответ на каждую задачу — это число. Десятичные дроби записывайте через точку.
+                    <br />
+                    Пока не закончилось время вы в любой момент можете изменить ответ на задачу, не забывайте нажимать
+                    на кнопку "Сохранить ответ" — она активна если есть несохраненные данные.
+
                     <br />
                     Успехов!
                 </p>
                 <p className="lead">
                     <Button color="success" onClick={async () => {
-                        const resp = await post(`qualification/${contestId}/start`);
+                        const resp = await post(`qualification/start?contestId=${contestId}`);
                         if (!resp.ok)
                             setError('Ошибка при старте отборочного тура');
                         else

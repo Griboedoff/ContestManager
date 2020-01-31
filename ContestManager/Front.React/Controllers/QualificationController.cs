@@ -16,6 +16,7 @@ namespace Front.React.Controllers
         private readonly IUserCookieManager cookieManager;
         private readonly IAsyncRepository<QualificationTask> tasksRepo;
         private readonly IAsyncRepository<Participant> participantRepo;
+        private readonly IAsyncRepository<Contest> contestRepo;
         private readonly IAsyncRepository<QualificationParticipation> participationRepo;
         private static readonly TimeSpan RoundTime = TimeSpan.FromHours(3);
 
@@ -23,11 +24,13 @@ namespace Front.React.Controllers
             IUserCookieManager cookieManager,
             IAsyncRepository<QualificationTask> tasksRepo,
             IAsyncRepository<Participant> participantRepo,
+            IAsyncRepository<Contest> contestRepo,
             IAsyncRepository<QualificationParticipation> participationRepo)
         {
             this.cookieManager = cookieManager;
             this.tasksRepo = tasksRepo;
             this.participantRepo = participantRepo;
+            this.contestRepo = contestRepo;
             this.participationRepo = participationRepo;
         }
 
@@ -42,10 +45,12 @@ namespace Front.React.Controllers
             if (participation == null)
                 return StatusCode(400, "not started");
 
+            var contest = await contestRepo.GetByIdAsync(participant.ContestId);
             var tasks = await GetTasks(participant);
             return Json(
                 new QualificationState
                 {
+                    Title = contest.Title,
                     Answers = participation.Answers,
                     Tasks = tasks.Select(t => t.Text).ToArray(),
                     TimeLeft = (int) (participation.EndTime - DateTimeOffset.UtcNow).TotalSeconds,
@@ -84,7 +89,7 @@ namespace Front.React.Controllers
                 ContestId = contestId,
                 ParticipantId = participant.Id,
                 EndTime = DateTimeOffset.UtcNow + RoundTime,
-                Answers = tasks.Select(_ => "").ToArray(),
+                Answers = tasks.OrderBy(t => t.Number).Select(_ => "").ToArray(),
             };
 
             var qualificationParticipation = await participationRepo.AddAsync(participation);
@@ -109,8 +114,7 @@ namespace Front.React.Controllers
         private async Task<IReadOnlyList<QualificationTask>> GetTasks(Participant participant)
         {
             return await tasksRepo.WhereAsync(
-                t => t.ContestId == participant.ContestId &&
-                     t.ForClasses.Contains(participant.UserSnapshot.Class.Value));
+                t => t.ContestId == participant.ContestId && t.Classes.Contains(participant.UserSnapshot.Class.Value));
         }
 
         private async Task<Participant> GetParticipant(Guid contestId)

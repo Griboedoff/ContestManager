@@ -1,12 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Alert from 'reactstrap/lib/Alert';
 import { QualificationSolveState } from '../../Enums/QualificationSolveState';
 import { get } from '../../Proxy';
 import { CenterSpinner } from '../CenterSpinner';
 import WithUser from '../HOC/WithUser';
 import { QualificationGreet } from './QualificationGreet';
-import { QualificationTasksView } from './QualificationTasks';
-
+import { QualificationTasksViewWrapper } from './QualificationTasks';
 
 class Qualification extends React.Component {
     constructor(props) {
@@ -22,7 +22,7 @@ class Qualification extends React.Component {
 
     async componentDidMount() {
         this.setState({ error: false });
-        const resp = await get(`qualification/${this.contestId}/start`);
+        const resp = await get(`qualification/state?contestId=${this.contestId}`);
         if (!resp.ok) {
             if (resp.status === 403)
                 this.setState({ error: 'Неавторизованный пользователь' });
@@ -39,6 +39,16 @@ class Qualification extends React.Component {
         if (this.state.fetching)
             return <CenterSpinner />;
 
+        if (!this.props.user)
+            return <Alert color="danger"> <Link to="/login">Войдите</Link> в систему.</Alert>;
+
+        return <>
+            {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
+            {this.renderContent()}
+        </>;
+    }
+
+    renderContent() {
         switch (this.state.qualificationState) {
             case QualificationSolveState.NotStarted:
                 return <QualificationGreet
@@ -46,9 +56,11 @@ class Qualification extends React.Component {
                     onStart={() => this.setState({ qualificationState: QualificationSolveState.InProgress })}
                     setError={error => this.setState({ error })} />;
             case QualificationSolveState.InProgress:
-                return <QualificationTasksView contestId={this.contestId} />;
+                return <QualificationTasksViewWrapper contestId={this.contestId} />;
             default:
-                return <Alert color="secondary">Ваше время закончилось. Результаты будут доступны после завершения тура.</Alert>;
+                return <Alert color="secondary">
+                    Ваше время закончилось. Результаты будут доступны после завершения тура.
+                </Alert>;
         }
     }
 }
