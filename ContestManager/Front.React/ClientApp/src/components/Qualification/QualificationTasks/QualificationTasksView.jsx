@@ -114,7 +114,7 @@ class QualificationTasksView extends React.Component {
                                      autoComplete="off"
                                      onChange={e => this.setAnswer(e.target.value)}
                                      value={answers[currentTask]}
-                                     pattern={"^[\\d\\.]+$"} />
+                                     pattern={"^[-\\d\\.]+$"} />
                             <AvFeedback>Ответ — это число</AvFeedback>
                         </AvGroup>
                         <Button disabled={saved}>

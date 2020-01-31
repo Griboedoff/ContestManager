@@ -53,7 +53,7 @@ namespace Front.React.Controllers
                     Title = contest.Title,
                     Answers = participation.Answers,
                     Tasks = tasks.Select(t => t.Text).ToArray(),
-                    TimeLeft = (int) (participation.EndTime - DateTimeOffset.UtcNow).TotalSeconds,
+                    TimeLeft = (int) (participation.EndTime.ToUniversalTime() - DateTimeOffset.UtcNow).TotalSeconds,
                 });
         }
 
@@ -68,7 +68,7 @@ namespace Front.React.Controllers
             if (participation == null)
                 return Json(QualificationSolveState.NotStarted);
 
-            if (DateTimeOffset.UtcNow + RoundTime > participation.EndTime)
+            if (DateTimeOffset.UtcNow < participation.EndTime.ToUniversalTime())
                 return Json(QualificationSolveState.InProgress);
 
             return Json(QualificationSolveState.Finished);
@@ -98,13 +98,16 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<ActionResult> Start(Guid contestId, [FromBody] string[] answers)
+        public async Task<ActionResult> Save(Guid contestId, [FromBody] string[] answers)
         {
             var participant = await GetParticipant(contestId);
             if (participant == null)
                 return StatusCode(403, "No participant for contest");
 
             var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
+            if (DateTimeOffset.UtcNow > participation.EndTime.ToUniversalTime())
+                return BadRequest();
+
             participation.Answers = answers;
             await participationRepo.UpdateAsync(participation);
 
