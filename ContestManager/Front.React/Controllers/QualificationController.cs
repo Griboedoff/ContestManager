@@ -57,7 +57,7 @@ namespace Front.React.Controllers
         {
             var participant = await GetParticipant(contestId);
             if (participant == null)
-                return StatusCode(403, "No participant for contest");
+                return StatusCode(400, "No participant for contest");
 
             var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
             if (participation == null)
@@ -69,12 +69,12 @@ namespace Front.React.Controllers
             return Json(QualificationSolveState.Finished);
         }
 
-        [HttpPost]
+        [HttpPost("start")]
         public async Task<ActionResult> Start(Guid contestId)
         {
             var participant = await GetParticipant(contestId);
             if (participant == null)
-                return StatusCode(403, "No participant for contest");
+                return StatusCode(400, "No participant for contest");
 
             var tasks = await GetTasks(participant);
 

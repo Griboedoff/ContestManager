@@ -5,7 +5,7 @@ import Input from 'reactstrap/lib/Input';
 import { get, post } from '../../../Proxy';
 import update from 'immutability-helper';
 import { CenterSpinner } from '../../CenterSpinner';
-import { Countdown } from './Countdown';
+import { CountdownWrapper } from './Countdown';
 
 export class QualificationTasksView extends React.Component {
     constructor(props) {
@@ -76,10 +76,10 @@ export class QualificationTasksView extends React.Component {
                     </Form>
                 </Col>
                 <Col sm={3}>
-                    <Countdown seconds={this.state.timeLeft} />
+                    <CountdownWrapper seconds={this.state.timeLeft} />
                     <ListGroup>
                         {this.state.tasks.map((t, i) => {
-                            return <ListGroupItem {this.calcColor(i)}>
+                            return <ListGroupItem {...this.calcColor(i)}>
                                 <span className="pseudo-link" onClick={() => this.changeTab(i)}>
                                     Задание {i}
                                 </span>

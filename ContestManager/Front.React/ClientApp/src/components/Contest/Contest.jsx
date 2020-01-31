@@ -118,7 +118,7 @@ class Contest extends React.Component {
                         </ListGroupItem>}
                     </ListGroup>
 
-                    {this.props.user && this.props.user.role === UserRole.Admin && this.renderAdminPanel(options)}
+                    {this.props.user?.role === UserRole.Admin && this.renderAdminPanel(options)}
                 </Col>
             </Row>
         </Container>;
@@ -126,7 +126,6 @@ class Contest extends React.Component {
 
     renderAdminPanel() {
         const { options, type } = this.props.contest;
-        console.log(this.props.contest);
 
         return <>
             <h5 className="mt-3">Админка</h5>
@@ -155,8 +154,7 @@ class Contest extends React.Component {
 
     showParticipateButton() {
         return hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
-            this.props.user &&
-            this.props.user.role === UserRole.Participant &&
+            this.props.user?.role === UserRole.Participant &&
             !this.props.participants.some(p => p.userId === this.props.user.id);
     }
 
@@ -173,7 +171,7 @@ class Contest extends React.Component {
     }
 
     async fetchContest() {
-        if (this.props.contest && this.props.contest.id === this.contestId) {
+        if (this.props.contest?.id === this.contestId) {
             return;
         }
 

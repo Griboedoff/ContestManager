@@ -9,7 +9,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
     }
 };
 
-export const Countdown = ({ seconds }) => <Countdown
+export const CountdownWrapper = ({ seconds }) => <Countdown
     date={Date.now() + seconds}
     renderer={renderer}
 />;
