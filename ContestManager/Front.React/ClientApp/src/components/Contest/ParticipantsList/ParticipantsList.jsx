@@ -3,7 +3,7 @@ import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { UserRole } from '../../../Enums/UserRole';
 import WithParticipants from '../../HOC/WithParticipants';
 import WithUser from '../../HOC/WithUser';
-import EditParticipantModal from '../ParticipateModal/EditParticipantModal';
+import { EditParticipantModal } from '../ParticipateModal';
 
 export const ParticipantsList = ({ contest, user, participants }) => {
     return <>

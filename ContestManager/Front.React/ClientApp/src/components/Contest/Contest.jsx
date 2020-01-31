@@ -14,12 +14,11 @@ import { AddResult } from './AddResult';
 import { EditNews, News } from './News';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
-import { ParticipateModal } from './ParticipateModal/ParticipateModal';
+import { ParticipateModal } from './ParticipateModal';
 import { Seating } from './Seating';
 
 
 class Contest extends React.Component {
-
     constructor(props) {
         super(props);
         this.contestId = this.props.match.params.id;
@@ -33,6 +32,8 @@ class Contest extends React.Component {
             participateOpen: false
         };
     }
+
+    contestUrl = (url = '') => `${this.CONTEST}/${url}`;
 
     toggleDropdown() {
         this.setState({
@@ -80,26 +81,26 @@ class Contest extends React.Component {
             <Row>
                 <Col sm={9}>
                     <Switch>
-                        <Route exact path={this.CONTEST}>
+                        <Route exact path={this.contestUrl()}>
                             <News contestId={this.contestId} />
                         </Route>
-                        <Route exact path={`${this.CONTEST}/participants`}>
+                        <Route exact path={this.contestUrl('participants')}>
                             <ParticipantsList contest={this.props.contest} participants={this.props.participants} />
                         </Route>
 
-                        <Route exact path={`${this.CONTEST}/addNews`}>
+                        <Route exact path={this.contestUrl('addNews')}>
                             <EditNews contestId={this.contestId} />
                         </Route>
-                        <Route exact path={`${this.CONTEST}/options`}>
+                        <Route exact path={this.contestUrl('options')}>
                             <Options />
                         </Route>
-                        <Route exact path={`${this.CONTEST}/seating`}>
+                        <Route exact path={this.contestUrl('seating')}>
                             <Seating contestId={this.contestId} />
                         </Route>
-                        <Route exact path={`${this.CONTEST}/addResult`}>
+                        <Route exact path={this.contestUrl('addResult')}>
                             <AddResult contestId={this.contestId} />
                         </Route>
-                        <Route exact path={`${this.CONTEST}/addTasks`}>
+                        <Route exact path={this.contestUrl('addTasks')}>
                             <AddResult contestId={this.contestId} />
                         </Route>
                     </Switch>
@@ -107,13 +108,13 @@ class Contest extends React.Component {
                 <Col sm={3}>
                     <ListGroup>
                         <ListGroupItem>
-                            <Link to={this.CONTEST}>Информация</Link>
+                            <Link to={this.contestUrl()}>Информация</Link>
                         </ListGroupItem>
                         <ListGroupItem>
-                            <Link to={`${this.CONTEST}/participants`}>Участники</Link>
+                            <Link to={this.contestUrl('participants')}>Участники</Link>
                         </ListGroupItem>
                         {hasFlag(options, ContestOptions.ResultsOpen) && <ListGroupItem>
-                            <Link to={`${this.CONTEST}/results`}>Результаты</Link>
+                            <Link to={this.contestUrl('results')}>Результаты</Link>
                         </ListGroupItem>}
                     </ListGroup>
 
@@ -125,28 +126,28 @@ class Contest extends React.Component {
 
     renderAdminPanel() {
         const { options, type } = this.props.contest;
-                          console.log(this.props.contest);
+        console.log(this.props.contest);
 
         return <>
             <h5 className="mt-3">Админка</h5>
             <ListGroup>
                 {type === ContestType.Qualification && <ListGroupItem>
-                    <Link to={`${this.CONTEST}/addTasks`}>Добавить задания</Link>
+                    <Link to={this.contestUrl('addTasks')}>Добавить задания</Link>
                 </ListGroupItem>}
                 <ListGroupItem>
-                    <Link to={`${this.CONTEST}/addNews`}>Добавить новость</Link>
+                    <Link to={this.contestUrl('addNews')}>Добавить новость</Link>
                 </ListGroupItem>
                 {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                    <Link to={`${this.CONTEST}/seating`}>Сгенерировать рассадку</Link>
+                    <Link to={this.contestUrl('seating')}>Сгенерировать рассадку</Link>
                 </ListGroupItem>}
                 {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                    <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
+                    <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>
                 </ListGroupItem>}
                 {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                    <Link to={`${this.CONTEST}/addResult`}>Добавить результаты</Link>
+                    <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>
                 </ListGroupItem>}
                 <ListGroupItem>
-                    <Link to={`${this.CONTEST}/options`}>Настройки</Link>
+                    <Link to={this.contestUrl('options')}>Настройки</Link>
                 </ListGroupItem>
             </ListGroup>
         </>;
