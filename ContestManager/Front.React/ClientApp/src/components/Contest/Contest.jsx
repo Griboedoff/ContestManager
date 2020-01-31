@@ -63,68 +63,74 @@ class Contest extends React.Component {
         if (!this.props.contest || this.fetching())
             return <CenterSpinner />;
 
-        const { title, options } = this.props.contest;
+        const { user, setUser, contest } = this.props;
         return <Container>
-            <Row className="mb-3 justify-content-between">
-                <h1>{title}</h1>
-                {this.showParticipateButton() &&
-                <Button color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
-                {this.state.participateOpen &&
-                <ParticipateModal user={this.props.user}
-                                  contest={this.props.contest}
-                                  close={this.toggleParticipate}
-                                  title="Принять участие"
-                                  saveButtonTitle="Участвовать"
-                                  setUser={this.props.setUser}
-                />}
-            </Row>
+            <Row className="mb-3 justify-content-between"><h1>{contest.title}</h1></Row>
             <Row>
                 <Col sm={9}>
-                    <Switch>
-                        <Route exact path={this.contestUrl()}>
-                            <News contestId={this.contestId} />
-                        </Route>
-                        <Route exact path={this.contestUrl('participants')}>
-                            <ParticipantsList contest={this.props.contest} participants={this.props.participants} />
-                        </Route>
-
-                        <Route exact path={this.contestUrl('addNews')}>
-                            <EditNews contestId={this.contestId} />
-                        </Route>
-                        <Route exact path={this.contestUrl('options')}>
-                            <Options />
-                        </Route>
-                        <Route exact path={this.contestUrl('seating')}>
-                            <Seating contestId={this.contestId} />
-                        </Route>
-                        <Route exact path={this.contestUrl('addResult')}>
-                            <AddResult contestId={this.contestId} />
-                        </Route>
-                        <Route exact path={this.contestUrl('addTasks')}>
-                            <AddResult contestId={this.contestId} />
-                        </Route>
-                    </Switch>
+                    {this.renderBody()}
                 </Col>
                 <Col sm={3}>
-                    <ListGroup>
-                        <ListGroupItem>
-                            <Link to={this.contestUrl()}>Информация</Link>
-                        </ListGroupItem>
-                        <ListGroupItem>
-                            <Link to={this.contestUrl('participants')}>Участники</Link>
-                        </ListGroupItem>
-                        {hasFlag(options, ContestOptions.ResultsOpen) && <ListGroupItem>
-                            <Link to={this.contestUrl('results')}>Результаты</Link>
-                        </ListGroupItem>}
-                    </ListGroup>
-
-                    {this.props.user?.role === UserRole.Admin && this.renderAdminPanel(options)}
+                    {this.renderMenu()}
                 </Col>
             </Row>
+            {this.state.participateOpen &&
+            <ParticipateModal user={user}
+                              contest={contest}
+                              close={this.toggleParticipate}
+                              title="Принять участие"
+                              saveButtonTitle="Участвовать"
+                              setUser={setUser} />}
         </Container>;
     }
 
-    renderAdminPanel() {
+    renderBody = () => (<Switch>
+        <Route exact path={this.contestUrl()}>
+            <News contestId={this.contestId} />
+        </Route>
+        <Route exact path={this.contestUrl('participants')}>
+            <ParticipantsList contest={this.props.contest} participants={this.props.participants} />
+        </Route>
+
+        <Route exact path={this.contestUrl('addNews')}>
+            <EditNews contestId={this.contestId} />
+        </Route>
+        <Route exact path={this.contestUrl('options')}>
+            <Options />
+        </Route>
+        <Route exact path={this.contestUrl('seating')}>
+            <Seating contestId={this.contestId} />
+        </Route>
+        <Route exact path={this.contestUrl('addResult')}>
+            <AddResult contestId={this.contestId} />
+        </Route>
+        <Route exact path={this.contestUrl('addTasks')}>
+            <AddResult contestId={this.contestId} />
+        </Route>
+    </Switch>);
+
+    renderMenu = () => {
+        const { user, contest } = this.props;
+        return <>
+            {this.showParticipateButton() &&
+            <Button className="mb-4" color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
+            <ListGroup>
+                <ListGroupItem>
+                    <Link to={this.contestUrl()}>Информация</Link>
+                </ListGroupItem>
+                <ListGroupItem>
+                    <Link to={this.contestUrl('participants')}>Участники</Link>
+                </ListGroupItem>
+                {hasFlag(contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
+                    <Link to={this.contestUrl('results')}>Результаты</Link>
+                </ListGroupItem>}
+            </ListGroup>
+
+            {user?.role === UserRole.Admin && this.renderAdminPanel(contest.options)}
+        </>;
+    };
+
+    renderAdminPanel = () => {
         const { options, type } = this.props.contest;
 
         return <>
@@ -150,12 +156,13 @@ class Contest extends React.Component {
                 </ListGroupItem>
             </ListGroup>
         </>;
-    }
+    };
 
     showParticipateButton() {
-        return hasFlag(this.props.contest.options, ContestOptions.RegistrationOpen) &&
-            this.props.user?.role === UserRole.Participant &&
-            !this.props.participants.some(p => p.userId === this.props.user.id);
+        const { user, contest, participants } = this.props;
+        return hasFlag(contest.options, ContestOptions.RegistrationOpen) &&
+            user?.role === UserRole.Participant &&
+            !participants.some(p => p.userId === user.id);
     }
 
     async fetchParticipants() {

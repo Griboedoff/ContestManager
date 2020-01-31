@@ -53,14 +53,12 @@ const ActionsBlock = ({ name, role, logout }) => <React.Fragment>
             {name}
         </DropdownToggle>
         <DropdownMenu right>
-            <DropdownItem> <Link className="text-dark" to="/user">Мои данные</Link> </DropdownItem>
-            {role === UserRole.Admin && <DropdownItem>
-                <Link className="text-dark" to="/createContest">Новое соревнование</Link>
+            <DropdownItem tag={Link} to="/user">Мои данные</DropdownItem>
+            {role === UserRole.Admin && <DropdownItem tag={Link} to="/createContest">
+                Новое соревнование
             </DropdownItem>}
             <DropdownItem divider />
-            <DropdownItem>
-                <Link className="text-dark" to="/" onClick={logout}>Выйти</Link>
-            </DropdownItem>
+            <DropdownItem tag={Link} to="/" onClick={logout}>Выйти</DropdownItem>
         </DropdownMenu>
     </UncontrolledDropdown>
 </React.Fragment>;
