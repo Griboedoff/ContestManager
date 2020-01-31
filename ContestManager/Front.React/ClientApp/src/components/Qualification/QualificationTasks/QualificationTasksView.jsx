@@ -64,7 +64,7 @@ class QualificationTasksView extends React.Component {
         this.state = {
             tasks: this.props.tasks,
             answers: this.props.answers,
-            currentTask: 4,
+            currentTask: 0,
             error: false,
             saved: true,
         };
