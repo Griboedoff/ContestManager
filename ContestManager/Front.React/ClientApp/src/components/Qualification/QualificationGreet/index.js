@@ -1,0 +1,1 @@
+export { QualificationGreet } from './QualificationGreet';

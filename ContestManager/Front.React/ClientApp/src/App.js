@@ -5,6 +5,7 @@ import { AcceptInvite } from './components/AcceptInvite';
 import Layout from './components/Layout';
 import { ContestList } from './components/ContestList';
 import { Login } from './components/Login';
+import { Qualification } from './components/Qualification';
 import { UserPage } from './components/UserPage';
 import { CreateContest } from './components/CreateContest';
 import { Contest } from './components/Contest';
@@ -19,6 +20,7 @@ export default () => (
             <Route path='/user' component={UserPage} />
             <Route path='/createContest' component={CreateContest} />
             <Route path='/contests/:id' component={Contest} />
+            <Route path='/contest/:id/qualification' component={Qualification} />
             <Route path='/invite/:id' component={AcceptInvite} />
         </Switch>
     </Layout>

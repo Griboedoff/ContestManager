@@ -9,5 +9,6 @@ namespace Core.Enums
         PreResultsOpen = 1 << 1,
         ResultsOpen = 1 << 2,
         Finished = 1 << 3,
+        QualificationOpen = 1 << 4,
     }
 }
