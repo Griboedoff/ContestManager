@@ -52,7 +52,7 @@ namespace Front.React.Controllers
                 {
                     Title = contest.Title,
                     Answers = participation.Answers,
-                    Tasks = tasks.Select(t => t.Text).ToArray(),
+                    Tasks = tasks.OrderBy(t => t.Number).Select(t => t.Text).ToArray(),
                     TimeLeft = (int) (participation.EndTime.ToUniversalTime() - DateTimeOffset.UtcNow).TotalSeconds,
                 });
         }

@@ -1,11 +1,12 @@
 import update from 'immutability-helper';
 import React from 'react';
-import Markdown from 'react-markdown';
 import { Alert, Button, Col, Container, ListGroup, ListGroupItem, Row, Spinner } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation';
 import { get, post } from '../../../Proxy';
 import { CenterSpinner } from '../../CenterSpinner';
 import { CountdownWrapper } from './Countdown';
+
+const ReactMarkdown = require('react-markdown/with-html');
 
 export class QualificationTasksViewWrapper extends React.Component {
     constructor(props) {
@@ -63,7 +64,7 @@ class QualificationTasksView extends React.Component {
         this.state = {
             tasks: this.props.tasks,
             answers: this.props.answers,
-            currentTask: 0,
+            currentTask: 4,
             error: false,
             saved: true,
         };
@@ -102,7 +103,7 @@ class QualificationTasksView extends React.Component {
             {error && <Alert color='danger'>{error}</Alert>}
             <Row>
                 <Col sm={9}>
-                    <Markdown className="mb-5" source={tasks[currentTask]} />
+                    <ReactMarkdown className="mb-5" source={tasks[currentTask]} escapeHtml={false} />
                     <AvForm className="align-items-start" inline onSubmit={
                         async (event, errors) => {
                             if (!errors.length)
