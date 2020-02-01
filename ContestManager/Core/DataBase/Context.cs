@@ -1,17 +1,9 @@
-﻿using System;
-using Core.DataBaseEntities;
+﻿using Core.DataBaseEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.DataBase
 {
-    public interface IContext : IDisposable
-    {
-        DbSet<T> Set<T>() where T : class;
-
-        int SaveChanges();
-    }
-
-    public class Context : DbContext, IContext
+    public class Context : DbContext
     {
         public Context(DbContextOptions options) : base(options)
         {
@@ -37,5 +29,6 @@ namespace Core.DataBase
         public virtual DbSet<Participant> Participants { get; set; }
         public virtual DbSet<QualificationTask> QualificationTasks { get; set; }
         public virtual DbSet<QualificationParticipation> QualificationParticipations { get; set; }
+        public virtual DbSet<Session> Sessions { get; set; }
     }
 }
