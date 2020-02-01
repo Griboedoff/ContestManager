@@ -10,6 +10,8 @@ function parseRegisterStatus(s) {
             return "Такой email уже зарегистрирован";
         case 3:
             return "Пользователь с таким VK уже зарегистрирован";
+        case 4:
+            return "Произошла ошибка при отправке письма с подтверждением";
         default:
             return "";
     }
