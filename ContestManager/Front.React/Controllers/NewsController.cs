@@ -13,9 +13,7 @@ namespace Front.React.Controllers
         private readonly IContestManager contestManager;
         private readonly INewsManager newsManager;
 
-        public NewsController(
-            IContestManager contestManager,
-            INewsManager newsManager)
+        public NewsController(IContestManager contestManager, INewsManager newsManager)
         {
             this.contestManager = contestManager;
             this.newsManager = newsManager;

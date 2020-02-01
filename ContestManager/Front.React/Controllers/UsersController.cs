@@ -85,10 +85,6 @@ namespace Front.React.Controllers
             return Json(registerByVk);
         }
 
-        [HttpGet("check")]
-        [Authorized]
-        public ActionResult Check(User user) => Json(user);
-
         [HttpPost("restore")]
         public async Task<ActionResult> RestorePassword([FromBody] string email)
         {
@@ -96,6 +92,10 @@ namespace Front.React.Controllers
 
             return Json(registrationRequestStatus);
         }
+
+        [HttpGet("check")]
+        [Authorized]
+        public ActionResult Check(User user) => Json(user);
 
         [HttpPatch]
         [Authorized]

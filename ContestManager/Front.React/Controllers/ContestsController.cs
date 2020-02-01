@@ -31,15 +31,6 @@ namespace Front.React.Controllers
             this.sheetsApiClient = sheetsApiClient;
         }
 
-        [HttpPost]
-        [Authorized(UserRole.Admin)]
-        public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel, User user)
-        {
-            var contest = await contestManager.Create(contestModel, user.Id);
-
-            return Json(contest);
-        }
-
         [HttpGet]
         public async Task<JsonResult> List()
         {
@@ -51,6 +42,14 @@ namespace Front.React.Controllers
                     .ToArray());
         }
 
+        [HttpGet("{id}")]
+        public async Task<JsonResult> Get(Guid id)
+        {
+            var contest = await contestsRepo.GetByIdAsync(id);
+
+            return Json(contest);
+        }
+
         [HttpGet("{id}/news")]
         public async Task<JsonResult> GetNews(Guid id)
         {
@@ -59,12 +58,20 @@ namespace Front.React.Controllers
             return Json(news.OrderByDescending(n => n.CreationDate));
         }
 
-        [HttpGet("{id}")]
-        public async Task<JsonResult> Get(Guid id)
+        [HttpGet("{id}/participants")]
+        public async Task<ActionResult> GetParticipants(Guid id)
         {
-            var contest = await contestsRepo.GetByIdAsync(id);
+            var participants = await contestManager.GetParticipants(id);
 
-            return Json(contest);
+            return Json(participants);
+        }
+
+        [HttpGet("{id}/results")]
+        public string Results(Guid id)
+        {
+            var participants = contestManager.GetParticipants(id);
+
+            return JsonConvert.SerializeObject(participants);
         }
 
         [HttpPost("{id}/participate")]
@@ -105,6 +112,15 @@ namespace Front.React.Controllers
             return StatusCode(200, "Успешно");
         }
 
+        [HttpPost]
+        [Authorized(UserRole.Admin)]
+        public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel, User user)
+        {
+            var contest = await contestManager.Create(contestModel, user.Id);
+
+            return Json(contest);
+        }
+
         [HttpPatch("{id}/options")]
         [Authorized(UserRole.Admin)]
         public async Task<ActionResult> UpdateOptions(Guid id, [FromBody] ContestOptions options)
@@ -112,22 +128,6 @@ namespace Front.React.Controllers
             await contestManager.UpdateOptions(id, options);
 
             return StatusCode(200);
-        }
-
-        [HttpGet("{id}/participants")]
-        public async Task<ActionResult> GetParticipants(Guid id)
-        {
-            var participants = await contestManager.GetParticipants(id);
-
-            return Json(participants);
-        }
-
-        [HttpGet("{id}/results")]
-        public string Results(Guid id)
-        {
-            var participants = contestManager.GetParticipants(id);
-
-            return JsonConvert.SerializeObject(participants);
         }
 
         [HttpGet("{id}/generateSeating")]

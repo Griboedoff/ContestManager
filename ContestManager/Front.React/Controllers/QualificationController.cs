@@ -31,48 +31,6 @@ namespace Front.React.Controllers
             this.participationRepo = participationRepo;
         }
 
-        [HttpGet]
-        [Authorized(UserRole.Participant)]
-        public async Task<ActionResult> GetQualificationState(Guid contestId, User user)
-        {
-            var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
-            if (participant == null)
-                return StatusCode(403, "No participant for contest");
-
-            var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
-            if (participation == null)
-                return StatusCode(400, "not started");
-
-            var contest = await contestRepo.GetByIdAsync(participant.ContestId);
-            var tasks = await GetTasks(participant);
-            return Json(
-                new QualificationState
-                {
-                    Title = contest.Title,
-                    Answers = participation.Answers,
-                    Tasks = tasks.OrderBy(t => t.Number).Select(t => t.Text).ToArray(),
-                    TimeLeft = (int) (participation.EndTime.ToUniversalTime() - DateTimeOffset.UtcNow).TotalSeconds,
-                });
-        }
-
-        [HttpGet("state")]
-        [Authorized(UserRole.Participant)]
-        public async Task<ActionResult> IsStarted(Guid contestId, User user)
-        {
-            var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
-            if (participant == null)
-                return StatusCode(400, "No participant for contest");
-
-            var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
-            if (participation == null)
-                return Json(QualificationSolveState.NotStarted);
-
-            if (DateTimeOffset.UtcNow < participation.EndTime.ToUniversalTime())
-                return Json(QualificationSolveState.InProgress);
-
-            return Json(QualificationSolveState.Finished);
-        }
-
         [HttpPost("start")]
         [Authorized(UserRole.Participant)]
         public async Task<ActionResult> Start(Guid contestId, User user)
@@ -95,6 +53,48 @@ namespace Front.React.Controllers
             var qualificationParticipation = await participationRepo.AddAsync(participation);
 
             return Json(qualificationParticipation);
+        }
+
+        [HttpGet("state")]
+        [Authorized(UserRole.Participant)]
+        public async Task<ActionResult> IsStarted(Guid contestId, User user)
+        {
+            var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
+            if (participant == null)
+                return StatusCode(400, "No participant for contest");
+
+            var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
+            if (participation == null)
+                return Json(QualificationSolveState.NotStarted);
+
+            if (DateTimeOffset.UtcNow < participation.EndTime.ToUniversalTime())
+                return Json(QualificationSolveState.InProgress);
+
+            return Json(QualificationSolveState.Finished);
+        }
+
+        [HttpGet]
+        [Authorized(UserRole.Participant)]
+        public async Task<ActionResult> GetQualificationState(Guid contestId, User user)
+        {
+            var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
+            if (participant == null)
+                return StatusCode(403, "No participant for contest");
+
+            var participation = await participationRepo.FirstOrDefaultAsync(p => p.ParticipantId == participant.Id);
+            if (participation == null)
+                return StatusCode(400, "not started");
+
+            var contest = await contestRepo.GetByIdAsync(participant.ContestId);
+            var tasks = await GetTasks(participant);
+            return Json(
+                new QualificationState
+                {
+                    Title = contest.Title,
+                    Answers = participation.Answers,
+                    Tasks = tasks.OrderBy(t => t.Number).Select(t => t.Text).ToArray(),
+                    TimeLeft = (int) (participation.EndTime.ToUniversalTime() - DateTimeOffset.UtcNow).TotalSeconds,
+                });
         }
 
         [HttpPost("save")]
