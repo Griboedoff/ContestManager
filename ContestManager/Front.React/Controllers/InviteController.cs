@@ -63,7 +63,7 @@ namespace Front.React.Controllers
             await invitesRepo.UpdateAsync(invite);
 
             var user = await userRepo.GetByIdAsync(account.UserId);
-            userCookieManager.SetLoginCookie(Response, user);
+            await userCookieManager.SetLoginCookie(Response, user);
         }
 
         private async Task<(InviteLinkStatus, AuthenticationAccount)> CheckInvite(Invite invite)

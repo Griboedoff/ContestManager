@@ -77,6 +77,7 @@ namespace Front.React
             services.AddSingleton<ISecurityManager, SecurityManager>();
             services.AddScoped<ISheetsApiClient, SheetsApiClient>();
             services.AddScoped<ISeatingGenerator, SeatingGenerator>();
+            services.AddScoped<ISessionManager, SessionManager>();
             services.AddScoped<AuthorizedActionFilter>();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));

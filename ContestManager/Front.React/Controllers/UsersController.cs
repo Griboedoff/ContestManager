@@ -43,7 +43,7 @@ namespace Front.React.Controllers
             try
             {
                 var user = await authenticationManager.Authenticate(emailLoginInfo);
-                userCookieManager.SetLoginCookie(Response, user);
+                await userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
             }
@@ -59,7 +59,7 @@ namespace Front.React.Controllers
             try
             {
                 var user = await authenticationManager.Authenticate(vkLoginInfo);
-                userCookieManager.SetLoginCookie(Response, user);
+                await userCookieManager.SetLoginCookie(Response, user);
 
                 return Json(user);
             }
@@ -131,7 +131,7 @@ namespace Front.React.Controllers
 
             var user = await usersRepo.GetByIdAsync(account.UserId);
             var isChanged = await userManager.ChangePassword(user, password);
-            userCookieManager.SetLoginCookie(Response, user);
+            await userCookieManager.SetLoginCookie(Response, user);
 
             return isChanged ? Ok() : StatusCode(400);
         }

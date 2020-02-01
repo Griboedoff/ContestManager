@@ -10,7 +10,7 @@ namespace Core.Users.Sessions
 {
     public interface IUserCookieManager
     {
-        void SetLoginCookie(HttpResponse response, User user);
+        Task SetLoginCookie(HttpResponse response, User user);
         Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request);
         void Clear(HttpResponse response);
     }
@@ -18,31 +18,49 @@ namespace Core.Users.Sessions
     public class UserCookieManager : IUserCookieManager
     {
         private readonly IAsyncRepository<User> userRepo;
+        private readonly ISessionManager sessionManager;
         private const string Sid = "sid";
         private const string UserInfo = "User";
 
-        public UserCookieManager(IAsyncRepository<User> userRepo) => this.userRepo = userRepo;
-
-        public void SetLoginCookie(HttpResponse response, User user)
+        public UserCookieManager(IAsyncRepository<User> userRepo, ISessionManager sessionManager)
         {
-            var sid = SessionManager.CreateSession(user.Name);
+            this.userRepo = userRepo;
+            this.sessionManager = sessionManager;
+        }
+
+        public async Task SetLoginCookie(HttpResponse response, User user)
+        {
+            var sid = await sessionManager.CreateSession(user);
 
             response.Cookies.Append(
                 Sid,
-                sid,
-                new CookieOptions { Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)) });
-            response.Cookies.Append(UserInfo, CreateUserInfo(user));
+                sid.ToString(),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)),
+                    HttpOnly = true,
+                    Secure = Constants.IsSecureCookie
+                });
+            response.Cookies.Append(
+                UserInfo,
+                CreateUserInfo(user),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)),
+                    HttpOnly = true,
+                    Secure = Constants.IsSecureCookie
+                });
         }
 
         public async Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request)
         {
-            if (!request.Cookies.TryGetValue(Sid, out var sid))
-                return OnlyStatus(ValidateUserSessionStatus.NoSidCookie);
+            if (!request.Cookies.TryGetValue(Sid, out var sidStr) || !Guid.TryParse(sidStr, out var sid))
+                return OnlyStatus(ValidateUserSessionStatus.BadSidCookie);
 
             if (!TryGetUser(request, out var user))
                 return OnlyStatus(ValidateUserSessionStatus.BadUserCookie);
 
-            if (!SessionManager.ValidateSession(user.Name, sid))
+            if (!await sessionManager.ValidateSession(sid, user.Id))
                 return OnlyStatus(ValidateUserSessionStatus.InvalidSession);
 
             return (ValidateUserSessionStatus.Ok, await userRepo.GetByIdAsync(user.Id));

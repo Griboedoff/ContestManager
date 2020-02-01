@@ -3,7 +3,7 @@ namespace Core.Users.Sessions
     public enum ValidateUserSessionStatus
     {
         Ok,
-        NoSidCookie,
+        BadSidCookie,
         BadUserCookie,
         InvalidSession
     }
