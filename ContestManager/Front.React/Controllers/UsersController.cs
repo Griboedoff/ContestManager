@@ -6,6 +6,7 @@ using Core.Users;
 using Core.Users.Login;
 using Core.Users.Registration;
 using Core.Users.Sessions;
+using Front.React.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Front.React.Controllers
@@ -26,7 +27,7 @@ namespace Front.React.Controllers
             IAsyncRepository<User> usersRepo,
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
             IAsyncRepository<Invite> invitesRepo
-            )
+        )
         {
             this.userCookieManager = userCookieManager;
             this.authenticationManager = authenticationManager;
@@ -60,8 +61,7 @@ namespace Front.React.Controllers
                 var user = await authenticationManager.Authenticate(vkLoginInfo);
                 userCookieManager.SetLoginCookie(Response, user);
 
-                var actionResult = Json(user);
-                return actionResult;
+                return Json(user);
             }
             catch (AuthenticationFailedException)
             {
@@ -86,20 +86,8 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("check")]
-        public async Task<ActionResult> Check()
-        {
-            try
-            {
-                var user = await userCookieManager.GetUser(Request);
-
-                return Json(user);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                userCookieManager.Clear(Response);
-                return StatusCode(403);
-            }
-        }
+        [Authorized]
+        public ActionResult Check(User user) => Json(user);
 
         [HttpPost("restore")]
         public async Task<ActionResult> RestorePassword([FromBody] string email)
@@ -110,34 +98,26 @@ namespace Front.React.Controllers
         }
 
         [HttpPatch]
-        public async Task<ActionResult> Patch([FromBody] User user)
+        [Authorized]
+        public async Task<ActionResult> Patch([FromBody] User newUser, User user)
         {
-            try
-            {
-                var userFromDb = await userCookieManager.GetUser(Request);
+            if (!RoleChangeValidator.Validate(user.Role, newUser.Role))
+                return StatusCode(
+                    403,
+                    new { error = "Нельзя менять роль", from = user.Role, to = newUser.Role });
 
-                if (!RoleChangeValidator.Validate(userFromDb.Role, user.Role))
-                    return StatusCode(
-                        403,
-                        new { error = "Нельзя менять роль", from = userFromDb.Role, to = user.Role });
-
-                userFromDb.Class = user.Class;
-                userFromDb.School = user.School;
-                userFromDb.Name = user.Name;
-                userFromDb.Role = user.Role;
-                userFromDb.City = user.City;
-                userFromDb.Coach = user.Coach;
-                await usersRepo.UpdateAsync(userFromDb);
-                return Json(user);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return StatusCode(403);
-            }
+            user.Class = newUser.Class;
+            user.School = newUser.School;
+            user.Name = newUser.Name;
+            user.Role = newUser.Role;
+            user.City = newUser.City;
+            user.Coach = newUser.Coach;
+            await usersRepo.UpdateAsync(user);
+            return Json(newUser);
         }
 
         [HttpPost("changePass/{code}")]
-        public async Task<ActionResult> ChangePass([FromBody]string password, string code)
+        public async Task<ActionResult> ChangePass([FromBody] string password, string code)
         {
             var invite = await invitesRepo.FirstOrDefaultAsync(r => r.ConfirmationCode == code);
 

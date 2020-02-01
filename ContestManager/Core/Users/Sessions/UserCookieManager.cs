@@ -11,7 +11,7 @@ namespace Core.Users.Sessions
     public interface IUserCookieManager
     {
         void SetLoginCookie(HttpResponse response, User user);
-        Task<User> GetUser(HttpRequest request);
+        Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request);
         void Clear(HttpResponse response);
     }
 
@@ -34,14 +34,21 @@ namespace Core.Users.Sessions
             response.Cookies.Append(UserInfo, CreateUserInfo(user));
         }
 
-        public async Task<User> GetUser(HttpRequest request)
+        public async Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request)
         {
-            if (!request.Cookies.TryGetValue(Sid, out var sid) ||
-                !TryGetUser(request, out var user) ||
-                !SessionManager.ValidateSession(user.Name, sid))
-                throw new UnauthorizedAccessException();
+            if (!request.Cookies.TryGetValue(Sid, out var sid))
+                return OnlyStatus(ValidateUserSessionStatus.NoSidCookie);
 
-            return await userRepo.GetByIdAsync(user.Id);
+            if (!TryGetUser(request, out var user))
+                return OnlyStatus(ValidateUserSessionStatus.BadUserCookie);
+
+            if (!SessionManager.ValidateSession(user.Name, sid))
+                return OnlyStatus(ValidateUserSessionStatus.InvalidSession);
+
+            return (ValidateUserSessionStatus.Ok, await userRepo.GetByIdAsync(user.Id));
+
+            (ValidateUserSessionStatus status, User user) OnlyStatus(ValidateUserSessionStatus status)
+                => (status, null);
         }
 
         public void Clear(HttpResponse response)

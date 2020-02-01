@@ -15,6 +15,7 @@ using Core.Users;
 using Core.Users.Login;
 using Core.Users.Registration;
 using Core.Users.Sessions;
+using Front.React.Filters;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 using Microsoft.AspNetCore.Builder;
@@ -76,6 +77,7 @@ namespace Front.React
             services.AddSingleton<ISecurityManager, SecurityManager>();
             services.AddScoped<ISheetsApiClient, SheetsApiClient>();
             services.AddScoped<ISeatingGenerator, SeatingGenerator>();
+            services.AddScoped<AuthorizedActionFilter>();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
         }

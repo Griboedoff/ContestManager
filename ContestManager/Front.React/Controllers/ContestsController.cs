@@ -8,7 +8,7 @@ using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Enums.DataBaseEnums;
 using Core.SheetsApi;
-using Core.Users.Sessions;
+using Front.React.Filters;
 using Front.React.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,30 +17,24 @@ namespace Front.React.Controllers
 {
     public class ContestsController : ControllerBase
     {
-        private readonly IUserCookieManager cookieManager;
         private readonly IContestManager contestManager;
         private readonly IAsyncRepository<Contest> contestsRepo;
         private readonly ISheetsApiClient sheetsApiClient;
 
         public ContestsController(
-            IUserCookieManager cookieManager,
             IContestManager contestManager,
             IAsyncRepository<Contest> contestsRepo,
             ISheetsApiClient sheetsApiClient)
         {
-            this.cookieManager = cookieManager;
             this.contestManager = contestManager;
             this.contestsRepo = contestsRepo;
             this.sheetsApiClient = sheetsApiClient;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel)
+        [Authorized(UserRole.Admin)]
+        public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel, User user)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             var contest = await contestManager.Create(contestModel, user.Id);
 
             return Json(contest);
@@ -74,11 +68,9 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("{id}/participate")]
-        public async Task<ObjectResult> Participate(Guid id, [FromBody] string verification = null)
+        [Authorized(UserRole.Participant)]
+        public async Task<ObjectResult> Participate(Guid id, User user, [FromBody] string verification = null)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Participant)
-                return StatusCode(400, "Неверная роль");
             if (string.IsNullOrEmpty(user.School))
                 return StatusCode(400, "Не заполнена школа");
             if (!user.Class.HasValue)
@@ -94,12 +86,9 @@ namespace Front.React.Controllers
         }
 
         [HttpPatch("{id}/updateParticipant")]
-        public async Task<ObjectResult> Update(Guid id, [FromBody] ParticipantData participantData)
+        [Authorized(UserRole.Participant, UserRole.Admin)]
+        public async Task<ObjectResult> Update(Guid id, [FromBody] ParticipantData participantData, User user)
         {
-            var user = await cookieManager.GetUser(Request);
-
-            if (user.Role != UserRole.Participant && user.Role != UserRole.Admin)
-                return StatusCode(400, "Неверная роль");
             if (user.Role == UserRole.Participant && user.Id != participantData.User.Id)
                 return StatusCode(400, "Нет прав");
             if (string.IsNullOrEmpty(participantData.User.School))
@@ -117,12 +106,9 @@ namespace Front.React.Controllers
         }
 
         [HttpPatch("{id}/options")]
+        [Authorized(UserRole.Admin)]
         public async Task<ActionResult> UpdateOptions(Guid id, [FromBody] ContestOptions options)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             await contestManager.UpdateOptions(id, options);
 
             return StatusCode(200);
@@ -145,26 +131,20 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/generateSeating")]
+        [Authorized(UserRole.Admin)]
         public async Task<StatusCodeResult> GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             await contestManager.GenerateSeating(id, auditoriums);
 
             return Ok();
         }
 
         [HttpPost("{id}/resultsTable")]
+        [Authorized(UserRole.Admin)]
         public async Task<ActionResult> CreateResultsTable(
             Guid id,
             [FromBody] Dictionary<Class, string> tasksDescriptions)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             await contestManager.AddResultsDescription(id, tasksDescriptions);
 
             var contest = await contestsRepo.GetByIdAsync(id);
@@ -181,12 +161,9 @@ namespace Front.React.Controllers
         }
 
         [HttpPost("{id}/fetchResults")]
+        [Authorized(UserRole.Admin)]
         public async Task<ActionResult> CreateResultsTable(Guid id)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             var contest = await contestsRepo.GetByIdAsync(id);
             var results = await sheetsApiClient.GetResults(contest.ResultsTableLink);
 
