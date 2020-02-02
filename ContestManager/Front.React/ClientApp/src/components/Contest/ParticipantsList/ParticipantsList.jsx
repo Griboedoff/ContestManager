@@ -34,7 +34,7 @@ const Participant = ({ participant, contest, withEdit }) => {
         </Row>
         <Row>
             <Col sm={6}>{user.city}, {user.school}</Col>
-            <Col sm={6}>Тренер: {user.coach}</Col>
+            {user.coach && <Col sm={6}>Тренер: {user.coach}</Col>}
         </Row>
 
         {edit && <EditParticipantModal

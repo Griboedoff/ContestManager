@@ -37,7 +37,7 @@ const EditParticipantModal = ({ isOpen, participant, contest, close, updateParti
                     {contest.type === 0 && <AvGroup row>
                         <Label sm={4}>Подтверждение</Label>
                         <Col sm={8}>
-                            <AvInput type="text" name="class" onChange={handleChange} value={verification} required />
+                            <AvInput type="text" name="verification" onChange={handleChange} value={verification} required />
                         </Col>
                     </AvGroup>}
                 </EditableUserData>

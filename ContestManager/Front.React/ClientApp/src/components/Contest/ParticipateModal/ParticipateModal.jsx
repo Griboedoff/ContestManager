@@ -35,7 +35,7 @@ export const ParticipateModal = ({ user, contest, close, setUser }) => {
                     {contest.type === 0 && <AvGroup row>
                         <Label sm={4}>Подтверждение</Label>
                         <Col sm={8}>
-                            <AvInput type="text" name="class" onChange={handleChange} value={verification} required />
+                            <AvInput type="text" name="verification" onChange={handleChange} value={verification} required />
                         </Col>
                         <Col>
                             <FormText>

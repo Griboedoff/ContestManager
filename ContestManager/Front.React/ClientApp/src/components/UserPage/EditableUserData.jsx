@@ -51,7 +51,7 @@ export default class EditableUserData extends React.Component {
     };
 
     validateSelect = (value, ctx, input, cb) => {
-        return value !== -1;
+        return value > -1;
     };
 
     render() {
