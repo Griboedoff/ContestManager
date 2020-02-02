@@ -50,7 +50,7 @@ namespace Core.Users.Sessions
             response.Cookies.Delete(UserInfo);
         }
 
-        private static bool TryGetUser(HttpRequest request, out User user)
+        public static bool TryGetUser(HttpRequest request, out User user)
         {
             user = null;
             if (!request.Cookies.TryGetValue(UserInfo, out var userInfoJson))
