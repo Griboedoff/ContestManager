@@ -9,6 +9,7 @@ namespace Core.Users.Sessions
     public interface IUserCookieManager
     {
         Task SetLoginCookie(HttpResponse response, User user);
+        Task<(ValidateUserSessionStatus status, Guid? sid)> GetSessionIdSafe(HttpRequest request);
         Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request);
         void Clear(HttpResponse response);
     }
@@ -47,21 +48,21 @@ namespace Core.Users.Sessions
             }
         }
 
+        public async Task<(ValidateUserSessionStatus status, Guid? sid)> GetSessionIdSafe(HttpRequest request)
+        {
+            var (status, _, sid) = await GetUserIdentifiersSafe(request);
+
+            return (status, sid);
+        }
+
         public async Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request)
         {
-            if (!TryGetCookie(request, Sid, out var sid))
-                return OnlyStatus(ValidateUserSessionStatus.BadSidCookie);
+            var (sessionStatus, userId, _) = await GetUserIdentifiersSafe(request);
 
-            if (!TryGetCookie(request, UserId, out var userId))
-                return OnlyStatus(ValidateUserSessionStatus.BadUserCookie);
+            if (sessionStatus != ValidateUserSessionStatus.Ok || !userId.HasValue)
+                return (sessionStatus, null);
 
-            if (!await sessionManager.ValidateSession(sid, userId))
-                return OnlyStatus(ValidateUserSessionStatus.InvalidSession);
-
-            return (ValidateUserSessionStatus.Ok, await userRepo.GetByIdAsync(userId));
-
-            (ValidateUserSessionStatus status, User user) OnlyStatus(ValidateUserSessionStatus status)
-                => (status, null);
+            return (ValidateUserSessionStatus.Ok, await userRepo.GetByIdAsync(userId.Value));
         }
 
         public void Clear(HttpResponse response)
@@ -74,6 +75,23 @@ namespace Core.Users.Sessions
         {
             value = default;
             return request.Cookies.TryGetValue(cookieName, out var valueStr) && Guid.TryParse(valueStr, out value);
+        }
+        
+        private async Task<(ValidateUserSessionStatus status, Guid? userId, Guid? sid)> GetUserIdentifiersSafe(HttpRequest request)
+        {
+            if (!TryGetCookie(request, Sid, out var sid))
+                return OnlyStatus(ValidateUserSessionStatus.BadSidCookie);
+
+            if (!TryGetCookie(request, UserId, out var userId))
+                return OnlyStatus(ValidateUserSessionStatus.BadUserCookie);
+
+            if (!await sessionManager.ValidateSession(sid, userId))
+                return OnlyStatus(ValidateUserSessionStatus.InvalidSession);
+
+            return (ValidateUserSessionStatus.Ok, userId, sid);
+
+            (ValidateUserSessionStatus status, Guid? userId, Guid? sid) OnlyStatus(ValidateUserSessionStatus status)
+                => (status, null, null);
         }
     }
 }

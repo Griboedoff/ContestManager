@@ -15,6 +15,7 @@ using Core.Users;
 using Core.Users.Login;
 using Core.Users.Registration;
 using Core.Users.Sessions;
+using Front.React.Middleware;
 using Front.React.Filters;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
@@ -26,6 +27,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Front.React
@@ -113,8 +115,11 @@ namespace Front.React
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLog4Net();
+            app.UseMiddleware<LogContextMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

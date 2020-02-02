@@ -32,6 +32,7 @@ namespace Front.React.Filters
                 logger.LogWarning($"Неавторизованный вызов {context.HttpContext.Request.Path} {status:G}");
                 cookieManager.Clear(context.HttpContext.Response);
                 context.Result = new UnauthorizedResult();
+
                 return;
             }
 

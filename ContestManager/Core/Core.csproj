@@ -3,6 +3,7 @@
     <ProjectGuid>{A4DD49D9-4F72-4FD1-BF14-E52FE2A9F9AD}</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
