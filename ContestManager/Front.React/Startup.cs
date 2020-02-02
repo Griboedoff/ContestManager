@@ -27,7 +27,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Front.React
@@ -115,9 +114,8 @@ namespace Front.React
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddLog4Net();
             app.UseMiddleware<LogContextMiddleware>();
 
             if (env.IsDevelopment())
