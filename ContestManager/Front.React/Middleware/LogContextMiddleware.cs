@@ -18,20 +18,20 @@ namespace Front.React.Middleware
             IUserCookieManager cookieManager)
         {
             var requestId = context.TraceIdentifier;
-            var userId = await GetUserId(cookieManager, context);
+            var sessionId = await GetSessionId(cookieManager, context);
 
-            using (logger.BeginScope($"[{requestId}] [{userId}]"))
+            using (logger.BeginScope($"[{requestId}] [{sessionId}]"))
             {
                 await next(context);
             }
         }
 
-        private static async Task<string> GetUserId(IUserCookieManager cookieManager, HttpContext context)
+        private static async Task<string> GetSessionId(IUserCookieManager cookieManager, HttpContext context)
         {
-            var (status, userId) = await cookieManager.GetUserIdSafe(context.Request);
+            var (status, sid) = await cookieManager.GetSessionIdSafe(context.Request);
 
-            return status == ValidateUserSessionStatus.Ok && userId.HasValue
-                ? $"{userId.Value:D}".Substring(0, 8)
+            return status == ValidateUserSessionStatus.Ok && sid.HasValue
+                ? $"{sid.Value:D}".Substring(0, 8)
                 : "Unknown";
         }
     }
