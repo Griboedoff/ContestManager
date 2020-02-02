@@ -110,6 +110,7 @@ namespace Front.React.Controllers
             user.School = newUser.School;
             user.Name = newUser.Name;
             user.Role = newUser.Role;
+            user.Sex = newUser.Sex;
             user.City = newUser.City;
             user.Coach = newUser.Coach;
             await usersRepo.UpdateAsync(user);
