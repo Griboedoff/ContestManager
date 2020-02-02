@@ -22,7 +22,9 @@ namespace Front.React.Middleware
 
             using (logger.BeginScope($"[{requestId}] [{sessionId}]"))
             {
+                logger.LogInformation($"Start controller call {context.Request.Path}");
                 await next(context);
+                logger.LogInformation($"Finish controller call {context.Request.Path}. Response status code {context.Response.StatusCode}");
             }
         }
 
@@ -32,7 +34,7 @@ namespace Front.React.Middleware
 
             return status == ValidateUserSessionStatus.Ok && sid.HasValue
                 ? $"{sid.Value:D}".Substring(0, 8)
-                : "Unknown";
+                : "No session";
         }
     }
 }
