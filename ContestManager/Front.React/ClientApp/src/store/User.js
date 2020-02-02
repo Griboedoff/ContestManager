@@ -1,10 +1,10 @@
 import { get, post } from '../Proxy';
 
 const fetching = 'FETCHING_USER';
-const stopFetching = 'STOP_FETCHING_USER';
+const noUser = 'NO_USER';
 const setUser = 'SET_USER';
 const logout = 'LOGOUT';
-const initialState = { user: null, fetching: false };
+const initialState = { user: null, fetching: false, checked: false };
 
 export const actionCreators = {
     setUser: user => dispatch => dispatch({ type: setUser, user }),
@@ -15,7 +15,7 @@ export const actionCreators = {
             const user = await resp.json();
             dispatch({ type: setUser, user });
         } else
-            dispatch({ type: stopFetching });
+            dispatch({ type: noUser });
     },
     logout: t => async dispatch => {
         await post('users/logout');
@@ -27,13 +27,13 @@ export const reducer = (state, action) => {
     state = state || initialState;
 
     if (action.type === setUser) {
-        return { ...state, user: action.user, fetching: false };
+        return { ...state, user: action.user, fetching: false, checked: true };
     }
     if (action.type === fetching) {
         return { ...state, fetching: true };
     }
-    if (action.type === stopFetching) {
-        return { ...state, fetching: false };
+    if (action.type === noUser) {
+        return { ...state, fetching: false, checked: true };
     }
     if (action.type === logout) {
         return { ...state, user: null };

@@ -10,7 +10,7 @@ export default function WithUser(WrappedComponent) {
         displayName = `WithUser(${getDisplayName(WrappedComponent)})`;
 
         async componentDidMount() {
-            if (!this.props.user)
+            if (!this.props.userChecked)
                 await this.props.setUserFromCookie();
         }
 
@@ -23,7 +23,7 @@ export default function WithUser(WrappedComponent) {
     }
 
     return connect(
-        state => ({ user: state.user.user, fetchingUser: state.user.fetching }),
+        state => ({ user: state.user.user, fetchingUser: state.user.fetching, userChecked: state.user.checked }),
         dispatch => bindActionCreators(actionCreators, dispatch)
     )(EnhancedComponent);
 }

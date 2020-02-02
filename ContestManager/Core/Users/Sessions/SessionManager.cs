@@ -30,13 +30,13 @@ namespace Core.Users.Sessions
         {
             var sid = Guid.NewGuid();
 
-            var session = await sessionRepo.AddAsync(
-                new Session
-                {
-                    Id = sid,
-                    UserId = user.Id,
-                    LastUse = DateTimeOffset.UtcNow,
-                });
+            var session = new Session
+            {
+                Id = sid,
+                UserId = user.Id,
+                LastUse = DateTimeOffset.UtcNow,
+            };
+            await sessionRepo.AddAsync(session);
             memoryCache.Set(sid, session, CacheTtl);
 
             return sid;
