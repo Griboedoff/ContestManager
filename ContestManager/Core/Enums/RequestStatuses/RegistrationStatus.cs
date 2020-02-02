@@ -6,5 +6,6 @@
         EmailAlreadyUsed = 1,
         RequestCreated = 2,
         VkIdAlreadyUsed = 3,
+        Error = 4,
     }
 }

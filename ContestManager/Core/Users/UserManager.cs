@@ -8,6 +8,7 @@ using Core.Enums.RequestStatuses;
 using Core.Mail;
 using Core.Mail.Models;
 using Core.Users.Registration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Core.Users
@@ -22,6 +23,7 @@ namespace Core.Users
 
     public class UserManager : IUserManager
     {
+        private readonly ILogger<UserManager> logger;
         private readonly IEmailManager emailManager;
         private readonly IAuthenticationAccountFactory authenticationAccountFactory;
         private readonly IInviteEmailFactory inviteEmailFactory;
@@ -31,6 +33,7 @@ namespace Core.Users
         private readonly IOptions<ConfigOptions> options;
 
         public UserManager(
+            ILogger<UserManager> logger,
             IEmailManager emailManager,
             IAuthenticationAccountFactory authenticationAccountFactory,
             IInviteEmailFactory inviteEmailFactory,
@@ -39,6 +42,7 @@ namespace Core.Users
             IAsyncRepository<AuthenticationAccount> authenticationAccountRepo,
             IOptions<ConfigOptions> options)
         {
+            this.logger = logger;
             this.emailManager = emailManager;
             this.authenticationAccountFactory = authenticationAccountFactory;
             this.inviteEmailFactory = inviteEmailFactory;
@@ -63,7 +67,8 @@ namespace Core.Users
             await authenticationAccountRepo.AddAsync(account);
 
             var request = inviteEmailFactory.CreateInvite(account, ConfirmationType.Registration);
-            SendEmail(request);
+            if (!TrySendEmail(request))
+                return RegistrationStatus.Error;
 
             await invitesRepo.AddAsync(request);
 
@@ -77,7 +82,8 @@ namespace Core.Users
                 return false;
 
             var request = inviteEmailFactory.CreateRestorePassword(account, ConfirmationType.Registration);
-            SendEmail(request);
+            if (!TrySendEmail(request))
+                return false;
 
             await invitesRepo.AddAsync(request);
 
@@ -112,13 +118,24 @@ namespace Core.Users
         private async Task<bool> IsServiceIdAlreadyUsed(string serviceId)
             => await authenticationAccountRepo.AnyAsync(r => r.ServiceId == serviceId);
 
-        private void SendEmail(Invite request)
+        private bool TrySendEmail(Invite request)
         {
             var mail = request.PasswordRestore
                 ? (EmailBase) new PasswordRestoreEmail(request.Email, request.ConfirmationCode, options)
                 : new RegistrationConfirmEmail(request.Email, request.ConfirmationCode, options);
 
-            emailManager.Send(mail);
+            try
+            {
+                emailManager.Send(mail);
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(
+                    e,
+                    $"Не удалось отправить письмо {(request.PasswordRestore ? "восстановления пароля" : "подтверждения регистрации")} на адрес {request.Email}");
+                return false;
+            }
         }
 
         private static User Create(string userName, UserRole role)

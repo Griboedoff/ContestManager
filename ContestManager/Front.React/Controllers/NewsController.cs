@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Core.Contests;
 using Core.Contests.News;
 using Core.Enums.DataBaseEnums;
-using Core.Users.Sessions;
+using Front.React.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Front.React.Controllers
@@ -12,25 +12,17 @@ namespace Front.React.Controllers
     {
         private readonly IContestManager contestManager;
         private readonly INewsManager newsManager;
-        private readonly IUserCookieManager cookieManager;
 
-        public NewsController(
-            IContestManager contestManager,
-            INewsManager newsManager,
-            IUserCookieManager cookieManager)
+        public NewsController(IContestManager contestManager, INewsManager newsManager)
         {
             this.contestManager = contestManager;
             this.newsManager = newsManager;
-            this.cookieManager = cookieManager;
         }
 
         [HttpPost]
+        [Authorized(UserRole.Admin)]
         public async Task<ActionResult> Add([FromBody] CreateNewsModel createNewsModel)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             if (!await contestManager.Exists(createNewsModel.ContestId))
                 return NotFound();
 
@@ -38,12 +30,9 @@ namespace Front.React.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorized(UserRole.Admin)]
         public async Task<ActionResult> Add(Guid id, [FromBody] CreateNewsModel createNewsModel)
         {
-            var user = await cookieManager.GetUser(Request);
-            if (user.Role != UserRole.Admin)
-                return StatusCode(403);
-
             if (!await newsManager.Exists(id))
                 return NotFound();
 

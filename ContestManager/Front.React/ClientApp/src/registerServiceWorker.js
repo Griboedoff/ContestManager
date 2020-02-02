@@ -43,7 +43,7 @@ export default function register() {
     }
 }
 
-const WORKBOX_CACHE_KEY = `workbox-precache-https://${window.location.hostname}/`;
+const WORKBOX_CACHE_KEY = `workbox-precache-v2-https://${window.location.hostname}/`;
 
 const clearFromCache = async (requests) => {
     if ('caches' in window.self) {

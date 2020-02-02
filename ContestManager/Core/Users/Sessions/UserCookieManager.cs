@@ -2,83 +2,89 @@
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
-using Core.Enums.DataBaseEnums;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace Core.Users.Sessions
 {
     public interface IUserCookieManager
     {
-        void SetLoginCookie(HttpResponse response, User user);
-        Task<User> GetUser(HttpRequest request);
+        Task SetLoginCookie(HttpResponse response, User user);
+        Task<(ValidateUserSessionStatus status, Guid? userId)> GetUserIdSafe(HttpRequest request);
+        Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request);
         void Clear(HttpResponse response);
     }
 
     public class UserCookieManager : IUserCookieManager
     {
         private readonly IAsyncRepository<User> userRepo;
+        private readonly ISessionManager sessionManager;
         private const string Sid = "sid";
-        private const string UserInfo = "User";
+        private const string UserId = "userId";
 
-        public UserCookieManager(IAsyncRepository<User> userRepo) => this.userRepo = userRepo;
-
-        public void SetLoginCookie(HttpResponse response, User user)
+        public UserCookieManager(IAsyncRepository<User> userRepo, ISessionManager sessionManager)
         {
-            var sid = SessionManager.CreateSession(user.Name);
-
-            response.Cookies.Append(
-                Sid,
-                sid,
-                new CookieOptions { Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)) });
-            response.Cookies.Append(UserInfo, CreateUserInfo(user));
+            this.userRepo = userRepo;
+            this.sessionManager = sessionManager;
         }
 
-        public async Task<User> GetUser(HttpRequest request)
+        public async Task SetLoginCookie(HttpResponse response, User user)
         {
-            if (!request.Cookies.TryGetValue(Sid, out var sid) ||
-                !TryGetUser(request, out var user) ||
-                !SessionManager.ValidateSession(user.Name, sid))
-                throw new UnauthorizedAccessException();
+            var sid = await sessionManager.CreateSession(user);
 
-            return await userRepo.GetByIdAsync(user.Id);
+            AddCookie(Sid, sid);
+            AddCookie(UserId, user.Id);
+
+            void AddCookie(string name, Guid value)
+            {
+                response.Cookies.Append(
+                    name,
+                    value.ToString(),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(1)),
+                        HttpOnly = true,
+                        Secure = Constants.IsSecureCookie
+                    });
+            }
+        }
+
+        public async Task<(ValidateUserSessionStatus status, Guid? userId)> GetUserIdSafe(HttpRequest request)
+        {
+            if (!TryGetCookie(request, Sid, out var sid))
+                return OnlyStatus(ValidateUserSessionStatus.BadSidCookie);
+
+            if (!TryGetCookie(request, UserId, out var userId))
+                return OnlyStatus(ValidateUserSessionStatus.BadUserCookie);
+
+            if (!await sessionManager.ValidateSession(sid, userId))
+                return OnlyStatus(ValidateUserSessionStatus.InvalidSession);
+
+            return (ValidateUserSessionStatus.Ok, userId);
+
+            (ValidateUserSessionStatus status, Guid? userId) OnlyStatus(ValidateUserSessionStatus status)
+                => (status, null);
+        }
+
+        public async Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request)
+        {
+            var (sessionStatus, userId) = await GetUserIdSafe(request);
+
+            if (sessionStatus != ValidateUserSessionStatus.Ok || !userId.HasValue)
+                return (sessionStatus, null);
+
+            return (ValidateUserSessionStatus.Ok, await userRepo.GetByIdAsync(userId.Value));
         }
 
         public void Clear(HttpResponse response)
         {
             response.Cookies.Delete(Sid);
-            response.Cookies.Delete(UserInfo);
+            response.Cookies.Delete(UserId);
         }
 
-        public static bool TryGetUser(HttpRequest request, out User user)
+        private static bool TryGetCookie(HttpRequest request, string cookieName, out Guid value)
         {
-            user = null;
-            if (!request.Cookies.TryGetValue(UserInfo, out var userInfoJson))
-                return false;
-
-            var userInfo = JsonConvert.DeserializeObject<UserInfo>(userInfoJson);
-            user = new User
-            {
-                Id = userInfo.Id,
-                Name = userInfo.Name,
-                Role = userInfo.Role,
-            };
-            return true;
+            value = default;
+            return request.Cookies.TryGetValue(cookieName, out var valueStr) && Guid.TryParse(valueStr, out value);
         }
-
-        private static string CreateUserInfo(User user) => JsonConvert.SerializeObject(
-            new UserInfo
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Role = user.Role,
-            });
-    }
-
-    internal class UserInfo
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public UserRole Role { get; set; }
     }
 }

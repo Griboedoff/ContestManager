@@ -1,60 +1,62 @@
 using System;
-using System.Collections.Concurrent;
-using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
+using Core.DataBase;
+using Core.DataBaseEntities;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Core.Users.Sessions
 {
-    public static class SessionManager
+    public interface ISessionManager
     {
-        //todo: use redis?
-        private static readonly ConcurrentDictionary<string, byte[]> Store = new ConcurrentDictionary<string, byte[]>();
-        private static readonly RNGCryptoServiceProvider Rng;
+        Task<Guid> CreateSession(User user);
+        Task<bool> ValidateSession(Guid sid, Guid userId);
+    }
 
-        static SessionManager()
+    public class SessionManager : ISessionManager
+    {
+        private static readonly TimeSpan SessionTtl = TimeSpan.FromDays(1);
+        private static readonly TimeSpan CacheTtl = TimeSpan.FromHours(1);
+
+        private readonly IAsyncRepository<Session> sessionRepo;
+        private readonly IMemoryCache memoryCache;
+
+        public SessionManager(IAsyncRepository<Session> sessionRepo, IMemoryCache memoryCache)
         {
-            Rng = new RNGCryptoServiceProvider();
+            this.sessionRepo = sessionRepo;
+            this.memoryCache = memoryCache;
         }
 
-        public static string CreateSession(string login)
+        public async Task<Guid> CreateSession(User user)
         {
-            var salt = new byte[10];
-            Rng.GetBytes(salt);
-            var loginBytes = Encoding.UTF8.GetBytes(login);
-            var loginWithSalt = ConcatArrays(loginBytes, salt);
-            using (var sha512 = SHA512.Create())
-            {
-                Store.AddOrUpdate(login, salt, (s, bytes) => salt);
+            var sid = Guid.NewGuid();
 
-                return Convert.ToBase64String(sha512.ComputeHash(loginWithSalt));
-            }
+            var session = await sessionRepo.AddAsync(
+                new Session
+                {
+                    Id = sid,
+                    UserId = user.Id,
+                    LastUse = DateTimeOffset.UtcNow,
+                });
+            memoryCache.Set(sid, session, CacheTtl);
+
+            return sid;
         }
 
-        public static bool ValidateSession(string login, string sid)
+        public async Task<bool> ValidateSession(Guid sid, Guid userId)
         {
-            if (login == null || sid == null)
+            if (memoryCache.TryGetValue<Session>(sid, out var session))
+                return session.UserId == userId;
+
+            session = await sessionRepo.FirstOrDefaultAsync(s => s.Id == sid);
+            if (session == null ||
+                session.LastUse.Add(SessionTtl).ToUniversalTime() < DateTimeOffset.UtcNow ||
+                session.UserId != userId)
                 return false;
 
-            if (!Store.TryGetValue(login, out var salt))
-                return false;
-
-            var loginBytes = Encoding.UTF8.GetBytes(login);
-            var loginWithSalt = ConcatArrays(loginBytes, salt);
-            using (var sha512 = SHA512.Create())
-            {
-                var computedSid = Convert.ToBase64String(sha512.ComputeHash(loginWithSalt));
-
-                return sid == computedSid;
-            }
-        }
-
-        private static T[] ConcatArrays<T>(T[] f, T[] s)
-        {
-            var r = new T[f.Length + s.Length];
-            f.CopyTo(r, 0);
-            s.CopyTo(r, f.Length);
-
-            return r;
+            session.LastUse = DateTimeOffset.UtcNow;
+            await sessionRepo.UpdateAsync(session);
+            memoryCache.Set(sid, session, CacheTtl);
+            return true;
         }
     }
 }
