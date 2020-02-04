@@ -8,7 +8,7 @@ namespace Core.Users.Sessions
 {
     public interface IUserCookieManager
     {
-        Task SetLoginCookie(HttpResponse response, User user);
+        Task<Guid> SetLoginCookie(HttpResponse response, User user);
         Task<(ValidateUserSessionStatus status, Guid? sid)> GetSessionIdSafe(HttpRequest request);
         Task<(ValidateUserSessionStatus status, User user)> GetUserSafe(HttpRequest request);
         void Clear(HttpResponse response);
@@ -27,12 +27,14 @@ namespace Core.Users.Sessions
             this.sessionManager = sessionManager;
         }
 
-        public async Task SetLoginCookie(HttpResponse response, User user)
+        public async Task<Guid> SetLoginCookie(HttpResponse response, User user)
         {
             var sid = await sessionManager.CreateSession(user);
 
             AddCookie(Sid, sid);
             AddCookie(UserId, user.Id);
+
+            return sid;
 
             void AddCookie(string name, Guid value)
             {
@@ -76,7 +78,7 @@ namespace Core.Users.Sessions
             value = default;
             return request.Cookies.TryGetValue(cookieName, out var valueStr) && Guid.TryParse(valueStr, out value);
         }
-        
+
         private async Task<(ValidateUserSessionStatus status, Guid? userId, Guid? sid)> GetUserIdentifiersSafe(HttpRequest request)
         {
             if (!TryGetCookie(request, Sid, out var sid))

@@ -58,7 +58,6 @@ namespace Core.Users.Login
                 throw new AuthenticationFailedException();
             }
 
-            logger.LogInformation($"Успешный вход по логин-паролю {loginInfo.Email}.");
             return await usersRepo.GetByIdAsync(account.UserId);
         }
 
@@ -84,7 +83,6 @@ namespace Core.Users.Login
                 throw new AuthenticationFailedException();
             }
 
-            logger.LogInformation($"Успешный вход по VK {loginInfo.Mid}.");
             return await usersRepo.GetByIdAsync(account.UserId);
         }
     }

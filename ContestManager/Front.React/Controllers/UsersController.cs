@@ -8,11 +8,13 @@ using Core.Users.Registration;
 using Core.Users.Sessions;
 using Front.React.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Front.React.Controllers
 {
     public class UsersController : ControllerBase
     {
+        private readonly ILogger<UsersController> logger;
         private readonly IUserCookieManager userCookieManager;
         private readonly IAuthenticationManager authenticationManager;
         private readonly IUserManager userManager;
@@ -21,6 +23,7 @@ namespace Front.React.Controllers
         private readonly IAsyncRepository<Invite> invitesRepo;
 
         public UsersController(
+            ILogger<UsersController> logger,
             IUserCookieManager userCookieManager,
             IAuthenticationManager authenticationManager,
             IUserManager userManager,
@@ -29,6 +32,7 @@ namespace Front.React.Controllers
             IAsyncRepository<Invite> invitesRepo
         )
         {
+            this.logger = logger;
             this.userCookieManager = userCookieManager;
             this.authenticationManager = authenticationManager;
             this.userManager = userManager;
@@ -43,8 +47,9 @@ namespace Front.React.Controllers
             try
             {
                 var user = await authenticationManager.Authenticate(emailLoginInfo);
-                await userCookieManager.SetLoginCookie(Response, user);
+                var sid = await userCookieManager.SetLoginCookie(Response, user);
 
+                logger.LogInformation($"Успешный вход по логин-паролю {emailLoginInfo.Email}. sessionId {sid}");
                 return Json(user);
             }
             catch (AuthenticationFailedException)
@@ -59,8 +64,9 @@ namespace Front.React.Controllers
             try
             {
                 var user = await authenticationManager.Authenticate(vkLoginInfo);
-                await userCookieManager.SetLoginCookie(Response, user);
+                var sid = await userCookieManager.SetLoginCookie(Response, user);
 
+                logger.LogInformation($"Успешный вход по VK {vkLoginInfo.Mid}. sessionId {sid}");
                 return Json(user);
             }
             catch (AuthenticationFailedException)
