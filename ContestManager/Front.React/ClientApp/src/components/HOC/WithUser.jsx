@@ -10,8 +10,7 @@ export default function WithUser(WrappedComponent) {
         displayName = `WithUser(${getDisplayName(WrappedComponent)})`;
 
         async componentDidMount() {
-            if (!this.props.userChecked)
-                await this.props.setUserFromCookie();
+            await this.props.checkUserSession();
         }
 
         render() {

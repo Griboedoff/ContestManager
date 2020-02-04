@@ -5,9 +5,12 @@ export const NO_USER = 'NO_USER';
 export const SET_USER = 'SET_USER';
 export const LOGOUT = 'LOGOUT';
 
-export const actionCreators = {
-    setUser: user => dispatch => dispatch({ type: SET_USER, user }),
-    setUserFromCookie: t => async dispatch => {
+const setUser = user => dispatch => dispatch({ type: SET_USER, user });
+
+const needCheckSession = state => !state.checked && !state.fetching;
+
+const checkUserSession = () => async (dispatch, getState) => {
+    if (needCheckSession(getState().user)) {
         dispatch({ type: FETCHING_USER });
         const resp = await get('users/check');
         if (resp.ok) {
@@ -15,9 +18,16 @@ export const actionCreators = {
             dispatch({ type: SET_USER, user });
         } else
             dispatch({ type: NO_USER });
-    },
-    logout: t => async dispatch => {
-        await post('users/logout');
-        dispatch({ type: LOGOUT });
     }
+};
+
+const logout = () => async dispatch => {
+    await post('users/logout');
+    dispatch({ type: LOGOUT });
+};
+
+export const actionCreators = {
+    setUser,
+    checkUserSession,
+    logout
 };
