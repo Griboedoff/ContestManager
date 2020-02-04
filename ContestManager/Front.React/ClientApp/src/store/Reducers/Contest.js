@@ -3,11 +3,11 @@ import {
     FETCH_CONTEST_FAILURE,
     FETCH_CONTEST_SUCCESS,
     FETCH_CONTESTS_SUCCESS
-} from './Actions/ContestActions';
+} from '../Actions/ContestActions';
 
 const initialState = { contests: [], contest: null, fetching: false };
 
-export const reducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
     switch (action.type) {
         case FETCH_CONTEST_BEGIN:
             return { ...state, fetching: true, error: null };

@@ -3,11 +3,11 @@ import {
     FETCH_PARTICIPANTS_FAILURE,
     FETCH_PARTICIPANTS_SUCCESS,
     UPDATE_PARTICIPANT
-} from './Actions/ParticipantActions';
+} from '../Actions/ParticipantActions';
 
 const initialState = { list: [], fetching: false };
 
-export const reducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
     switch (action.type) {
         case FETCH_PARTICIPANTS_BEGIN:
             return { ...state, fetching: true };
