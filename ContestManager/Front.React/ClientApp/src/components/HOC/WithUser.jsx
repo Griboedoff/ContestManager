@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actionCreators } from '../../store/User';
+import { userActionsCreators } from '../../store/Actions';
 import { getDisplayName } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import React from 'react';
@@ -24,6 +24,6 @@ export default function WithUser(WrappedComponent) {
 
     return connect(
         state => ({ user: state.user.user, fetchingUser: state.user.fetching, userChecked: state.user.checked }),
-        dispatch => bindActionCreators(actionCreators, dispatch)
+        dispatch => bindActionCreators(userActionsCreators, dispatch)
     )(EnhancedComponent);
 }

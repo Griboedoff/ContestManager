@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actionCreators } from '../../store/Contest';
+import { contestActionsCreators } from '../../store/Actions';
 import { getDisplayName } from '../../utils';
 
 export default function WithContests(WrappedComponent) {
@@ -22,6 +22,6 @@ export default function WithContests(WrappedComponent) {
 
     return connect(
         state => state.contests,
-        dispatch => bindActionCreators(actionCreators, dispatch)
+        dispatch => bindActionCreators(contestActionsCreators, dispatch)
     )(EnhancedComponent);
 }

@@ -1,15 +1,6 @@
-const FETCH_NEWS_BEGIN = 'FETCH_NEWS_BEGIN';
-const FETCH_NEWS_SUCCESS = 'FETCH_NEWS_SUCCESS';
-const FETCH_NEWS_FAILURE = 'FETCH_NEWS_FAILURE';
-const initialState = { news: {}, fetching: false };
+import { FETCH_NEWS_BEGIN, FETCH_NEWS_FAILURE, FETCH_NEWS_SUCCESS } from './Actions/NewsActions';
 
-export const actionCreators = {
-    storeNews: (news, contestId) => dispatch => {
-        dispatch({ type: FETCH_NEWS_SUCCESS, news, contestId });
-    },
-    startFetchingNews: t => dispatch => dispatch({ type: FETCH_NEWS_BEGIN }),
-    fetchingError: t => dispatch => dispatch({ type: FETCH_NEWS_FAILURE })
-};
+const initialState = { news: {}, fetching: false };
 
 export const reducer = (state = initialState, action) => {
     switch (action.type) {

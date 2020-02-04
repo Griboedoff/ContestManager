@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actionCreators } from '../../store/Contest';
+import { contestActionsCreators } from '../../store/Actions';
 
 export default function WithContest(WrappedComponent) {
     return connect(
         state => ({ ...state.contests, fetchingContests: state.contests.fetching }),
-        dispatch => bindActionCreators(actionCreators, dispatch)
+        dispatch => bindActionCreators(contestActionsCreators, dispatch)
     )(WrappedComponent);
 }

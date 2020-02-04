@@ -1,43 +1,18 @@
-import { get, post } from '../Proxy';
+import { FETCHING_USER, LOGOUT, NO_USER, SET_USER } from './Actions/UserActions';
 
-const fetching = 'FETCHING_USER';
-const noUser = 'NO_USER';
-const setUser = 'SET_USER';
-const logout = 'LOGOUT';
 const initialState = { user: null, fetching: false, checked: false };
 
-export const actionCreators = {
-    setUser: user => dispatch => dispatch({ type: setUser, user }),
-    setUserFromCookie: t => async dispatch => {
-        dispatch({ type: fetching });
-        const resp = await get('users/check');
-        if (resp.ok) {
-            const user = await resp.json();
-            dispatch({ type: setUser, user });
-        } else
-            dispatch({ type: noUser });
-    },
-    logout: t => async dispatch => {
-        await post('users/logout');
-        dispatch({ type: logout });
+export const reducer = (state = initialState, action) => {
+    switch (action.type) {
+        case SET_USER:
+            return { ...state, user: action.user, fetching: false, checked: true };
+        case FETCHING_USER:
+            return { ...state, fetching: true };
+        case NO_USER:
+            return { ...state, fetching: false, checked: true };
+        case LOGOUT:
+            return { ...state, user: null };
+        default:
+            return state;
     }
-};
-
-export const reducer = (state, action) => {
-    state = state || initialState;
-
-    if (action.type === setUser) {
-        return { ...state, user: action.user, fetching: false, checked: true };
-    }
-    if (action.type === fetching) {
-        return { ...state, fetching: true };
-    }
-    if (action.type === noUser) {
-        return { ...state, fetching: false, checked: true };
-    }
-    if (action.type === logout) {
-        return { ...state, user: null };
-    }
-
-    return state;
 };
