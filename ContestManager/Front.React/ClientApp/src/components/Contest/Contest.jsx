@@ -4,7 +4,6 @@ import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstra
 import { ContestOptions } from '../../Enums/ContestOptions';
 // import { ContestType } from '../../Enums/ContestType';
 import { UserRole } from '../../Enums/UserRole';
-import { get } from '../../Proxy';
 import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
@@ -53,7 +52,7 @@ class Contest extends React.Component {
 
     async componentDidMount() {
         await this.fetchContest();
-        await this.fetchParticipants();
+        await this.props.fetchParticipants(this.contestId);
     }
 
     fetching() {
@@ -182,18 +181,6 @@ class Contest extends React.Component {
             </ListGroup>
         </>;
     };
-
-    async fetchParticipants() {
-        this.props.startFetchingParticipants();
-        await get(`contests/${this.contestId}/participants`)
-            .then(resp => {
-                if (resp.ok)
-                    return resp.json();
-
-                throw Error();
-            }).then(participants => this.props.storeParticipants(participants))
-            .catch(_ => this.props.fetchingError());
-    }
 
     async fetchContest() {
         if (this.props.contest?.id === this.contestId) {
