@@ -25,6 +25,7 @@ namespace Core.DataBaseEntities
         }
 
         [JsonIgnore]
+        [Column(TypeName = "json")]
         public string SerializedUserSnapshot { get; set; }
 
         [NotMapped]
@@ -47,7 +48,7 @@ namespace Core.DataBaseEntities
             ContestId = ContestId,
             UserId = UserId,
             SerializedResults = SerializedResults,
-            SerializedUserSnapshot = SerializedUserSnapshot,
+            UserSnapshot = UserSnapshot,
             Verification = Verification,
         };
     }
