@@ -1,8 +1,9 @@
 import React from 'react';
 import { Jumbotron, Button } from 'reactstrap';
 import { post } from '../../../Proxy';
+import { WithSetError } from '../../HOC/WithSetError';
 
-export const QualificationGreet = ({ contestId, setError, onStart }) => {
+const QualificationGreet = ({ contestId, onStart, setRequestError }) => {
     return (
         <div>
             <Jumbotron>
@@ -22,7 +23,7 @@ export const QualificationGreet = ({ contestId, setError, onStart }) => {
                     <Button color="success" onClick={async () => {
                         const resp = await post(`qualification/start?contestId=${contestId}`);
                         if (!resp.ok)
-                            setError('Ошибка при старте отборочного тура');
+                            setRequestError(resp, 'Вы не являетесь участником этого соревнования');
                         else
                             onStart();
                     }}>Начать решать</Button>
@@ -32,3 +33,6 @@ export const QualificationGreet = ({ contestId, setError, onStart }) => {
     );
 };
 
+QualificationGreet.displayName = 'QualificationGreet';
+
+export default WithSetError(QualificationGreet);

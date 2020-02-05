@@ -1,1 +1,1 @@
-export { QualificationGreet } from './QualificationGreet';
+export { default as QualificationGreet } from './QualificationGreet';
