@@ -30,7 +30,10 @@ export class QualificationTasksViewWrapper extends React.Component {
             const data = await resp.json();
             this.setState({ ...data });
         } else {
-            this.setState({ error: true });
+            if (resp.status === 403)
+                this.setState({ error: 'Вы не являетесь участником олимпиады' });
+            else
+                this.setState({ error: 'Не получилось загрузить задачи' });
         }
         this.setState({ fetching: false });
     }
@@ -88,7 +91,10 @@ class QualificationTasksView extends React.Component {
             if (resp.ok) {
                 this.setState({ saved: true });
             } else {
-                this.setState({ error: 'Не удалось сохранить ответы' });
+                if (resp.status === 403)
+                    this.setState({ error: 'Не удалось сохранить ответы' });
+                else
+                    this.setState({ error: 'Соревнование закончено' });
             }
             this.setState({ saving: false });
         }

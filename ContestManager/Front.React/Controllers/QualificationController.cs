@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
+using Core.Enums;
 using Core.Enums.DataBaseEnums;
 using Front.React.Filters;
 using Front.React.Models;
@@ -77,6 +78,10 @@ namespace Front.React.Controllers
         [Authorized(UserRole.Participant)]
         public async Task<ActionResult> GetQualificationState(Guid contestId, User user)
         {
+            var contest = await contestRepo.GetByIdAsync(contestId);
+            if (!contest.Options.HasFlag(ContestOptions.QualificationOpen))
+                return StatusCode(400, "contest closed");
+
             var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
             if (participant == null)
                 return StatusCode(403, "No participant for contest");
@@ -85,7 +90,6 @@ namespace Front.React.Controllers
             if (participation == null)
                 return StatusCode(400, "not started");
 
-            var contest = await contestRepo.GetByIdAsync(participant.ContestId);
             var tasks = await GetTasks(participant);
             return Json(
                 new QualificationState
@@ -101,6 +105,10 @@ namespace Front.React.Controllers
         [Authorized(UserRole.Participant)]
         public async Task<ActionResult> Save(Guid contestId, User user, [FromBody] string[] answers)
         {
+            var contest = await contestRepo.GetByIdAsync(contestId);
+            if (!contest.Options.HasFlag(ContestOptions.QualificationOpen))
+                return StatusCode(403, "contest closed");
+
             var participant = await participantRepo.FirstOrDefaultAsync(p => p.UserId == user.Id && p.ContestId == contestId);
             if (participant == null)
                 return StatusCode(403, "No participant for contest");
