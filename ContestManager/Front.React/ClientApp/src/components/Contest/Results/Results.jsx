@@ -2,13 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Container, Nav, NavItem, NavLink, Table } from 'reactstrap';
 import { Class } from '../../../Enums/Class';
+import sortBy from 'lodash/sortBy';
 
-const Results = ({ match, participants, ...props }) => {
+const Results = ({ match, participants }) => {
     const classFromUrl = parseInt(match.params.class, 10);
     const defaultClass = Object.values(Class).includes(classFromUrl) ? classFromUrl : Class.Fifth;
     const [currentClass, setCurrentClass] = useState(defaultClass);
     const tasksCount = useMemo(() => Math.max(...participants.map(p => p.results.length)), [participants]);
-    const filteredParticipants = useMemo(() => participants.filter(p => p.userSnapshot.class === currentClass), [participants, currentClass]);
+    const filteredParticipants = useMemo(() => sortBy(
+            participants.filter(p => p.userSnapshot.class === currentClass),
+            [p => p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
+        ),
+        [participants, currentClass]);
 
     return <Container>
         <h4 className="mt-3">Результаты</h4>
