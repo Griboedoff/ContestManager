@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { Container, Nav, NavItem, NavLink, Table } from 'reactstrap';
+import { Alert, Container, Nav, NavItem, NavLink, Table } from 'reactstrap';
 import { Class } from '../../../Enums/Class';
 import sortBy from 'lodash/sortBy';
 
@@ -10,10 +10,12 @@ const Results = ({ match, participants }) => {
     const [currentClass, setCurrentClass] = useState(defaultClass);
     const tasksCount = useMemo(() => Math.max(...participants.map(p => p.results.length)), [participants]);
     const filteredParticipants = useMemo(() => sortBy(
-            participants.filter(p => p.userSnapshot.class === currentClass),
-            [p => -p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
+        participants.filter(p => p.userSnapshot.class === currentClass),
+        [p => -p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
         ),
         [participants, currentClass]);
+
+    const hasParticipants = filteredParticipants.length !== 0;
 
     return <Container>
         <h4 className="mt-3">Результаты</h4>
@@ -32,7 +34,7 @@ const Results = ({ match, participants }) => {
             })}
         </Nav>
 
-        <Table bordered size="sm">
+        {hasParticipants ? <Table bordered size="sm">
             <thead>
             <tr>
                 <th rowSpan="2">Участник</th>
@@ -58,7 +60,8 @@ const Results = ({ match, participants }) => {
                 </tr>;
             })}
             </tbody>
-        </Table>
+        </Table>:
+        <Alert color="secondary">Нет участников в {currentClass} классе</Alert>}
     </Container>;
 };
 

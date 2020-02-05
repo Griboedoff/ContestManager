@@ -11,8 +11,10 @@ const Options = ({ contest }) => {
     const [fetching, setFetching] = useState(false);
 
     const onChange = async (value, flag) => {
-        await setOptions(triggerFlag(value, flag));
-        await patch(`contests/${contest.id}/options`, this.state.options);
+        const newValue = triggerFlag(value, flag);
+        setOptions(newValue);
+
+        await patch(`contests/${contest.id}/options`, newValue);
     };
 
     const refreshResults = async () => {
