@@ -13,7 +13,6 @@ namespace Core.Contests
     {
         Task<Contest> Create(CreateContestModel title, Guid ownerId);
         Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId);
-        Task<NewsModel> AddNews(Guid contestId, string content);
         Task<bool> Exists(Guid contestId);
         Task<Participant> AddOrUpdateParticipant(Guid contestId, User user, string verification);
         Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId);
@@ -21,6 +20,7 @@ namespace Core.Contests
         Task GenerateSeating(Guid contestId, Auditorium[] auditoriums);
         Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription);
         Task AddResults(Guid contestId, Dictionary<string, List<string>> results);
+        Task CalculateQualificationResults(Guid contestId);
     }
 
     public class ContestManager : IContestManager
@@ -28,6 +28,8 @@ namespace Core.Contests
         private readonly IAsyncRepository<Contest> contestsRepo;
         private readonly IAsyncRepository<NewsModel> newsRepo;
         private readonly IAsyncRepository<Participant> participantsRepo;
+        private readonly IAsyncRepository<QualificationParticipation> qualificationParticipationRepo;
+        private readonly IAsyncRepository<QualificationTask> qualificationTaskRepo;
         private readonly Context context;
         private readonly ISeatingGenerator seatingGenerator;
 
@@ -35,12 +37,16 @@ namespace Core.Contests
             IAsyncRepository<Contest> contestsRepo,
             IAsyncRepository<NewsModel> newsRepo,
             IAsyncRepository<Participant> participantsRepo,
+            IAsyncRepository<QualificationParticipation> qualificationParticipationRepo,
+            IAsyncRepository<QualificationTask> qualificationTaskRepo,
             Context context,
             ISeatingGenerator seatingGenerator)
         {
             this.contestsRepo = contestsRepo;
             this.newsRepo = newsRepo;
             this.participantsRepo = participantsRepo;
+            this.qualificationParticipationRepo = qualificationParticipationRepo;
+            this.qualificationTaskRepo = qualificationTaskRepo;
             this.context = context;
             this.seatingGenerator = seatingGenerator;
         }
@@ -62,18 +68,6 @@ namespace Core.Contests
 
         public async Task<IReadOnlyList<NewsModel>> GetNews(Guid contestId)
             => await newsRepo.WhereAsync(n => n.ContestId == contestId);
-
-        public async Task<NewsModel> AddNews(Guid contestId, string content)
-        {
-            var news = new NewsModel
-            {
-                ContestId = contestId,
-                CreationDate = DateTime.Now,
-                Content = content,
-            };
-
-            return await newsRepo.AddAsync(news);
-        }
 
         public async Task<bool> Exists(Guid contestId)
         {
@@ -171,6 +165,36 @@ namespace Core.Contests
 
                 await participantsRepo.UpdateAsync(participant);
             }
+        }
+
+        public async Task CalculateQualificationResults(Guid contestId)
+        {
+            var correctAnswers = await GetCorrectAnswers(contestId);
+            var participations = await qualificationParticipationRepo.WhereAsync(p => p.ContestId == contestId);
+
+            foreach (var participation in participations)
+            {
+                var participant = await participantsRepo.GetByIdAsync(participation.ParticipantId);
+
+                participant.Results = correctAnswers[participant.UserSnapshot.Class.Value]
+                    .Select((t, i) => t == participation.Answers[i] ? "1" : "0")
+                    .ToArray();
+
+                await participantsRepo.UpdateAsync(participant);
+            }
+        }
+
+        private async Task<Dictionary<Class, string[]>> GetCorrectAnswers(Guid contestId)
+        {
+            var tasks = await qualificationTaskRepo.WhereAsync(t => t.ContestId == contestId);
+            var result = new Dictionary<Class, string[]>();
+            foreach (var c in Enum.GetValues(typeof(Class)).Cast<Class>())
+                result[c] = tasks.Where(t => t.Classes.Contains(c))
+                    .OrderBy(t => t.Number)
+                    .Select(t => t.Answer)
+                    .ToArray();
+
+            return result;
         }
 
         private async Task SealParticipants(Contest contest)

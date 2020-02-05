@@ -11,7 +11,7 @@ const Results = ({ match, participants }) => {
     const tasksCount = useMemo(() => Math.max(...participants.map(p => p.results.length)), [participants]);
     const filteredParticipants = useMemo(() => sortBy(
             participants.filter(p => p.userSnapshot.class === currentClass),
-            [p => p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
+            [p => -p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
         ),
         [participants, currentClass]);
 
@@ -53,14 +53,13 @@ const Results = ({ match, participants }) => {
                     <td>{user.name}</td>
                     <td>{`${user.school} (${user.city})`}</td>
                     {p.results.map((r, i) => <td key={i}>{r}</td>)}
-                    <td>{p.results.reduce((a, b) => a + b, 0)}</td>
+                    <td>{p.results.reduce((a, b) => parseInt(b) + a, 0)}</td>
                     <td>{p.place || ""}</td>
                 </tr>;
             })}
             </tbody>
         </Table>
     </Container>;
-
 };
 
 export default withRouter(Results);
