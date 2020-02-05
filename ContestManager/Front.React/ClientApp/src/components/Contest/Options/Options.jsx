@@ -3,7 +3,6 @@ import { CustomInput, Form, FormGroup } from 'reactstrap';
 import { ContestOptions } from '../../../Enums/ContestOptions';
 import { patch } from '../../../Proxy';
 import { hasFlag, triggerFlag } from '../../../utils';
-import WithContest from '../../HOC/WithContest';
 
 class Options extends React.Component {
     constructor(props) {
@@ -67,4 +66,4 @@ const Switch = ({ id, optType, value, label, onChange }) => (
                  label={label} id={id}
                  onChange={() => onChange(value, optType)} />);
 
-export default WithContest(Options);
+export default Options;

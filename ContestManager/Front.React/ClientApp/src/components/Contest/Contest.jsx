@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
-import { ContestType } from '../../Enums/ContestType';
+// import { ContestType } from '../../Enums/ContestType';
 import { UserRole } from '../../Enums/UserRole';
 import { get } from '../../Proxy';
 import { hasFlag } from '../../utils';
@@ -15,6 +15,7 @@ import { EditNews, News } from './News';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
 import { ParticipateModal } from './ParticipateModal';
+import { Results } from './Results';
 import { Seating } from './Seating';
 
 
@@ -22,7 +23,7 @@ class Contest extends React.Component {
     constructor(props) {
         super(props);
         this.contestId = this.props.match.params.id;
-        this.CONTEST = `/contests/${this.contestId}`;
+        this.CONTEST = this.props.match.url;
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
         this.toggleParticipate = this.toggleParticipate.bind(this);
@@ -96,13 +97,16 @@ class Contest extends React.Component {
             <EditNews contestId={this.contestId} />
         </Route>
         <Route exact path={this.contestUrl('options')}>
-            <Options />
+            <Options contest={this.props.contest} />
         </Route>
         <Route exact path={this.contestUrl('seating')}>
             <Seating contestId={this.contestId} />
         </Route>
         <Route exact path={this.contestUrl('addResult')}>
-            <AddResult contestId={this.contestId} />
+            <AddResult contest={this.contestId} />
+        </Route>
+        <Route path={this.contestUrl('results/:class')}>
+            <Results contest={this.props.contest} participants={this.props.participants} />
         </Route>
         {/*<Route exact path={this.contestUrl('addTasks')}>*/}
         {/*    <AddResult contestId={this.contestId} />*/}
@@ -127,8 +131,9 @@ class Contest extends React.Component {
                 <ListGroupItem>
                     <Link to={this.contestUrl('participants')}>Участники</Link>
                 </ListGroupItem>
-                {hasFlag(contest.options, ContestOptions.ResultsOpen) && <ListGroupItem>
-                    <Link to={this.contestUrl('results')}>Результаты</Link>
+                {(hasFlag(contest.options, ContestOptions.ResultsOpen) || this.props.user.role === UserRole.Admin) &&
+                <ListGroupItem>
+                    <Link to={this.contestUrl('results/5')}>Результаты</Link>
                 </ListGroupItem>}
             </ListGroup>
 
@@ -151,20 +156,20 @@ class Contest extends React.Component {
     }
 
     renderAdminPanel = () => {
-        const { options, type } = this.props.contest;
-
+        const { options } = this.props.contest;
+        // const isQualification = type === ContestType.Qualification;
         return <>
             <h5 className="mt-3">Админка</h5>
             <ListGroup>
-                {type === ContestType.Qualification && <ListGroupItem>
-                    <Link to={this.contestUrl('addTasks')}>Добавить задания</Link>
-                </ListGroupItem>}
+                {/*{isQualification && <ListGroupItem>*/}
+                {/*    <Link to={this.contestUrl('addTasks')}>Добавить задания</Link>*/}
+                {/*</ListGroupItem>}*/}
                 <ListGroupItem>
                     <Link to={this.contestUrl('addNews')}>Добавить новость</Link>
                 </ListGroupItem>
-                {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
-                    <Link to={this.contestUrl('seating')}>Сгенерировать рассадку</Link>
-                </ListGroupItem>}
+                {/*{!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>*/}
+                {/*    <Link to={this.contestUrl('seating')}>Сгенерировать рассадку</Link>*/}
+                {/*</ListGroupItem>}*/}
                 {!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>
                     <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>
                 </ListGroupItem>}
