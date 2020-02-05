@@ -25,6 +25,7 @@ const Options = ({ contest }) => {
         setFetching(false);
     };
 
+    const isQualification = contest.type === ContestType.Qualification;
     return <>
         <h4 className="mb-3">Настройки соревнования</h4>
         <Form>
@@ -35,15 +36,24 @@ const Options = ({ contest }) => {
                         optType={ContestOptions.RegistrationOpen}
                         onChange={onChange}
                 />
+                {isQualification &&
+                <Switch id="qualification"
+                        value={options}
+                        label="Открыт отбор"
+                        optType={ContestOptions.QualificationOpen}
+                        onChange={onChange}
+                />}
+                {!isQualification &&
                 <Switch id="preresults"
                         value={options}
-                        label="Открыты предварительные результаты"
+                        label="Открыты результаты с шифрами"
                         optType={ContestOptions.PreResultsOpen}
                         onChange={onChange}
                 />
+                }
                 <Switch id="results"
                         value={options}
-                        label="Открыты результаты"
+                        label="Открыты результаты с фио"
                         optType={ContestOptions.ResultsOpen}
                         onChange={onChange}
                 />
@@ -53,16 +63,10 @@ const Options = ({ contest }) => {
                         optType={ContestOptions.Finished}
                         onChange={onChange}
                 />
-                <Switch id="qualification"
-                        value={options}
-                        label="Открыт отбор"
-                        optType={ContestOptions.QualificationOpen}
-                        onChange={onChange}
-                />
             </FormGroup>
         </Form>
 
-        {contest.type === ContestType.Qualification &&
+        {isQualification &&
         <Button onClick={refreshResults}>
             {fetching && <Spinner size="sm" color="light" />}{' '}
             Обновить результаты пробного тура</Button>}
