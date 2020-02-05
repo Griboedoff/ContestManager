@@ -22,7 +22,7 @@ class CreateContest extends React.Component {
 
         this.setState({ isProcessing: false, error: false });
 
-        post('contests', {
+        post('contestAdmin/create', {
             title: this.state.title,
             type: this.state.type,
         }).then(resp => {

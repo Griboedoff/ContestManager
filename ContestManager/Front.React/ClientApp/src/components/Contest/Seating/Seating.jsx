@@ -32,7 +32,7 @@ export class Seating extends React.Component {
             isError: false
         });
 
-        post(`contests/${this.props.contestId}/generateSeating`, this.state.auditoriumsData).then(resp => {
+        post(`contestAdmin/${this.props.contestId}/generateSeating`, this.state.auditoriumsData).then(resp => {
             if (resp.ok)
                 return resp;
 

@@ -18,7 +18,7 @@ export class AddResult extends React.Component {
     }
 
     componentDidMount() {
-        get(`contests/${this.props.contestId}/resultsTable`).then(resp => {
+        get(`contestAdmin/${this.props.contestId}/resultsTable`).then(resp => {
             if (resp.ok)
                 return resp.json();
         }).then(link => this.setState({
@@ -41,7 +41,7 @@ export class AddResult extends React.Component {
             isError: false
         });
 
-        post(`contests/${this.props.contestId}/resultsTable`, this.state.tasksData).then(resp => {
+        post(`contestAdmin/${this.props.contestId}/resultsTable`, this.state.tasksData).then(resp => {
             if (resp.ok)
                 return resp.json();
 

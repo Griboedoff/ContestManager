@@ -14,7 +14,7 @@ const Options = ({ contest }) => {
         const newValue = triggerFlag(value, flag);
         setOptions(newValue);
 
-        await patch(`contests/${contest.id}/options`, newValue);
+        await patch(`contestAdmin/${contest.id}/options`, newValue);
     };
 
     const refreshResults = async () => {
