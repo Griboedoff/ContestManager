@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Core.Badges;
 using Core.Configs;
 using Core.Contests;
 using Core.Contests.News;
@@ -43,6 +45,7 @@ namespace Front.React
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the React files will be served from this directory
@@ -58,6 +61,7 @@ namespace Front.React
             );
 
             services.Configure<ConfigOptions>(Configuration);
+            services.Configure<BadgeDrawerConfig>(Configuration);
 
             ConfigureDi(services);
             RegisterStoredConfigs(services).Wait();
@@ -79,6 +83,7 @@ namespace Front.React
             services.AddScoped<ISheetsApiClient, SheetsApiClient>();
             services.AddScoped<ISeatingGenerator, SeatingGenerator>();
             services.AddScoped<ISessionManager, SessionManager>();
+            services.AddScoped<IBadgesDrawer, BadgesDrawer>();
             services.AddScoped<AuthorizedActionFilter>();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
