@@ -6,6 +6,7 @@ using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
 using Core.Enums.DataBaseEnums;
+using Core.Users.Sessions;
 using Front.React.Filters;
 using Front.React.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace Front.React.Controllers
     {
         private readonly IContestManager contestManager;
         private readonly IAsyncRepository<Contest> contestsRepo;
+        private readonly IUserCookieManager cookieManager;
 
-        public ContestsController(IContestManager contestManager, IAsyncRepository<Contest> contestsRepo)
+        public ContestsController(IContestManager contestManager, IAsyncRepository<Contest> contestsRepo, IUserCookieManager cookieManager)
         {
             this.contestManager = contestManager;
             this.contestsRepo = contestsRepo;
+            this.cookieManager = cookieManager;
         }
 
         [HttpGet]
@@ -58,14 +61,15 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/results")]
-        public async Task<ActionResult> Results(Guid id, User user)
+        public async Task<ActionResult> Results(Guid id)
         {
+            var (_, user) = await cookieManager.GetUserSafe(Request);
             var contest = await contestsRepo.GetByIdAsync(id);
-            var isAdmin = user.Role == UserRole.Admin;
+            var isAdmin = user?.Role == UserRole.Admin;
             if (isAdmin || contest.Options.HasFlag(ContestOptions.ResultsOpen))
-                return Json(await contestManager.GetResults(id, true));
-            if (contest.Options.HasFlag(ContestOptions.PreResultsOpen))
                 return Json(await contestManager.GetResults(id, false));
+            if (contest.Options.HasFlag(ContestOptions.PreResultsOpen))
+                return Json(await contestManager.GetResults(id, true));
 
             return NotFound();
         }

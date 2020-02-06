@@ -56,6 +56,9 @@
         <None Update="Static\Badges\template.bmp">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Include="ClientApp\src\components\HOC\WithResults.jsx" />
+        <None Include="ClientApp\src\store\Actions\ResultsActions.js" />
+        <None Include="ClientApp\src\store\Reducers\Results.js" />
     </ItemGroup>
 
     <ItemGroup>

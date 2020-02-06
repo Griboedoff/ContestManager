@@ -2,21 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Alert, Container, Nav, NavItem, NavLink, Table } from 'reactstrap';
 import { Class } from '../../../Enums/Class';
-import sortBy from 'lodash/sortBy';
 
-const Results = ({ match, participants }) => {
+const Results = ({ results, match }) => {
     const classFromUrl = parseInt(match.params.class, 10);
     const defaultClass = Object.values(Class).includes(classFromUrl) ? classFromUrl : Class.Fifth;
     const [currentClass, setCurrentClass] = useState(defaultClass);
-    const tasksCount = useMemo(() => Math.max(...participants.map(p => p.results.length)), [participants]);
-    const filteredParticipants = useMemo(() => sortBy(
-        participants.filter(p => p.userSnapshot.class === currentClass && p.results.length !== 0),
-        [p => -p.results.map(r => parseInt(r)).reduce((a, b) => a + b, 0), p => p.userSnapshot.name]
-        ),
-        [participants, currentClass]);
-
-    const hasParticipants = filteredParticipants.length !== 0;
-    const noResults = [...Array(tasksCount).keys()].map(_ => 0);
+    const filteredResults = results[currentClass];
+    const tasksCount = useMemo(() => Math.max(0, Math.max(...filteredResults.map(p => p.results.length))), [filteredResults]);
+    const hasResults = filteredResults?.length !== 0;
 
     return <Container>
         <h4 className="mt-3">Результаты</h4>
@@ -35,7 +28,7 @@ const Results = ({ match, participants }) => {
             })}
         </Nav>
 
-        {hasParticipants ? <Table bordered size="sm">
+        {hasResults ? <Table bordered size="sm">
                 <thead>
                 <tr>
                     <th rowSpan="2">Участник</th>
@@ -49,15 +42,13 @@ const Results = ({ match, participants }) => {
                 </tr>
                 </thead>
                 <tbody>
-                {filteredParticipants.map(p => {
-                    const user = p.userSnapshot;
-
-                    return <tr key={p.id}>
-                        <td>{user.name}</td>
-                        <td>{`${user.school} (${user.city})`}</td>
-                        {p.results.map((r, i) => <td key={i}>{r}</td>)}
-                        <td>{p.results.reduce((a, b) => parseInt(b) + a, 0)}</td>
-                        <td>{p.place || ""}</td>
+                {filteredResults.map(r => {
+                    return <tr key={r.id}>
+                        <td>{r.name}</td>
+                        <td>{r.schoolWithCity}</td>
+                        {r.results.map((r, i) => <td key={i}>{r}</td>)}
+                        <td>{r.sum}</td>
+                        <td>{r.place || ""}</td>
                     </tr>;
                 })}
                 </tbody>

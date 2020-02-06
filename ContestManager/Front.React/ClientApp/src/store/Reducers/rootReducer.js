@@ -4,6 +4,7 @@ import contests from './Contest';
 import error from './Error';
 import news from './News';
 import participants from './Participants';
+import results from './Results';
 import user from './User';
 
 export function createRootReducer(history) {
@@ -12,6 +13,7 @@ export function createRootReducer(history) {
         user,
         contests,
         news,
+        results,
         participants
     };
 

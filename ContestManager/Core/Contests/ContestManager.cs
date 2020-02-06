@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
-using Front.React.Models;
 using NewsModel = Core.DataBaseEntities.News;
 
 namespace Core.Contests
@@ -22,7 +21,7 @@ namespace Core.Contests
         Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription);
         Task AddResults(Guid contestId, Dictionary<string, List<string>> results);
         Task CalculateQualificationResults(Guid contestId);
-        Task<Dictionary<Class, Result[]>> GetResults(Guid contestId, bool showPreResults);
+        Task<Dictionary<int, Result[]>> GetResults(Guid contestId, bool showPreResults);
     }
 
     public class ContestManager : IContestManager
@@ -186,24 +185,26 @@ namespace Core.Contests
             }
         }
 
-        public async Task<Dictionary<Class, Result[]>> GetResults(Guid contestId, bool showPreResults)
+        public async Task<Dictionary<int, Result[]>> GetResults(Guid contestId, bool showPreResults)
         {
             var contest = await contestsRepo.GetByIdAsync(contestId);
-            var participants = await GetParticipants(contestId);
+            var participants = await GetParticipantsInternal(contestId);
             var participantsByClass = participants
                 .Where(p => contest.Type != ContestType.Common || p.Verified)
                 .Where(p => p.Results.Length != 0 && p.UserSnapshot.Class.HasValue)
                 .GroupBy(p => p.UserSnapshot.Class.Value)
                 .ToDictionary(
-                    g => g.Key,
+                    g => (int)g.Key,
                     g => g.Select(
                             p =>
                             {
                                 var results = p.Results.Select(int.Parse).ToArray();
+                                var city = (!string.IsNullOrEmpty(p.UserSnapshot.City) ? $" ({p.UserSnapshot.City})" : "");
                                 return new Result
                                 {
+                                    Id = p.Id,
                                     Name = showPreResults ? p.Login : p.UserSnapshot.Name,
-                                    SchoolWithCity = $"{p.UserSnapshot.City}",
+                                    SchoolWithCity = $"{p.UserSnapshot.School}{city}",
                                     Results = results,
                                     Sum = results.Sum(),
                                     Place = ""
@@ -212,6 +213,10 @@ namespace Core.Contests
                         .OrderByDescending(r => r.Sum)
                         .ThenBy(r => r.Name)
                         .ToArray());
+
+            foreach (var c in Enum.GetValues(typeof(Class)).Cast<int>())
+                if (!participantsByClass.ContainsKey(c))
+                    participantsByClass[c] = new Result[0];
 
             return participantsByClass;
         }

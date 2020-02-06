@@ -8,6 +8,7 @@ import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
+import WithResults from '../HOC/WithResults';
 import WithUser from '../HOC/WithUser';
 import { AddResult } from './AddResult';
 import { EditNews, News } from './News';
@@ -51,12 +52,17 @@ class Contest extends React.Component {
     }
 
     async componentDidMount() {
-        await this.fetchContest();
-        await this.props.fetchParticipants(this.contestId);
+        await Promise.all(
+            [
+                this.fetchContest(),
+                this.props.fetchParticipants(this.contestId),
+                this.props.fetchResults(this.contestId),
+            ]
+        );
     }
 
     fetching() {
-        return this.props.fetchingContests || this.props.fetchingUser || this.props.fetchingParticipants;
+        return this.props.fetchingContests || this.props.fetchingUser || this.props.fetchingParticipants || this.props.fetchingResults;
     }
 
     render() {
@@ -105,7 +111,7 @@ class Contest extends React.Component {
             <AddResult contest={this.contestId} />
         </Route>
         <Route path={this.contestUrl('results/:class')}>
-            <Results contest={this.props.contest} participants={this.props.participants} />
+            <Results contest={this.props.contest} results={this.props.results} />
         </Route>
         {/*<Route exact path={this.contestUrl('addTasks')}>*/}
         {/*    <AddResult contestId={this.contestId} />*/}
@@ -191,4 +197,4 @@ class Contest extends React.Component {
     }
 }
 
-export default WithParticipants(WithUser(WithContest(Contest)));
+export default WithResults(WithParticipants(WithUser(WithContest(Contest))));
