@@ -9,8 +9,6 @@ using Core.Enums.DataBaseEnums;
 using Front.React.Filters;
 using Front.React.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-
 namespace Front.React.Controllers
 {
     public class ContestsController : ControllerBase
@@ -60,11 +58,16 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/results")]
-        public string Results(Guid id)
+        public async Task<ActionResult> Results(Guid id, User user)
         {
-            var participants = contestManager.GetParticipants(id);
+            var contest = await contestsRepo.GetByIdAsync(id);
+            var isAdmin = user.Role == UserRole.Admin;
+            if (isAdmin || contest.Options.HasFlag(ContestOptions.ResultsOpen))
+                return Json(await contestManager.GetResults(id, true));
+            if (contest.Options.HasFlag(ContestOptions.PreResultsOpen))
+                return Json(await contestManager.GetResults(id, false));
 
-            return JsonConvert.SerializeObject(participants);
+            return NotFound();
         }
 
         [HttpPost("{id}/participate")]

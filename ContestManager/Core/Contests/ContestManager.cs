@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
+using Front.React.Models;
 using NewsModel = Core.DataBaseEntities.News;
 
 namespace Core.Contests
@@ -21,6 +22,7 @@ namespace Core.Contests
         Task AddResultsDescription(Guid contestId, Dictionary<Class, string> tasksDescription);
         Task AddResults(Guid contestId, Dictionary<string, List<string>> results);
         Task CalculateQualificationResults(Guid contestId);
+        Task<Dictionary<Class, Result[]>> GetResults(Guid contestId, bool showPreResults);
     }
 
     public class ContestManager : IContestManager
@@ -182,6 +184,36 @@ namespace Core.Contests
 
                 await participantsRepo.UpdateAsync(participant);
             }
+        }
+
+        public async Task<Dictionary<Class, Result[]>> GetResults(Guid contestId, bool showPreResults)
+        {
+            var contest = await contestsRepo.GetByIdAsync(contestId);
+            var participants = await GetParticipants(contestId);
+            var participantsByClass = participants
+                .Where(p => contest.Type != ContestType.Common || p.Verified)
+                .Where(p => p.Results.Length != 0 && p.UserSnapshot.Class.HasValue)
+                .GroupBy(p => p.UserSnapshot.Class.Value)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(
+                            p =>
+                            {
+                                var results = p.Results.Select(int.Parse).ToArray();
+                                return new Result
+                                {
+                                    Name = showPreResults ? p.Login : p.UserSnapshot.Name,
+                                    SchoolWithCity = $"{p.UserSnapshot.City}",
+                                    Results = results,
+                                    Sum = results.Sum(),
+                                    Place = ""
+                                };
+                            })
+                        .OrderByDescending(r => r.Sum)
+                        .ThenBy(r => r.Name)
+                        .ToArray());
+
+            return participantsByClass;
         }
 
         private async Task<Dictionary<Class, string[]>> GetCorrectAnswers(Guid contestId)

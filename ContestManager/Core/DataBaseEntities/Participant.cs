@@ -42,14 +42,15 @@ namespace Core.DataBaseEntities
         public string Verification { get; set; }
 
         public bool Verified { get; set; }
+
         public Participant WithoutLogin() => new Participant
         {
             Id = Id,
             ContestId = ContestId,
             UserId = UserId,
-            SerializedResults = SerializedResults,
             UserSnapshot = UserSnapshot,
             Verification = Verification,
+            Verified = Verified
         };
     }
 }
