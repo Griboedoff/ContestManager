@@ -70,6 +70,7 @@ namespace Core.Contests
                     var (login, pass) = GenerateLogin(participant, auditorium.Code);
                     participant.Login = login;
                     participant.Pass = pass;
+                    participant.Auditorium = auditorium.Name;
                     used.Push(participant);
                 }
             }

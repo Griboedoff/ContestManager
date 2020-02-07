@@ -36,11 +36,10 @@ namespace Core.DataBaseEntities
         }
 
         public string Login { get; set; }
-
         public string Pass { get; set; }
+        public string Auditorium { get; set; }
 
         public string Verification { get; set; }
-
         public bool Verified { get; set; }
 
         public Participant WithoutLogin() => new Participant
