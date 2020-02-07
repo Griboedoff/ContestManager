@@ -14,6 +14,8 @@ namespace Core.Contests
             Guid fromContestId,
             Guid toContestId,
             int[] tasksThreshold);
+
+        Task VerifyParticipant(Guid participantId, string verification);
     }
 
     public class ContestAdminManager : IContestAdminManager
@@ -77,6 +79,15 @@ namespace Core.Contests
             }
 
             return MoveParticipantsStatus.Ok;
+        }
+
+        public async Task VerifyParticipant(Guid participantId, string verification)
+        {
+            var participant = await participantsRepo.GetByIdAsync(participantId);
+            participant.Verification = verification;
+            participant.Verified = true;
+
+            await participantsRepo.UpdateAsync(participant);
         }
     }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import { ContestOptions } from '../../Enums/ContestOptions';
-// import { ContestType } from '../../Enums/ContestType';
+import { ContestType } from '../../Enums/ContestType';
 import { UserRole } from '../../Enums/UserRole';
 import { hasFlag } from '../../utils';
 import { CenterSpinner } from '../CenterSpinner';
@@ -12,6 +12,7 @@ import WithResults from '../HOC/WithResults';
 import WithUser from '../HOC/WithUser';
 import { AddResult } from './AddResult';
 import { EditNews, News } from './News';
+import { NotVerifiedList } from './NotVerifiedList';
 import { Options } from './Options';
 import { ParticipantsList } from './ParticipantsList';
 import { ParticipateModal } from './ParticipateModal';
@@ -113,6 +114,9 @@ class Contest extends React.Component {
         <Route path={this.contestUrl('results/:class')}>
             <Results contest={this.props.contest} results={this.props.results} />
         </Route>
+        <Route exact path={this.contestUrl('notVerified')}>
+            <NotVerifiedList contestId={this.contestId} />
+        </Route>
         {/*<Route exact path={this.contestUrl('addTasks')}>*/}
         {/*    <AddResult contestId={this.contestId} />*/}
         {/*</Route>*/}
@@ -161,8 +165,8 @@ class Contest extends React.Component {
     }
 
     renderAdminPanel = () => {
-        const { options } = this.props.contest;
-        // const isQualification = type === ContestType.Qualification;
+        const { options, type } = this.props.contest;
+        const isQualification = type === ContestType.Qualification;
         return <>
             <h5 className="mt-3">Админка</h5>
             <ListGroup>
@@ -181,6 +185,9 @@ class Contest extends React.Component {
                 {/*{!hasFlag(options, ContestOptions.RegistrationOpen) && <ListGroupItem>*/}
                 {/*    <Link to={this.contestUrl('addResult')}>Добавить результаты</Link>*/}
                 {/*</ListGroupItem>}*/}
+                {!isQualification && <ListGroupItem>
+                    <Link to={this.contestUrl('notVerified')}>Без подтверждения</Link>
+                </ListGroupItem>}
                 <ListGroupItem>
                     <Link to={this.contestUrl('options')}>Настройки</Link>
                 </ListGroupItem>

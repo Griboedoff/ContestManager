@@ -10,23 +10,27 @@ using Core.Enums.DataBaseEnums;
 using Core.SheetsApi;
 using Front.React.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Front.React.Controllers
 {
     [Authorized(UserRole.Admin)]
     public class ContestAdminController : ControllerBase
     {
+        private readonly ILogger<ContestAdminController> logger;
         private readonly IContestManager contestManager;
         private readonly IContestAdminManager contestAdminManager;
         private readonly IAsyncRepository<Contest> contestsRepo;
         private readonly ISheetsApiClient sheetsApiClient;
 
         public ContestAdminController(
+            ILogger<ContestAdminController> logger,
             IContestManager contestManager,
             IContestAdminManager contestAdminManager,
             IAsyncRepository<Contest> contestsRepo,
             ISheetsApiClient sheetsApiClient)
         {
+            this.logger = logger;
             this.contestManager = contestManager;
             this.contestAdminManager = contestAdminManager;
             this.contestsRepo = contestsRepo;
@@ -101,6 +105,21 @@ namespace Front.React.Controllers
             var moveStatus = await contestAdminManager.MoveParticipantsToMainPart(id, data.ToContest, data.Thresholds);
             return Json(moveStatus);
         }
+
+        [HttpPost("{id}/verify")]
+        public async Task<ActionResult> Verify(User user, Guid id, [FromBody] VerifyData data)
+        {
+            await contestAdminManager.VerifyParticipant(data.ParticipantId, data.Verification);
+            logger.LogInformation($"{user.Name} подтвердил участника {data.ParticipantId}");
+
+            return Ok();
+        }
+    }
+
+    public class VerifyData
+    {
+        public Guid ParticipantId { get; set; }
+        public string Verification { get; set; }
     }
 
     public class MoveToMainPartData

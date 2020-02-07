@@ -24,10 +24,6 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
-        <Content Include="ClientApp\src\components\Contest\Results\index.js" />
-        <Content Include="ClientApp\src\components\Contest\Results\Results.jsx" />
-        <Content Include="ClientApp\src\components\HOC\WithSetError.js" />
-        <Content Include="ClientApp\src\Enums\Class.js" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <Content Update="credentials.json">
@@ -56,17 +52,10 @@
         <None Update="Static\Badges\template.bmp">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Include="ClientApp\src\components\HOC\WithResults.jsx" />
-        <None Include="ClientApp\src\store\Actions\ResultsActions.js" />
-        <None Include="ClientApp\src\store\Reducers\Results.js" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Core\Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Views" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
