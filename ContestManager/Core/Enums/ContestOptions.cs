@@ -10,5 +10,6 @@ namespace Core.Enums
         ResultsOpen = 1 << 2,
         Finished = 1 << 3,
         QualificationOpen = 1 << 4,
+        FilterVerified = 1 << 5,
     }
 }

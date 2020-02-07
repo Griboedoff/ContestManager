@@ -18,43 +18,23 @@ const Options = ({ contest }) => {
 
 
     const isQualification = contest.type === ContestType.Qualification;
+
+    const createSwitch = (id, label, opt) => <Switch id={id}
+                                                     value={options}
+                                                     label={label}
+                                                     optType={opt}
+                                                     onChange={onChange} />;
+
     return <>
         <h4 className="mb-3">Настройки соревнования</h4>
         <Form>
             <FormGroup>
-                <Switch id="registration"
-                        value={options}
-                        label="Открыта регистрация"
-                        optType={ContestOptions.RegistrationOpen}
-                        onChange={onChange}
-                />
-                {isQualification &&
-                <Switch id="qualification"
-                        value={options}
-                        label="Открыт отбор"
-                        optType={ContestOptions.QualificationOpen}
-                        onChange={onChange}
-                />}
-                {!isQualification &&
-                <Switch id="preresults"
-                        value={options}
-                        label="Открыты результаты с шифрами"
-                        optType={ContestOptions.PreResultsOpen}
-                        onChange={onChange}
-                />
-                }
-                <Switch id="results"
-                        value={options}
-                        label="Открыты результаты с фио"
-                        optType={ContestOptions.ResultsOpen}
-                        onChange={onChange}
-                />
-                <Switch id="finished"
-                        value={options}
-                        label="Соревнование закончено"
-                        optType={ContestOptions.Finished}
-                        onChange={onChange}
-                />
+                {createSwitch('registration', "Открыта регистрация", ContestOptions.RegistrationOpen)}
+                {isQualification && createSwitch("qualification", "Открыт отбор", ContestOptions.QualificationOpen)}
+                {!isQualification && createSwitch("preresults", "Открыты результаты с шифрами", ContestOptions.PreResultsOpen)}
+                {!isQualification && createSwitch("filterNotVerified", "Фильтровать неподтвержденных участников", ContestOptions.FilterVerified)}
+                {createSwitch('results', "Открыты результаты с фио", ContestOptions.ResultsOpen)}
+                {createSwitch('finished', "Соревнование закончено", ContestOptions.Finished)}
             </FormGroup>
         </Form>
 

@@ -53,11 +53,16 @@ namespace Front.React.Controllers
         }
 
         [HttpGet("{id}/participants")]
-        public async Task<ActionResult> GetParticipants(Guid id)
+        public async Task<ActionResult> GetParticipants(Guid id, bool onlyNotVerified)
         {
             var participants = await contestManager.GetParticipants(id);
 
-            return Json(participants);
+            if (onlyNotVerified)
+                return Json(participants.Where(p => !p.Verified).ToArray());
+
+            var contest = await contestsRepo.GetByIdAsync(id);
+
+            return Json(participants.Where(p => !contest.Options.HasFlag(ContestOptions.FilterVerified) || p.Verified).ToArray());
         }
 
         [HttpGet("{id}/results")]
