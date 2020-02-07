@@ -77,6 +77,7 @@ namespace Front.React
             services.AddSingleton<ICryptoHelper, CryptoHelper>();
             services.AddSingleton<IDataGenerator, DataGenerator>();
             services.AddScoped<IContestManager, ContestManager>();
+            services.AddScoped<IContestAdminManager, ContestAdminManager>();
             services.AddSingleton<IEmailManager, EmailManager>();
             services.AddScoped<INewsManager, NewsManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();

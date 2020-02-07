@@ -17,15 +17,18 @@ namespace Front.React.Controllers
     public class ContestAdminController : ControllerBase
     {
         private readonly IContestManager contestManager;
+        private readonly IContestAdminManager contestAdminManager;
         private readonly IAsyncRepository<Contest> contestsRepo;
         private readonly ISheetsApiClient sheetsApiClient;
 
         public ContestAdminController(
             IContestManager contestManager,
+            IContestAdminManager contestAdminManager,
             IAsyncRepository<Contest> contestsRepo,
             ISheetsApiClient sheetsApiClient)
         {
             this.contestManager = contestManager;
+            this.contestAdminManager = contestAdminManager;
             this.contestsRepo = contestsRepo;
             this.sheetsApiClient = sheetsApiClient;
         }
@@ -91,5 +94,18 @@ namespace Front.React.Controllers
             await contestManager.AddResults(id, results);
             return Json(200);
         }
+
+        [HttpPost("{id}/moveToMainPart")]
+        public async Task<ActionResult> MoveToMainPart(Guid id, [FromBody] MoveToMainPartData data)
+        {
+            var moveStatus = await contestAdminManager.MoveParticipantsToMainPart(id, data.ToContest, data.Thresholds);
+            return Json(moveStatus);
+        }
+    }
+
+    public class MoveToMainPartData
+    {
+        public Guid ToContest { get; set; }
+        public int[] Thresholds { get; set; }
     }
 }

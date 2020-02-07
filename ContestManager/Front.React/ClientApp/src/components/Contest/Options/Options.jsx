@@ -8,7 +8,6 @@ import { hasFlag, triggerFlag } from '../../../utils';
 
 const Options = ({ contest }) => {
     const [options, setOptions] = useState(contest.options);
-    const [fetching, setFetching] = useState(false);
 
     const onChange = async (value, flag) => {
         const newValue = triggerFlag(value, flag);
@@ -17,13 +16,6 @@ const Options = ({ contest }) => {
         await patch(`contestAdmin/${contest.id}/options`, newValue);
     };
 
-    const refreshResults = async () => {
-        setFetching(true);
-        await Promise.all([
-            await post(`contestAdmin/${contest.id}/calcQualificationResults`),
-            new Promise(resolve => setTimeout(resolve, 500))]);
-        setFetching(false);
-    };
 
     const isQualification = contest.type === ContestType.Qualification;
     return <>
@@ -66,13 +58,30 @@ const Options = ({ contest }) => {
             </FormGroup>
         </Form>
 
-        {isQualification &&
-        <Button onClick={refreshResults}>
-            {fetching && <Spinner size="sm" color="light" />}{' '}
-            Обновить результаты пробного тура</Button>}
+        {isQualification && <QualificationSettings contestId={contest.id} />}
     </>;
 };
 Options.displayName = 'Options';
+
+
+const QualificationSettings = ({ contestId }) => {
+    const [fetchingCalcQualResults, setFetchingCalcQualResults] = useState(false);
+
+    const refreshResults = async () => {
+        setFetchingCalcQualResults(true);
+        await Promise.all([
+            await post(`contestAdmin/${contestId}/calcQualificationResults`),
+            new Promise(resolve => setTimeout(resolve, 500))]);
+        setFetchingCalcQualResults(false);
+    };
+
+    return <>
+        <Button onClick={refreshResults}>
+            {fetchingCalcQualResults && <Spinner size="sm" color="light" />}{' '}
+            Обновить результаты пробного тура
+        </Button>
+    </>;
+};
 
 const Switch = ({ id, optType, value, label, onChange }) => (
     <CustomInput type="switch"

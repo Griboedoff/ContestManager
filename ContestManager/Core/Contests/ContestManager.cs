@@ -102,25 +102,11 @@ namespace Core.Contests
         }
 
         public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId) =>
-            (await GetParticipantsInternal(contestId))
+            (await participantsRepo.WhereAsync(p => p.ContestId == contestId))
             .Select(p => p.WithoutLogin())
             .OrderBy(p => p.UserSnapshot.Class)
             .ThenBy(p => p.UserSnapshot.Name)
             .ToList();
-
-        private async Task<IReadOnlyList<Participant>> GetParticipantsInternal(Guid contestId)
-        {
-            var contest = await contestsRepo.GetByIdAsync(contestId);
-            if (contest.Options.HasFlag(ContestOptions.RegistrationOpen))
-                return GetParticipantsFromUsers(contest);
-
-            return await participantsRepo.WhereAsync(p => p.ContestId == contestId);
-        }
-
-        private IReadOnlyList<Participant> GetParticipantsFromUsers(Contest contest) =>
-            context.Set<Participant>()
-                .Where(p => p.ContestId == contest.Id)
-                .ToList();
 
         public async Task UpdateOptions(Guid contestId, ContestOptions newOptions)
         {
@@ -188,7 +174,7 @@ namespace Core.Contests
         public async Task<Dictionary<int, Result[]>> GetResults(Guid contestId, bool showPreResults)
         {
             var contest = await contestsRepo.GetByIdAsync(contestId);
-            var participants = await GetParticipantsInternal(contestId);
+            var participants = await participantsRepo.WhereAsync(p => p.ContestId == contestId);
             var participantsByClass = participants
                 .Where(p => contest.Type != ContestType.Common || p.Verified)
                 .Where(p => p.Results.Length != 0 && p.UserSnapshot.Class.HasValue)
