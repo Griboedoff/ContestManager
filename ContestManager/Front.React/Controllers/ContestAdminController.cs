@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Core.Contests;
 using Core.DataBase;
@@ -113,6 +115,19 @@ namespace Front.React.Controllers
             logger.LogInformation($"{user.Name} подтвердил участника {data.ParticipantId}");
 
             return Ok();
+        }
+
+        [HttpPost("{id}/drawDiplomas")]
+        public async Task<ActionResult> Verify(Guid id)
+        {
+            var pdf = await contestAdminManager.GenerateDiplomas(id);
+
+            using (var ms = new MemoryStream())
+            {
+                pdf.Save(ms, false);
+
+                return File(ms.ToArray(), MediaTypeNames.Application.Pdf, $"Diplomas.pdf");
+            }
         }
     }
 

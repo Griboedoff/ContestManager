@@ -133,7 +133,7 @@ namespace Core.Migrations
 
                     b.Property<string>("Pass");
 
-                    b.Property<string>("Place");
+                    b.Property<int?>("Place");
 
                     b.Property<string>("SerializedResults");
 

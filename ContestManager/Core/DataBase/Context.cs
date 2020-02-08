@@ -8,6 +8,7 @@ namespace Core.DataBase
         public Context(DbContextOptions options) : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("public");

@@ -42,7 +42,7 @@ namespace Core.DataBaseEntities
         public string Verification { get; set; }
         public bool Verified { get; set; }
 
-        public string Place { get; set; }
+        public int? Place { get; set; }
 
         public Participant WithoutLogin() => new Participant
         {

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Core.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200208101516_Place")]
+    [Migration("20200208105209_Place")]
     partial class Place
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,7 +135,7 @@ namespace Core.Migrations
 
                     b.Property<string>("Pass");
 
-                    b.Property<string>("Place");
+                    b.Property<int?>("Place");
 
                     b.Property<string>("SerializedResults");
 

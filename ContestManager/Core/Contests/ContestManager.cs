@@ -193,7 +193,7 @@ namespace Core.Contests
                                     SchoolWithCity = showPreResults ? "" : $"{p.UserSnapshot.School}{city}",
                                     Results = results,
                                     Sum = results.Sum(),
-                                    Place = showPreResults ? "" : p.Place,
+                                    Place = showPreResults ? "" : (p.Place.HasValue ? p.Place.Value.ToString() : ""),
                                 };
                             })
                         .OrderByDescending(r => r.Sum)

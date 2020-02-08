@@ -6,7 +6,7 @@ namespace Core.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
+            migrationBuilder.AddColumn<int>(
                 name: "Place",
                 schema: "public",
                 table: "Participants",
