@@ -18,7 +18,7 @@ import { ParticipantsList } from './ParticipantsList';
 import { ParticipateModal } from './ParticipateModal';
 import { Results } from './Results';
 import { Seating } from './Seating';
-
+import { get } from '../../Proxy';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -133,6 +133,24 @@ class Contest extends React.Component {
                 Отборочный тур
             </Button>}
 
+            {this.showBadgesButton() &&
+            <Button className="mb-4" color="success" onClick={async () => {
+                const response = await get(`badges/print?contestId=${this.contestId}`);
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `${user.name}.pdf`);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
+                }
+            }}>
+                Напечатать бейдж
+            </Button>}
+
             <ListGroup>
                 <ListGroupItem>
                     <Link to={this.contestUrl()}>Информация</Link>
@@ -162,6 +180,14 @@ class Contest extends React.Component {
         return hasFlag(contest.options, ContestOptions.QualificationOpen) &&
             user?.role === UserRole.Participant &&
             participants.some(p => p.userId === user.id);
+    }
+
+    showBadgesButton() {
+        const { user, contest, participants } = this.props;
+        const part = participants.find(p => p.userId === user?.id);
+        return hasFlag(contest.options, ContestOptions.FilterVerified) &&
+            user?.role === UserRole.Participant &&
+            part?.verified;
     }
 
     renderAdminPanel = () => {

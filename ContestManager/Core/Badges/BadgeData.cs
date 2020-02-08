@@ -13,7 +13,7 @@ namespace Core.Badges
         public BadgeData(Participant participant)
         {
             User = participant.UserSnapshot;
-            // Auditorium = participant.Auditorium;
+            Auditorium = participant.Auditorium;
             Login = participant.Login;
         }
 
