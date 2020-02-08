@@ -190,10 +190,10 @@ namespace Core.Contests
                                 {
                                     Id = p.Id,
                                     Name = showPreResults ? p.Login : p.UserSnapshot.Name,
-                                    SchoolWithCity = $"{p.UserSnapshot.School}{city}",
+                                    SchoolWithCity = showPreResults ? "" : $"{p.UserSnapshot.School}{city}",
                                     Results = results,
                                     Sum = results.Sum(),
-                                    Place = ""
+                                    Place = showPreResults ? "" : p.Place,
                                 };
                             })
                         .OrderByDescending(r => r.Sum)
