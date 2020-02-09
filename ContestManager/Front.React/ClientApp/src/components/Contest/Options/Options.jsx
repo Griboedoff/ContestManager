@@ -41,7 +41,7 @@ const Options = ({ contest }) => {
 
         {!isQualification && <Button onClick={async () => {
             setFetchingDiplomas(true);
-            const response = await get(`contestAdmin/${contest.id}/drawDiplomas`);
+            const response = await post(`contestAdmin/${contest.id}/drawDiplomas`);
 
             if (response.ok) {
                 const blob = await response.blob();

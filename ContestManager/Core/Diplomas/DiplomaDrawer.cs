@@ -18,7 +18,7 @@ namespace Core.Diplomas
             var opt = new XPdfFontOptions(PdfFontEncoding.Unicode);
             Fonts = new Dictionary<int, XFont>();
             foreach (var fontSize in new[] { 13, 18, 20, 23, 30 })
-                Fonts[fontSize] = new XFont("Times New Roman", 13, XFontStyle.Bold, opt);
+                Fonts[fontSize] = new XFont("Times New Roman", fontSize, XFontStyle.Bold, opt);
         }
 
         public PdfDocument DrawDiplomas(IEnumerable<Diploma> diplomas)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.DataBase;
 using Core.DataBaseEntities;
 using Core.Enums;
+using Core.Extensions;
 using NewsModel = Core.DataBaseEntities.News;
 
 namespace Core.Contests
@@ -180,23 +181,29 @@ namespace Core.Contests
                 .Where(p => p.Results.Length != 0 && p.UserSnapshot.Class.HasValue)
                 .GroupBy(p => p.UserSnapshot.Class.Value)
                 .ToDictionary(
-                    g => (int)g.Key,
+                    g => (int) g.Key,
                     g => g.Select(
                             p =>
                             {
-                                var results = p.Results.Select(int.Parse).ToArray();
-                                var city = (!string.IsNullOrEmpty(p.UserSnapshot.City) ? $" ({p.UserSnapshot.City})" : "");
+                                var results = p.ResultsAsNumbers();
+                                var city = !string.IsNullOrEmpty(p.UserSnapshot.City)
+                                    ? $" ({p.UserSnapshot.City.Trim()})"
+                                    : "";
+                                var school = !string.IsNullOrEmpty(p.UserSnapshot.School)
+                                    ? p.UserSnapshot.School.Trim()
+                                    : "";
                                 return new Result
                                 {
                                     Id = p.Id,
                                     Name = showPreResults ? p.Login : p.UserSnapshot.Name,
-                                    SchoolWithCity = showPreResults ? "" : $"{p.UserSnapshot.School}{city}",
+                                    SchoolWithCity = showPreResults ? "" : $"{school}{city}",
                                     Results = results,
                                     Sum = results.Sum(),
                                     Place = showPreResults ? "" : (p.Place.HasValue ? p.Place.Value.ToString() : ""),
                                 };
                             })
-                        .OrderByDescending(r => r.Sum)
+                        .OrderBy(r => int.TryParse(r.Place, out var result) ? result : int.MaxValue)
+                        .ThenByDescending(r => r.Sum)
                         .ThenBy(r => r.Name)
                         .ToArray());
 

@@ -99,8 +99,10 @@ namespace Core.Contests
 
         public async Task<PdfDocument> GenerateDiplomas(Guid contestId)
         {
-            var participants = await participantsRepo.WhereAsync(p => p.ContestId == contestId);
-            var diplomasData = participants.Select(
+            var participants = await participantsRepo.WhereAsync(p => p.ContestId == contestId && p.Verified);
+            var diplomasData = participants
+                .OrderBy(p => p.UserSnapshot.Class)
+                .ThenByDescending(p => p.ResultsAsNumbers().Sum()).Select(
                 p => new DiplomaData
                 {
                     Name = p.UserSnapshot.Name,

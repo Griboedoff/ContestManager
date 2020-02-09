@@ -158,7 +158,7 @@ class Contest extends React.Component {
                 <ListGroupItem>
                     <Link to={this.contestUrl('participants')}>Участники</Link>
                 </ListGroupItem>
-                {(hasFlag(contest.options, ContestOptions.ResultsOpen) || this.props.user?.role === UserRole.Admin) &&
+                {(hasFlag(contest.options, ContestOptions.ResultsOpen) || hasFlag(contest.options, ContestOptions.PreResultsOpen) || this.props.user?.role === UserRole.Admin) &&
                 <ListGroupItem>
                     <Link to={this.contestUrl('results/5')}>Результаты</Link>
                 </ListGroupItem>}

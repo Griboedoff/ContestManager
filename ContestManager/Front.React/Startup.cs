@@ -9,6 +9,7 @@ using Core.Contests;
 using Core.Contests.News;
 using Core.DataBase;
 using Core.DataBaseEntities;
+using Core.Diplomas;
 using Core.Exceptions;
 using Core.Helpers;
 using Core.Mail;
@@ -85,6 +86,7 @@ namespace Front.React
             services.AddScoped<ISeatingGenerator, SeatingGenerator>();
             services.AddScoped<ISessionManager, SessionManager>();
             services.AddScoped<IBadgesDrawer, BadgesDrawer>();
+            services.AddScoped<IDiplomaDrawer, DiplomaDrawer>();
             services.AddScoped<AuthorizedActionFilter>();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
