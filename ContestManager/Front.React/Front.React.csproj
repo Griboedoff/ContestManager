@@ -30,28 +30,10 @@
           <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <None Update="Static\images\formulas_8641.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Static\images\powers_10-11_khrt123.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Static\images\powers_8-9_qwdge12.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <Content Update="log4net.config">
-          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <Content Include="Static\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
         </Content>
-        <None Update="Static\Badges\BOrg.bmp">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Static\Badges\BTemplate.bmp">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Static\Badges\template.bmp">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
     <ItemGroup>
