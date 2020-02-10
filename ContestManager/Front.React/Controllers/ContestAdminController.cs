@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Core.Contests;
@@ -42,7 +41,7 @@ namespace Front.React.Controllers
         [HttpPost("{id}/calcQualificationResults")]
         public async Task<ActionResult> CalculateQualificationResults(Guid id)
         {
-            await contestManager.CalculateQualificationResults(id);
+            await contestAdminManager.CalculateQualificationResults(id);
 
             return Ok();
         }
@@ -50,7 +49,7 @@ namespace Front.React.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] CreateContestModel contestModel, User user)
         {
-            var contest = await contestManager.Create(contestModel, user.Id);
+            var contest = await contestAdminManager.Create(contestModel, user.Id);
 
             return Json(contest);
         }
@@ -58,7 +57,7 @@ namespace Front.React.Controllers
         [HttpPatch("{id}/options")]
         public async Task<ActionResult> UpdateOptions(Guid id, [FromBody] ContestOptions options)
         {
-            await contestManager.UpdateOptions(id, options);
+            await contestAdminManager.UpdateOptions(id, options);
 
             return StatusCode(200);
         }
@@ -66,7 +65,7 @@ namespace Front.React.Controllers
         [HttpGet("{id}/generateSeating")]
         public async Task<StatusCodeResult> GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
         {
-            await contestManager.GenerateSeating(id, auditoriums);
+            await contestAdminManager.GenerateSeating(id, auditoriums);
 
             return Ok();
         }
@@ -76,7 +75,7 @@ namespace Front.React.Controllers
             Guid id,
             [FromBody] Dictionary<Class, string> tasksDescriptions)
         {
-            await contestManager.AddResultsDescription(id, tasksDescriptions);
+            await contestAdminManager.AddResultsDescription(id, tasksDescriptions);
 
             var contest = await contestsRepo.GetByIdAsync(id);
 
@@ -97,7 +96,7 @@ namespace Front.React.Controllers
             var contest = await contestsRepo.GetByIdAsync(id);
             var results = await sheetsApiClient.GetResults(contest.ResultsTableLink);
 
-            await contestManager.AddResults(id, results);
+            await contestAdminManager.AddResults(id, results);
             return Json(200);
         }
 
