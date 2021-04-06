@@ -15,8 +15,8 @@ const ContestList = ({ fetching, contests }) => {
         return <Spinner style={{ width: '3rem', height: '3rem' }} />;
     }
 
-    const ongoing = contests.filter(c => c.options !== ContestOptions.Finished);
-    const finished = contests.filter(c => c.options === ContestOptions.Finished);
+    const ongoing = contests.filter(c => (c.options & ContestOptions.Finished) !== ContestOptions.Finished);
+    const finished = contests.filter(c => (c.options & ContestOptions.Finished) === ContestOptions.Finished);
 
     const onClick = () => {
         setToStorage(jumboClosedKey, true);
