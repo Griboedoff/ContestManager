@@ -45,7 +45,7 @@ class Contest extends React.Component {
 
     async toggleParticipate() {
         if (this.state.participateOpen)
-            await this.fetchParticipants();
+            await this.props.fetchParticipants();
 
         await this.setState({
             participateOpen: !this.state.participateOpen
