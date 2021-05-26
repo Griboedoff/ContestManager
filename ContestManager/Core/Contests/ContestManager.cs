@@ -100,7 +100,7 @@ namespace Core.Contests
                                     : "";
                                 return new Result
                                 {
-                                    Id = p.Id,
+                                    Id = p.UserId,
                                     Name = showPreResults ? p.Login : p.UserSnapshot.Name,
                                     SchoolWithCity = showPreResults ? "" : $"{school}{city}",
                                     Results = results,
