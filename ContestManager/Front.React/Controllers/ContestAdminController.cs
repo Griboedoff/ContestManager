@@ -62,7 +62,7 @@ namespace Front.React.Controllers
             return StatusCode(200);
         }
 
-        [HttpGet("{id}/generateSeating")]
+        [HttpPost("{id}/generateSeating")]
         public async Task<StatusCodeResult> GenerateSeating(Guid id, [FromBody] Auditorium[] auditoriums)
         {
             await contestAdminManager.GenerateSeating(id, auditoriums);

@@ -62,7 +62,7 @@ export default class EditableUserData extends React.Component {
         const smInput = small ? 8 : 4;
         return (<AvForm onSubmit={this.save}>
             <AvGroup row>
-                <Label sm={smLabel}>Имя</Label>
+                <Label sm={smLabel}>ФИО</Label>
                 <Col sm={smInput}>
                     <AvInput type="text" name="name" onChange={this.handleChange} value={name} required />
                 </Col>

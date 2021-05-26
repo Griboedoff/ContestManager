@@ -139,7 +139,7 @@ export class Register extends React.Component {
                     </Col>
                 </AvGroup>
                 <AvGroup row>
-                    <Label sm={3}>Имя</Label>
+                    <Label sm={3}>ФИО</Label>
                     <Col sm={9}>
                         <AvInput onChange={this.handleChange}
                                  placeholder="Иван"

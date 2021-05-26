@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import configureStore, { history } from './store/configureStore';
 import App from './App';
-import { unregister } from './registerServiceWorker';
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = window.initialReduxState;
@@ -23,5 +22,3 @@ ReactDOM.render(
         </ConnectedRouter>
     </Provider>,
     rootElement);
-
-unregister();

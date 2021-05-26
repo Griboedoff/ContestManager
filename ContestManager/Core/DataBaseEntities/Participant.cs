@@ -44,11 +44,12 @@ namespace Core.DataBaseEntities
 
         public int? Place { get; set; }
 
-        public Participant WithoutLogin() => new Participant
+        public Participant WithoutPass() => new Participant
         {
             Id = Id,
             ContestId = ContestId,
             UserId = UserId,
+            Login = Login,
             UserSnapshot = UserSnapshot,
             Verification = Verification,
             Verified = Verified

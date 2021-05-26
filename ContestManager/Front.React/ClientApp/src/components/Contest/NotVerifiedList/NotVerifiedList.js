@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, Button, Form, FormGroup, Input, Label, ListGroup, ListGroupItem } from 'reactstrap';
-import { CenterSpinner } from '../../CenterSpinner';
-import { Participant } from '../ParticipantsList';
-import { get, post } from '../../../Proxy';
+import React, {useState, useEffect} from 'react';
+import {Alert, Button, Form, FormGroup, Input, Label, ListGroup, ListGroupItem} from 'reactstrap';
+import {CenterSpinner} from '../../CenterSpinner';
+import {Participant} from '../ParticipantsList';
+import {get, post} from '../../../Proxy';
 
 const getNotVerified = async (contestId, setParticipants, setFetching) => {
     const resp = await get(`contests/${contestId}/participants?onlyNotVerified=true`);
@@ -12,7 +12,7 @@ const getNotVerified = async (contestId, setParticipants, setFetching) => {
     setFetching(false);
 };
 
-export const NotVerifiedList = ({ contestId }) => {
+export const NotVerifiedList = ({contestId}) => {
     const [fetching, setFetching] = useState(true);
     const [participants, setParticipants] = useState([]);
     useEffect(() => {
@@ -20,33 +20,34 @@ export const NotVerifiedList = ({ contestId }) => {
     }, [contestId]);
 
     if (fetching)
-        return <CenterSpinner />;
+        return <CenterSpinner/>;
 
     if (participants.length === 0)
         return <Alert>Все подтверждены</Alert>;
 
     return <>
         <ListGroup>
-            {participants.map(p => <ParticipantWithButton
+            {participants.map((p, i) => <ParticipantWithButton
                 key={p.id}
+                index={i}
                 participant={p}
-                onSuccess={async () => await getNotVerified(contestId, setParticipants, setFetching)} />)}
+                onSuccess={async () => await getNotVerified(contestId, setParticipants, setFetching)}/>)}
         </ListGroup>
     </>;
 };
 
-const ParticipantWithButton = ({ participant, onSuccess }) => {
+const ParticipantWithButton = ({participant, onSuccess, index}) => {
     const [verification, setVerification] = useState(participant.verification);
-
+    participant.userSnapshot.name = index + ". " + participant.userSnapshot.name
     return <ListGroupItem key={participant.id}>
-        <Participant participant={participant} />
+        <Participant participant={participant}/>
         <Form className="mt-3" inline>
             <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
                 <Label className="mr-sm-2">Подтверждение</Label>
                 <Input type="text"
                        name="verification"
                        value={verification}
-                       onChange={e => setVerification(e.target.value)} />
+                       onChange={e => setVerification(e.target.value)}/>
             </FormGroup>
             <Button color="success" onClick={async () => {
                 if (!verification)

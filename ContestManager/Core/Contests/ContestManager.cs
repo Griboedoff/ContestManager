@@ -73,7 +73,7 @@ namespace Core.Contests
 
         public async Task<IReadOnlyList<Participant>> GetParticipants(Guid contestId) =>
             (await participantsRepo.WhereAsync(p => p.ContestId == contestId))
-            .Select(p => p.WithoutLogin())
+            .Select(p => p.WithoutPass())
             .OrderBy(p => p.UserSnapshot.Class)
             .ThenBy(p => p.UserSnapshot.Name)
             .ToList();

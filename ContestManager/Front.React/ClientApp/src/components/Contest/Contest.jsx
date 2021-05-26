@@ -1,24 +1,24 @@
 import React from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
-import { Button, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
-import { ContestOptions } from '../../Enums/ContestOptions';
-import { ContestType } from '../../Enums/ContestType';
-import { UserRole } from '../../Enums/UserRole';
-import { hasFlag } from '../../utils';
-import { CenterSpinner } from '../CenterSpinner';
+import {Link, Route, Switch} from 'react-router-dom';
+import {Button, Col, Container, Label, ListGroup, ListGroupItem, Row} from 'reactstrap';
+import {ContestOptions} from '../../Enums/ContestOptions';
+import {ContestType} from '../../Enums/ContestType';
+import {UserRole} from '../../Enums/UserRole';
+import {hasFlag} from '../../utils';
+import {CenterSpinner} from '../CenterSpinner';
 import WithContest from '../HOC/WithContest';
 import WithParticipants from '../HOC/WithParticipants';
 import WithResults from '../HOC/WithResults';
 import WithUser from '../HOC/WithUser';
-import { AddResult } from './AddResult';
-import { EditNews, News } from './News';
-import { NotVerifiedList } from './NotVerifiedList';
-import { Options } from './Options';
-import { ParticipantsList } from './ParticipantsList';
-import { ParticipateModal } from './ParticipateModal';
-import { Results } from './Results';
-import { Seating } from './Seating';
-import { get } from '../../Proxy';
+import {AddResult} from './AddResult';
+import {EditNews, News} from './News';
+import {NotVerifiedList} from './NotVerifiedList';
+import {Options} from './Options';
+import {ParticipantsList} from './ParticipantsList';
+import {ParticipateModal} from './ParticipateModal';
+import {Results} from './Results';
+import {Seating} from './Seating';
+import {get} from '../../Proxy';
 
 class Contest extends React.Component {
     constructor(props) {
@@ -68,9 +68,9 @@ class Contest extends React.Component {
 
     render() {
         if (!this.props.contest || this.fetching())
-            return <CenterSpinner />;
+            return <CenterSpinner/>;
 
-        const { user, setUser, contest } = this.props;
+        const {user, setUser, contest} = this.props;
         return <Container>
             <Row className="mb-3 justify-content-between"><h1>{contest.title}</h1></Row>
             <Row>
@@ -87,43 +87,44 @@ class Contest extends React.Component {
                               close={this.toggleParticipate}
                               title="Принять участие"
                               saveButtonTitle="Участвовать"
-                              setUser={setUser} />}
+                              setUser={setUser}/>}
         </Container>;
     }
 
     renderBody = () => (<Switch>
         <Route exact path={this.contestUrl()}>
-            <News contestId={this.contestId} />
+            <News contestId={this.contestId}/>
         </Route>
         <Route exact path={this.contestUrl('participants')}>
-            <ParticipantsList contest={this.props.contest} participants={this.props.participants} />
+            <ParticipantsList contest={this.props.contest} participants={this.props.participants}/>
         </Route>
 
         <Route exact path={this.contestUrl('addNews')}>
-            <EditNews contestId={this.contestId} />
+            <EditNews contestId={this.contestId}/>
         </Route>
         <Route exact path={this.contestUrl('options')}>
-            <Options contest={this.props.contest} />
+            <Options contest={this.props.contest}/>
         </Route>
         <Route exact path={this.contestUrl('seating')}>
-            <Seating contestId={this.contestId} />
+            <Seating contestId={this.contestId}/>
         </Route>
         <Route exact path={this.contestUrl('addResult')}>
-            <AddResult contest={this.contestId} />
+            <AddResult contestId={this.contestId}/>
         </Route>
         <Route path={this.contestUrl('results/:class')}>
-            <Results contest={this.props.contest} results={this.props.results} />
+            <Results contest={this.props.contest} results={this.props.results}/>
         </Route>
         <Route exact path={this.contestUrl('notVerified')}>
-            <NotVerifiedList contestId={this.contestId} />
+            <NotVerifiedList contestId={this.contestId}/>
         </Route>
         {/*<Route exact path={this.contestUrl('addTasks')}>*/}
         {/*    <AddResult contestId={this.contestId} />*/}
         {/*</Route>*/}
     </Switch>);
 
+    
     renderMenu = () => {
-        const { user, contest } = this.props;
+        const {user, contest} = this.props;
         return <>
             {this.showParticipateButton() &&
             <Button className="mb-4" color="success" onClick={this.toggleParticipate}>Принять участие</Button>}
@@ -133,23 +134,31 @@ class Contest extends React.Component {
                 Отборочный тур
             </Button>}
 
-            {this.showBadgesButton() &&
-            <Button className="mb-4" color="success" onClick={async () => {
-                const response = await get(`badges/print?contestId=${this.contestId}`);
+            {this.showBadgesButton()
+            && <div>
+                <Button className="mb-4" color="success" onClick={async () => {
+                    const response = await get(`badges/print?contestId=${this.contestId}`);
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', `${user.name}.pdf`);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.parentNode.removeChild(link);
-                }
-            }}>
-                Напечатать бейдж
-            </Button>}
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(new Blob([blob]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', `${user.name}.pdf`);
+                        document.body.appendChild(link);
+                        link.click();
+                        link.parentNode.removeChild(link);
+                    }
+                }}>
+                    Напечатать бейдж
+                </Button>
+            </div>}
+
+            {this.showUserLogin() &&
+            <div>
+                <Label className="mb-4">Ваш код: {this.props.participants.find(p => p.userId === user?.id)?.login}
+                </Label>
+            </div>}
 
             <ListGroup>
                 <ListGroupItem>
@@ -169,21 +178,27 @@ class Contest extends React.Component {
     };
 
     showParticipateButton() {
-        const { user, contest, participants } = this.props;
+        const {user, contest, participants} = this.props;
         return hasFlag(contest.options, ContestOptions.RegistrationOpen) &&
             user?.role === UserRole.Participant &&
             !participants.some(p => p.userId === user.id);
     }
 
     showQualificationButton() {
-        const { user, contest, participants } = this.props;
+        const {user, contest, participants} = this.props;
         return hasFlag(contest.options, ContestOptions.QualificationOpen) &&
             user?.role === UserRole.Participant &&
             participants.some(p => p.userId === user.id);
     }
 
+    showUserLogin() {
+        const {user, contest} = this.props;
+        return hasFlag(contest.options, ContestOptions.FilterVerified) &&
+            user?.role === UserRole.Participant
+    }
+
     showBadgesButton() {
-        const { user, contest, participants } = this.props;
+        const {user, contest, participants} = this.props;
         const part = participants.find(p => p.userId === user?.id);
         return hasFlag(contest.options, ContestOptions.FilterVerified) &&
             user?.role === UserRole.Participant &&
@@ -191,7 +206,7 @@ class Contest extends React.Component {
     }
 
     renderAdminPanel = () => {
-        const { options, type } = this.props.contest;
+        const {options, type} = this.props.contest;
         const isQualification = type === ContestType.Qualification;
         return <>
             <h5 className="mt-3">Админка</h5>

@@ -40,7 +40,7 @@ class UserPage extends React.Component {
 
 const ReadonlyView = ({ class: propsClass, school, role, coach, name, sex, city }) => {
     return <React.Fragment>
-        <UserInfoRow label="Имя" value={name} />
+        <UserInfoRow label="ФИО" value={name} />
         <UserInfoRow label="Роль" value={role} showValue={r => roleToString[r]} />
         {role === UserRole.Participant &&
         <UserInfoRow label="Пол" value={sex} showValue={r => sexToString[r]} />}
