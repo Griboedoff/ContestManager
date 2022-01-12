@@ -19,10 +19,6 @@ const Participant = ({ participant, contest, withEdit }) => {
             <Col sm={6}>{user.city}, {user.school}</Col>
             {user.coach && <Col sm={6}>Тренер: {user.coach}</Col>}
         </Row>
-        <Row>
-            <Col sm={6}>{user.city}, {user.school}</Col>
-            {user.coach && <Col sm={6}>Тренер: {user.coach}</Col>}
-        </Row>
 
         {edit && <EditParticipantModal
             isOpen={edit}
